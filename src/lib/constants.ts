@@ -1,0 +1,160 @@
+import type {
+  AssessmentStatus,
+  AttemptStatus,
+  CreditPlan,
+  Difficulty,
+  InvitationStatus,
+  PaymentProvider,
+  PaymentStatus,
+  QuestionType,
+  Role,
+} from "./types";
+
+export type BadgeTone = "neutral" | "success" | "warning" | "danger" | "info";
+
+export const ROLE_LABELS: Record<Role, string> = {
+  CANDIDATE: "Candidate",
+  RECRUITER: "Recruiter",
+  ADMIN: "Admin",
+};
+
+export const ROLE_HOME: Record<Role, string> = {
+  CANDIDATE: "/dashboard/candidate",
+  RECRUITER: "/dashboard/recruiter",
+  ADMIN: "/dashboard/admin",
+};
+
+export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
+  MCQ: "Multiple choice",
+  WRITTEN: "Written",
+  CODING: "Coding",
+};
+
+export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  EASY: "Easy",
+  MEDIUM: "Medium",
+  HARD: "Hard",
+};
+
+export const ASSESSMENT_STATUS_LABELS: Record<AssessmentStatus, string> = {
+  DRAFT: "Draft",
+  PUBLISHED: "Published",
+  CLOSED: "Closed",
+  ARCHIVED: "Archived",
+};
+
+export const ASSESSMENT_STATUS_TONES: Record<AssessmentStatus, BadgeTone> = {
+  DRAFT: "neutral",
+  PUBLISHED: "info",
+  CLOSED: "warning",
+  ARCHIVED: "danger",
+};
+
+export const INVITATION_STATUS_LABELS: Record<InvitationStatus, string> = {
+  PENDING: "Pending",
+  ACCEPTED: "Accepted",
+  DECLINED: "Declined",
+  EXPIRED: "Expired",
+};
+
+export const INVITATION_STATUS_TONES: Record<InvitationStatus, BadgeTone> = {
+  PENDING: "warning",
+  ACCEPTED: "success",
+  DECLINED: "danger",
+  EXPIRED: "neutral",
+};
+
+export const ATTEMPT_STATUS_LABELS: Record<AttemptStatus, string> = {
+  IN_PROGRESS: "In progress",
+  SUBMITTED: "Submitted",
+  EVALUATED: "Evaluated",
+  EXPIRED: "Expired",
+};
+
+export const ATTEMPT_STATUS_TONES: Record<AttemptStatus, BadgeTone> = {
+  IN_PROGRESS: "info",
+  SUBMITTED: "warning",
+  EVALUATED: "success",
+  EXPIRED: "danger",
+};
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  PENDING: "Pending",
+  PAID: "Paid",
+  FAILED: "Failed",
+  REFUNDED: "Refunded",
+};
+
+export const PAYMENT_STATUS_TONES: Record<PaymentStatus, BadgeTone> = {
+  PENDING: "warning",
+  PAID: "success",
+  FAILED: "danger",
+  REFUNDED: "info",
+};
+
+export const PAYMENT_PROVIDER_LABELS: Record<PaymentProvider, string> = {
+  STRIPE: "Stripe",
+  BKASH: "bKash",
+  SSLCOMMERZ: "SSLCommerz",
+};
+
+export const DIFFICULTY_TONES: Record<Difficulty, BadgeTone> = {
+  EASY: "success",
+  MEDIUM: "warning",
+  HARD: "danger",
+};
+
+export const CREDIT_PLANS: {
+  id: CreditPlan;
+  name: string;
+  credits: number;
+  priceBdt: number;
+  highlight: string[];
+  featured: boolean;
+}[] = [
+  {
+    id: "STARTER",
+    name: "Starter",
+    credits: 25,
+    priceBdt: 2500,
+    highlight: ["25 invitations", "Email support", "30-day history"],
+    featured: false,
+  },
+  {
+    id: "PRO",
+    name: "Pro",
+    credits: 100,
+    priceBdt: 7500,
+    highlight: [
+      "100 invitations",
+      "Priority support",
+      "Full attempt history",
+      "Evaluation analytics",
+    ],
+    featured: true,
+  },
+  {
+    id: "ENTERPRISE",
+    name: "Enterprise",
+    credits: 500,
+    priceBdt: 30000,
+    highlight: [
+      "500 invitations",
+      "Dedicated support",
+      "Everything in Pro",
+      "Best unit price",
+    ],
+    featured: false,
+  },
+];
+
+export const SUPPORT_EMAIL = "support@codearena.com";
+export const APP_NAME = "CodeArena";
+export const APP_TAGLINE =
+  "Rigorous technical screening for modern engineering teams";
+
+export const NAV_LINKS = [
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about", label: "How it works" },
+  { href: "/contact", label: "Contact" },
+] as const;
