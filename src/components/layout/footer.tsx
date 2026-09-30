@@ -55,7 +55,7 @@ export function Footer() {
 
         <div className="flex flex-col gap-3">
           <p className="font-heading text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-            Get started
+            Explore
           </p>
           <ul className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => (
