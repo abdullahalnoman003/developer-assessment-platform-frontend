@@ -1,12 +1,5 @@
 import type { JsonValue } from "./types";
 
-/* ------------------------------------------------------------------ JSON */
-
-/**
- * The backend returns some string columns as Prisma `Json` and others as
- * `String`. Everything goes through here so views never have to branch.
- */
-
 export function toStringList(
   value: JsonValue | string | null | undefined,
 ): string[] {
@@ -43,7 +36,6 @@ export function toStringList(
   return [];
 }
 
-/** Options may arrive as a string, an array, or a JSON-encoded array. */
 export function toOptionList(value: JsonValue | null | undefined): string[] {
   if (value === null || value === undefined) return [];
   if (Array.isArray(value)) {
@@ -72,7 +64,6 @@ export function toOptionList(value: JsonValue | null | undefined): string[] {
   return [];
 }
 
-/** The correct answer may be the option text, an index, or a JSON value. */
 export function correctAnswerLabel(
   value: JsonValue | null | undefined,
   options: string[],
@@ -110,8 +101,6 @@ export function isJsonEmpty(value: JsonValue | null | undefined): boolean {
   if (typeof value === "object") return Object.keys(value).length === 0;
   return false;
 }
-
-/* ----------------------------------------------------------------- Dates */
 
 export function toDate(value: string | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -171,7 +160,6 @@ export function formatRelative(
   return fallback;
 }
 
-/** `02:14:59` — used by the attempt countdown. */
 export function formatCountdown(
   target: string | Date | null | undefined,
 ): string {
@@ -192,11 +180,9 @@ export function isPast(value: string | Date | null | undefined): boolean {
   return date ? date.getTime() < Date.now() : false;
 }
 
-/* --------------------------------------------------------------- Numbers */
-
 export function formatCurrency(
   value: string | number | null | undefined,
-  currency = "BDT",
+  currency = "USD",
 ): string {
   if (value === null || value === undefined) return "—";
   const amount = typeof value === "number" ? value : Number(value);
@@ -206,6 +192,16 @@ export function formatCurrency(
     currency,
     maximumFractionDigits: 2,
   }).format(amount);
+}
+
+export function formatUsdCents(
+  cents: number | null | undefined,
+  fallback = "—",
+): string {
+  if (cents === null || cents === undefined || Number.isNaN(cents)) {
+    return fallback;
+  }
+  return formatCurrency(cents / 100, "USD");
 }
 
 export function formatNumber(
@@ -230,8 +226,6 @@ export function formatPercent(
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
-
-/* ----------------------------------------------------------------- Text */
 
 export function initials(name: string | null | undefined): string {
   if (!name) return "?";

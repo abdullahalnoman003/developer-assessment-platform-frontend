@@ -12,8 +12,6 @@ const optionalUrl = (max = 500) =>
     )
     .transform((value) => (value === "" ? null : value));
 
-/* ------------------------------------------------------------------ Auth */
-
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address").trim().toLowerCase(),
   password: z.string().min(1, "Password is required"),
@@ -35,8 +33,6 @@ export const registerSchema = z.object({
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
-/* --------------------------------------------------------------- Profile */
-
 export const updateProfileSchema = z.object({
   name: z
     .string()
@@ -56,8 +52,6 @@ export const updateProfileSchema = z.object({
 });
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
-/* --------------------------------------------------------------- Company */
-
 export const upsertCompanySchema = z.object({
   name: z
     .string()
@@ -69,8 +63,6 @@ export const upsertCompanySchema = z.object({
   logoUrl: optionalUrl(1000).optional(),
 });
 export type UpsertCompanyInput = z.infer<typeof upsertCompanySchema>;
-
-/* ------------------------------------------------------------- Questions */
 
 const questionBase = {
   type: z.enum(["MCQ", "WRITTEN", "CODING"]),
@@ -145,8 +137,6 @@ export const updateQuestionSchema = z
   });
 export type UpdateQuestionInput = z.infer<typeof updateQuestionSchema>;
 
-/* ----------------------------------------------------------- Assessments */
-
 export const createAssessmentSchema = z.object({
   title: z
     .string()
@@ -197,8 +187,6 @@ export const updateAssessmentSchema = z.union([
 ]);
 export type UpdateAssessmentInput = z.infer<typeof updateAssessmentSchema>;
 
-/* ----------------------------------------------------------- Invitations */
-
 export const inviteSchema = z.object({
   candidateEmails: z
     .array(z.email("One of the emails is invalid"))
@@ -211,8 +199,6 @@ export const respondInvitationSchema = z.object({
   status: z.enum(["ACCEPTED", "DECLINED"]),
 });
 export type RespondInvitationInput = z.infer<typeof respondInvitationSchema>;
-
-/* -------------------------------------------------------------- Attempts */
 
 export const saveAnswersSchema = z.object({
   answers: z
@@ -245,13 +231,10 @@ export const evaluateAttemptSchema = z.object({
 });
 export type EvaluateAttemptInput = z.infer<typeof evaluateAttemptSchema>;
 
-/* -------------------------------------------------------------- Payments */
-
 export const initiatePaymentSchema = z.object({
   plan: z.enum(["STARTER", "PRO", "ENTERPRISE"]),
 });
-
-/* ----------------------------------------------------------------- Admin */
+export type InitiatePaymentInput = z.infer<typeof initiatePaymentSchema>;
 
 export const updateUserStatusSchema = z
   .object({
@@ -264,8 +247,7 @@ export const updateUserStatusSchema = z
       message: "Choose an action",
     },
   );
-
-/* --------------------------------------------- Frontend-only (contact) */
+export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
 
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Tell us your name").max(100),
@@ -278,8 +260,6 @@ export const contactSchema = z.object({
     .max(2000, "Message is too long"),
 });
 export type ContactInput = z.infer<typeof contactSchema>;
-
-/* ------------------------------------------------------- Query builders */
 
 export const questionQuerySchema = z.object({
   q: z.string().trim().max(200).optional(),

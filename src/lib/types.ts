@@ -7,6 +7,7 @@ export type QuestionType = "MCQ" | "WRITTEN" | "CODING";
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 export type InvitationStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED";
 export type AttemptStatus =
+  | "NOT_STARTED"
   | "IN_PROGRESS"
   | "SUBMITTED"
   | "EVALUATED"
@@ -15,7 +16,6 @@ export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 export type PaymentProvider = "STRIPE" | "BKASH" | "SSLCOMMERZ";
 export type CreditPlan = "STARTER" | "PRO" | "ENTERPRISE";
 
-/** Prisma Json column, as it arrives over the wire. */
 export type JsonValue =
   | string
   | number
@@ -43,8 +43,6 @@ export interface Paginated<T> {
   items: T[];
   meta: PaginatedMeta;
 }
-
-/* ------------------------------------------------------------------ Users */
 
 export interface Company {
   id: string;
@@ -87,13 +85,11 @@ export interface User {
   deletedAt: string | null;
 }
 
-/** Shape returned by `GET /auth/me` and `GET /users/me`. */
 export interface SessionUser extends User {
   companyMembership: CompanyMembership | null;
 }
 
-/** Shape returned by `POST /auth/register` and `PATCH /users/me` (no membership). */
-export type ProfileUser = User;
+export type ProfileUser = SessionUser;
 
 export interface AdminUser {
   id: string;
@@ -108,12 +104,19 @@ export interface AdminUser {
   _count: { invitations: number; attempts: number; auditLogs: number };
 }
 
+export interface AdminUserPatch {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  status: UserStatus;
+  deletedAt: string | null;
+}
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
 }
-
-/* --------------------------------------------------------------- Company */
 
 export interface CompanyDashboard {
   company: {
@@ -133,8 +136,6 @@ export interface CompanyDashboard {
   averageScore: number | null;
 }
 
-/* ------------------------------------------------------------- Questions */
-
 export interface Question {
   id: string;
   companyId: string;
@@ -149,8 +150,6 @@ export interface Question {
   updatedAt: string;
   deletedAt: string | null;
 }
-
-/* ----------------------------------------------------------- Assessments */
 
 export interface Assessment {
   id: string;
@@ -167,6 +166,10 @@ export interface Assessment {
 
 export interface AssessmentListItem extends Assessment {
   _count: { questions: number; invitations: number };
+}
+
+export interface AssessmentWithQuestions extends Assessment {
+  questions: AssessmentQuestion[];
 }
 
 export interface AssessmentQuestion {
@@ -191,8 +194,6 @@ export interface AssessmentDetail extends Assessment {
   stats: AssessmentStats;
 }
 
-/* ----------------------------------------------------------- Invitations */
-
 export interface Invitation {
   id: string;
   assessmentId: string;
@@ -201,7 +202,6 @@ export interface Invitation {
   token: string;
   expiresAt: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface InvitationWithAssessment extends Invitation {
@@ -224,8 +224,6 @@ export interface InvitationWithCandidate extends Invitation {
   candidate: { id: string; name: string; email: string };
 }
 
-/* -------------------------------------------------------------- Attempts */
-
 export interface Answer {
   id: string;
   attemptId: string;
@@ -233,8 +231,6 @@ export interface Answer {
   response: JsonValue;
   isCorrect: boolean | null;
   pointsAwarded: number | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface Attempt {
@@ -242,39 +238,38 @@ export interface Attempt {
   invitationId: string;
   candidateId: string;
   status: AttemptStatus;
-  startedAt: string;
+  startedAt: string | null;
   submittedAt: string | null;
   deadline: string | null;
   score: number | null;
   maxScore: number | null;
   resultReleased: boolean;
   evaluatorNote: string | null;
-  createdAt: string;
-  updatedAt: string;
+}
+
+export interface AttemptAssessmentBrief {
+  id: string;
+  title: string;
+  durationMins: number;
 }
 
 export interface StartedAttempt extends Attempt {
-  invitation: {
-    id: string;
-    status: InvitationStatus;
-    assessment: { id: string; title: string; durationMins: number };
-  };
+  invitation: Invitation & { assessment: AttemptAssessmentBrief };
 }
 
 export interface SavedAttempt extends Attempt {
   answers: Answer[];
-  invitation: {
-    id: string;
-    assessment: { id: string; title: string; durationMins: number };
-  };
+  invitation: Invitation & { assessment: AttemptAssessmentBrief };
 }
 
-/** `GET /attempts/:id` — carries the full question set and the answers. */
+export interface EvaluatedAttempt extends Attempt {
+  answers: Answer[];
+  invitation: Invitation & { assessment: { id: string; title: string } };
+}
+
 export interface AttemptDetail extends Attempt {
   answers: Answer[];
-  invitation: {
-    id: string;
-    status: InvitationStatus;
+  invitation: Invitation & {
     assessment: Assessment & { questions: AssessmentQuestion[] };
   };
 }
@@ -283,8 +278,6 @@ export interface ResultRow extends Attempt {
   candidate: { id: string; name: string; email: string };
   invitation: { status: InvitationStatus };
 }
-
-/* -------------------------------------------------------------- Payments */
 
 export interface Payment {
   id: string;
@@ -307,8 +300,6 @@ export interface InitiatePaymentResult {
   payment: Payment;
 }
 
-/* ----------------------------------------------------------------- Admin */
-
 export interface AdminStats {
   users: {
     total: number;
@@ -328,7 +319,7 @@ export interface AuditLog {
   userId: string | null;
   action: string;
   entity: string;
-  entityId: string;
+  entityId: string | null;
   meta: JsonValue | null;
   createdAt: string;
   user: { id: string; name: string; email: string } | null;
