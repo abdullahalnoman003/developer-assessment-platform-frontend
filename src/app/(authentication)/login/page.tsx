@@ -1,11 +1,36 @@
-export default function LoginPage() {
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { LoginForm } from "@/app/(authentication)/_components/login-form";
+import { ROLE_HOME } from "@/lib/constants";
+import { safeRedirect } from "@/lib/redirect";
+import { authService } from "@/service/auth";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Sign in to your CodeArena account.",
+};
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const user = await authService.currentUser();
+  if (user) redirect(ROLE_HOME[user.role]);
+
+  const params = await searchParams;
+  const single = (value: string | string[] | undefined) =>
+    Array.isArray(value) ? value[0] : value;
+
+  const redirectTo = safeRedirect(single(params.redirectTo), "") || null;
+  const notice =
+    params.registered === "1" ? "Account created. Sign in below." : null;
+
   return (
-    <main>
-      <h1>Sign in</h1>
-      <p>
-        TODO: RHF + Zod login form, show/hide password, redirectTo support,
-        conditional Google button, three one-click demo login cards.
-      </p>
-    </main>
+    <LoginForm
+      googleEnabled={Boolean(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)}
+      notice={notice}
+      redirectTo={redirectTo}
+    />
   );
 }

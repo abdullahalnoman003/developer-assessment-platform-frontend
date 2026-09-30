@@ -6,8 +6,8 @@ import type {
   UpdateProfileInput,
 } from "@/lib/validations";
 
-function fetchMe(): Promise<ApiResponse<SessionUser>> {
-  return api("/auth/me");
+function fetchMe(token?: string): Promise<ApiResponse<SessionUser>> {
+  return token ? api("/auth/me", { token }) : api("/auth/me");
 }
 
 export const authService = {
@@ -29,9 +29,9 @@ export const authService = {
   updateProfile: (payload: UpdateProfileInput): Promise<ApiResponse<User>> =>
     api("/users/me", { method: "PATCH", body: payload }),
 
-  currentUser: async (): Promise<SessionUser | null> => {
+  currentUser: async (token?: string): Promise<SessionUser | null> => {
     try {
-      const res = await fetchMe();
+      const res = await fetchMe(token);
       return res.success ? res.data : null;
     } catch {
       return null;

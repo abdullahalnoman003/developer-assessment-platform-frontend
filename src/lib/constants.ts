@@ -24,6 +24,34 @@ export const ROLE_HOME: Record<Role, string> = {
   ADMIN: "/dashboard/admin",
 };
 
+export interface DemoAccount {
+  role: Role;
+  email: string;
+  password: string;
+  blurb: string;
+}
+
+export const DEMO_ACCOUNTS: readonly DemoAccount[] = [
+  {
+    role: "CANDIDATE",
+    email: "candidate@codearena.com",
+    password: "candidate123",
+    blurb: "Invitations, live attempts and released results.",
+  },
+  {
+    role: "RECRUITER",
+    email: "recruiter@codearena.com",
+    password: "recruiter123",
+    blurb: "Question bank, assessments, grading and billing.",
+  },
+  {
+    role: "ADMIN",
+    email: "admin@codearena.com",
+    password: "admin1234",
+    blurb: "Users, audit logs and payment lookup.",
+  },
+] as const;
+
 export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   MCQ: "Multiple choice",
   WRITTEN: "Written",

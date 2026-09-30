@@ -118,6 +118,20 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+export interface ActionState {
+  status: "idle" | "success" | "error";
+  message: string;
+  fieldErrors: Record<string, string[]>;
+  redirectTo: string | null;
+}
+
+export const IDLE_ACTION_STATE: ActionState = {
+  status: "idle",
+  message: "",
+  fieldErrors: {},
+  redirectTo: null,
+};
+
 export interface CompanyDashboard {
   company: {
     id: string | undefined;
