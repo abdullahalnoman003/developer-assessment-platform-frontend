@@ -65,6 +65,7 @@ export const INVITATION_STATUS_TONES: Record<InvitationStatus, BadgeTone> = {
 };
 
 export const ATTEMPT_STATUS_LABELS: Record<AttemptStatus, string> = {
+  NOT_STARTED: "Not started",
   IN_PROGRESS: "In progress",
   SUBMITTED: "Submitted",
   EVALUATED: "Evaluated",
@@ -72,6 +73,7 @@ export const ATTEMPT_STATUS_LABELS: Record<AttemptStatus, string> = {
 };
 
 export const ATTEMPT_STATUS_TONES: Record<AttemptStatus, BadgeTone> = {
+  NOT_STARTED: "neutral",
   IN_PROGRESS: "info",
   SUBMITTED: "warning",
   EVALUATED: "success",
@@ -108,7 +110,7 @@ export const CREDIT_PLANS: {
   id: CreditPlan;
   name: string;
   credits: number;
-  priceBdt: number;
+  priceUsdCents: number;
   highlight: string[];
   featured: boolean;
 }[] = [
@@ -116,7 +118,7 @@ export const CREDIT_PLANS: {
     id: "STARTER",
     name: "Starter",
     credits: 25,
-    priceBdt: 2500,
+    priceUsdCents: 2000,
     highlight: ["25 invitations", "Email support", "30-day history"],
     featured: false,
   },
@@ -124,7 +126,7 @@ export const CREDIT_PLANS: {
     id: "PRO",
     name: "Pro",
     credits: 100,
-    priceBdt: 7500,
+    priceUsdCents: 7500,
     highlight: [
       "100 invitations",
       "Priority support",
@@ -136,10 +138,10 @@ export const CREDIT_PLANS: {
   {
     id: "ENTERPRISE",
     name: "Enterprise",
-    credits: 500,
-    priceBdt: 30000,
+    credits: 300,
+    priceUsdCents: 20000,
     highlight: [
-      "500 invitations",
+      "300 invitations",
       "Dedicated support",
       "Everything in Pro",
       "Best unit price",

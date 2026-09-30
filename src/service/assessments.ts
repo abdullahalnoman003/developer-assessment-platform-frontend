@@ -1,11 +1,14 @@
 import { api, buildQuery } from "@/lib/api";
 import type {
   ApiResponse,
+  Assessment,
   AssessmentDetail,
   AssessmentListItem,
+  AssessmentWithQuestions,
   Paginated,
   ResultRow,
 } from "@/lib/types";
+import type { CreateAssessmentInput } from "@/lib/validations";
 
 export interface AssessmentFilters {
   status?: "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED";
@@ -21,23 +24,22 @@ export const assessmentService = {
   ): Promise<ApiResponse<Paginated<AssessmentListItem>>> =>
     api(`/assessments${buildQuery(filters)}`, { tags: ["assessments"] }),
 
-  create: (payload: unknown): Promise<ApiResponse<AssessmentListItem>> =>
+  create: (payload: CreateAssessmentInput): Promise<ApiResponse<Assessment>> =>
     api("/assessments", { method: "POST", body: payload }),
 
   detail: (id: string): Promise<ApiResponse<AssessmentDetail>> =>
     api(`/assessments/${id}`, { tags: [`assessment:${id}`] }),
 
-  /** The backend accepts only one variant per call. */
   setStatus: (
     id: string,
     status: "PUBLISHED" | "CLOSED" | "ARCHIVED",
-  ): Promise<ApiResponse<AssessmentDetail>> =>
+  ): Promise<ApiResponse<Assessment>> =>
     api(`/assessments/${id}`, { method: "PATCH", body: { status } }),
 
   setQuestions: (
     id: string,
     questionIds: string[],
-  ): Promise<ApiResponse<AssessmentDetail>> =>
+  ): Promise<ApiResponse<AssessmentWithQuestions>> =>
     api(`/assessments/${id}`, { method: "PATCH", body: { questionIds } }),
 
   updateDetails: (
@@ -48,10 +50,10 @@ export const assessmentService = {
       durationMins?: number;
       passScore?: number | null;
     },
-  ): Promise<ApiResponse<AssessmentDetail>> =>
+  ): Promise<ApiResponse<Assessment>> =>
     api(`/assessments/${id}`, { method: "PATCH", body: payload }),
 
-  remove: (id: string): Promise<ApiResponse<AssessmentDetail>> =>
+  remove: (id: string): Promise<ApiResponse<Assessment>> =>
     api(`/assessments/${id}`, { method: "PATCH", body: { deletedAt: "now" } }),
 
   results: (

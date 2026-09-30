@@ -2,10 +2,12 @@ import { api, buildQuery } from "@/lib/api";
 import type {
   AdminStats,
   AdminUser,
+  AdminUserPatch,
   ApiResponse,
   AuditLog,
   Paginated,
 } from "@/lib/types";
+import type { UpdateUserStatusInput } from "@/lib/validations";
 
 export interface AdminUserFilters {
   q?: string;
@@ -23,8 +25,8 @@ export const adminService = {
 
   updateUser: (
     id: string,
-    payload: { status?: "ACTIVE" | "SUSPENDED"; deletedAt?: "now" },
-  ): Promise<ApiResponse<AdminUser>> =>
+    payload: UpdateUserStatusInput,
+  ): Promise<ApiResponse<AdminUserPatch>> =>
     api(`/admin/users/${id}`, { method: "PATCH", body: payload }),
 
   stats: (): Promise<ApiResponse<AdminStats>> =>

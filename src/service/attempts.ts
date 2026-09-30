@@ -1,49 +1,32 @@
 import { api } from "@/lib/api";
 import type {
-  Answer,
   ApiResponse,
   AttemptDetail,
-  AttemptStatus,
+  EvaluatedAttempt,
+  SavedAttempt,
   StartedAttempt,
 } from "@/lib/types";
-
-export interface StartResult {
-  attempt: StartedAttempt;
-  savedAnswers: Answer[];
-}
+import type { EvaluateAttemptInput, SaveAnswersInput } from "@/lib/validations";
 
 export const attemptService = {
-  /** Candidate starts (or resumes) the attempt for an accepted invitation. */
-  start: (invitationId: string): Promise<ApiResponse<StartResult>> =>
+  start: (invitationId: string): Promise<ApiResponse<StartedAttempt>> =>
     api(`/invitations/${invitationId}/start`, { method: "POST", body: {} }),
 
   detail: (id: string): Promise<ApiResponse<AttemptDetail>> =>
     api(`/attempts/${id}`, { tags: [`attempt:${id}`] }),
 
-  /** Autosave — sends only the answers that changed. */
   save: (
     id: string,
-    answers: { questionId: string; response: unknown }[],
-  ): Promise<ApiResponse<AttemptDetail>> =>
+    answers: SaveAnswersInput["answers"],
+  ): Promise<ApiResponse<SavedAttempt>> =>
     api(`/attempts/${id}`, { method: "PATCH", body: { answers } }),
 
-  submit: (id: string): Promise<ApiResponse<AttemptDetail>> =>
-    api(`/attempts/${id}`, {
-      method: "PATCH",
-      body: { status: "SUBMITTED" satisfies AttemptStatus },
-    }),
+  submit: (id: string): Promise<ApiResponse<SavedAttempt>> =>
+    api(`/attempts/${id}`, { method: "PATCH", body: { status: "SUBMITTED" } }),
 
-  /** Recruiter scores the written/coding answers; `releaseResult` is optional. */
   evaluate: (
     id: string,
-    scores: { answerId: string; points: number }[],
-    releaseResult?: boolean,
-  ): Promise<ApiResponse<AttemptDetail>> =>
-    api(`/attempts/${id}/evaluate`, {
-      method: "POST",
-      body: {
-        scores,
-        ...(releaseResult === undefined ? {} : { releaseResult }),
-      },
-    }),
+    payload: EvaluateAttemptInput,
+  ): Promise<ApiResponse<EvaluatedAttempt>> =>
+    api(`/attempts/${id}/evaluate`, { method: "POST", body: payload }),
 };

@@ -16,7 +16,6 @@ const REFRESH_COOKIE = "refreshToken";
 const ACCESS_MAX_AGE = 60 * 60 * 24;
 const REFRESH_MAX_AGE = 60 * 60 * 24 * 7;
 
-/** Thrown when the session cannot be recovered and the user must sign in again. */
 export class UnauthenticatedError extends Error {
   constructor(message = "Your session has expired. Please sign in again.") {
     super(message);
@@ -43,7 +42,6 @@ export interface ApiOptions {
   method?: Method;
   body?: unknown;
   token?: string | null;
-  /** Next.js cache tags for cacheable reads. */
   tags?: string[];
   revalidate?: number | false;
 }
@@ -57,13 +55,6 @@ async function readCookie(name: string): Promise<string | null> {
   return store.get(name)?.value ?? null;
 }
 
-/**
- * Copies the tokens the backend issued onto our own origin.
- *
- * The API sets its httpOnly cookies on `localhost:5000`, which the browser on
- * `localhost:3000` can never read — so the JSON body tokens are mirrored here.
- * Only writable in Server Actions / Route Handlers; throws in RSC renders.
- */
 export async function setAuthCookies(tokens: AuthTokens): Promise<void> {
   const store = await cookies();
   store.set(ACCESS_COOKIE, tokens.accessToken, {
@@ -116,13 +107,7 @@ async function send<T>(
       headers,
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
-      // A non-2xx is data, not an exception. This keeps the backend envelope
-      // intact and leaves the 401 refresh-and-retry path in control.
       ignoreResponseError: true,
-      // ofetch silently re-sends GETs once on 408/409/425/429/5xx. The API is
-      // rate-limited to 100 requests / 15 minutes, so that hidden retry burns
-      // the budget and can escalate a 429 into a hard failure. The only retry
-      // this client performs is the deliberate one in `api()`.
       retry: 0,
       cache: options.tags ? undefined : "no-store",
       ...(options.tags || options.revalidate !== undefined
@@ -178,13 +163,6 @@ async function refreshSession(): Promise<string | null> {
   return res.data.accessToken;
 }
 
-/**
- * Single entry point for every backend call.
- *
- * On a 401 the session is rotated once and the original request is retried.
- * When the rotation cannot be persisted (a Server Component render) an
- * `UnauthenticatedError` is thrown so callers can redirect to `/login`.
- */
 export async function api<T>(
   path: string,
   options: ApiOptions = {},

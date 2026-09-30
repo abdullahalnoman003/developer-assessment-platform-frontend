@@ -6,6 +6,7 @@ import type {
   InvitationWithCandidate,
   Paginated,
 } from "@/lib/types";
+import type { InviteInput, RespondInvitationInput } from "@/lib/validations";
 
 export interface InvitationFilters {
   status?: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED";
@@ -14,35 +15,29 @@ export interface InvitationFilters {
 }
 
 export const invitationService = {
-  /** Recruiter: invite one or more candidate emails to a published assessment. */
   invite: (
     assessmentId: string,
-    candidateEmails: string[],
-  ): Promise<ApiResponse<Invitation[]>> =>
+    payload: InviteInput,
+  ): Promise<ApiResponse<InvitationWithCandidate[]>> =>
     api(`/assessments/${assessmentId}/invitations`, {
       method: "POST",
-      body: { candidateEmails },
+      body: payload,
     }),
 
-  /** Recruiter: the invite list for one of their assessments. */
-  listForAssessment: (
-    assessmentId: string,
-    filters: InvitationFilters = {},
-  ): Promise<ApiResponse<Paginated<InvitationWithCandidate>>> =>
-    api(`/assessments/${assessmentId}/invitations${buildQuery(filters)}`, {
-      tags: [`invitations:${assessmentId}`],
-    }),
-
-  /** Candidate: invitations addressed to the signed-in candidate. */
   listForCandidate: (
     filters: InvitationFilters = {},
-  ): Promise<ApiResponse<InvitationWithAssessment[]>> =>
+  ): Promise<ApiResponse<Paginated<InvitationWithAssessment>>> =>
     api(`/invitations/me${buildQuery(filters)}`, { tags: ["my-invitations"] }),
 
-  /** Candidate accepts/declines; recruiter revokes with `"REVOKED"`. */
   respond: (
     id: string,
-    status: "ACCEPTED" | "DECLINED" | "REVOKED",
+    payload: RespondInvitationInput,
   ): Promise<ApiResponse<Invitation>> =>
-    api(`/invitations/${id}`, { method: "PATCH", body: { status } }),
+    api(`/invitations/${id}`, { method: "PATCH", body: payload }),
+
+  revoke: (id: string): Promise<ApiResponse<Invitation>> =>
+    api(`/invitations/${id}`, {
+      method: "PATCH",
+      body: { status: "DECLINED" },
+    }),
 };

@@ -1,10 +1,6 @@
-/**
- * Every user-facing string for server actions lives here so feedback stays
- * consistent and can be reviewed in one place.
- */
 export const ACTION_MESSAGES = {
   login: {
-    success: "Welcome back. Taking you to your dashboard…",
+    success: "Welcome back. Taking you to your dashboard.",
     failure: "Sign in failed. Check your email and password.",
   },
   register: {
@@ -55,9 +51,9 @@ export const ACTION_MESSAGES = {
     success: "Invitations sent.",
     failure: "Could not send the invitations.",
   },
-  revokeInvitation: {
-    success: "Invitation revoked.",
-    failure: "Could not revoke the invitation.",
+  respondInvitation: {
+    success: "Invitation updated.",
+    failure: "Could not update the invitation.",
   },
   startAttempt: {
     success: "Attempt started.",
@@ -76,7 +72,7 @@ export const ACTION_MESSAGES = {
     failure: "Could not save the evaluation.",
   },
   initiatePayment: {
-    success: "Redirecting you to checkout…",
+    success: "Redirecting you to checkout...",
     failure: "Could not start checkout.",
   },
   updateUserStatus: {
@@ -91,6 +87,10 @@ export const VALIDATION_MESSAGES = {
     "Could not reach the CodeArena API. Check that the backend is running.",
   unauthorized: "Your session has expired. Please sign in again.",
   forbidden: "You do not have permission to do that.",
+  suspended:
+    "Your account has been suspended. Please contact support for assistance.",
+  notFound: "We could not find what you were looking for.",
+  conflict: "That action conflicts with the current state.",
   rateLimited: "Too many requests. Please slow down and try again shortly.",
   unknown: "Something went wrong. Please try again.",
 } as const;
@@ -130,7 +130,6 @@ export const EMPTY_STATES = {
   },
 } as const;
 
-/** Validation payloads the backend returns, mapped to calm, readable copy. */
 export const FIELD_ERROR_COPY: Record<string, string> = {
   "body.difficulty": "Choose a difficulty",
   "body.durationMins": "Enter the time limit in minutes",

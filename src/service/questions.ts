@@ -1,5 +1,9 @@
 import { api, buildQuery } from "@/lib/api";
 import type { ApiResponse, Paginated, Question } from "@/lib/types";
+import type {
+  CreateQuestionInput,
+  UpdateQuestionInput,
+} from "@/lib/validations";
 
 export interface QuestionFilters {
   q?: string;
@@ -15,13 +19,15 @@ export const questionService = {
   ): Promise<ApiResponse<Paginated<Question>>> =>
     api(`/questions${buildQuery(filters)}`, { tags: ["questions"] }),
 
-  create: (payload: unknown): Promise<ApiResponse<Question>> =>
+  create: (payload: CreateQuestionInput): Promise<ApiResponse<Question>> =>
     api("/questions", { method: "POST", body: payload }),
 
-  update: (id: string, payload: unknown): Promise<ApiResponse<Question>> =>
+  update: (
+    id: string,
+    payload: UpdateQuestionInput,
+  ): Promise<ApiResponse<Question>> =>
     api(`/questions/${id}`, { method: "PATCH", body: payload }),
 
-  /** The backend performs a soft delete when `deletedAt: "now"` is sent. */
   remove: (id: string): Promise<ApiResponse<Question>> =>
     api(`/questions/${id}`, { method: "PATCH", body: { deletedAt: "now" } }),
 };
