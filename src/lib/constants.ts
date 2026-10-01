@@ -147,7 +147,11 @@ export const CREDIT_PLANS: {
     name: "Starter",
     credits: 25,
     priceUsdCents: 2000,
-    highlight: ["25 invitations", "Email support", "30-day history"],
+    highlight: [
+      "25 assessment credits",
+      "All three question types",
+      "Stripe test-mode checkout",
+    ],
     featured: false,
   },
   {
@@ -156,10 +160,9 @@ export const CREDIT_PLANS: {
     credits: 100,
     priceUsdCents: 7500,
     highlight: [
-      "100 invitations",
-      "Priority support",
-      "Full attempt history",
-      "Evaluation analytics",
+      "100 assessment credits",
+      "Everything in Starter",
+      "Lower price per credit",
     ],
     featured: true,
   },
@@ -169,10 +172,9 @@ export const CREDIT_PLANS: {
     credits: 300,
     priceUsdCents: 20000,
     highlight: [
-      "300 invitations",
-      "Dedicated support",
+      "300 assessment credits",
       "Everything in Pro",
-      "Best unit price",
+      "Lowest price per credit",
     ],
     featured: false,
   },
@@ -184,7 +186,8 @@ export const APP_TAGLINE =
   "Rigorous technical screening for modern engineering teams";
 
 export const NAV_LINKS = [
+  { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "How it works" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ] as const;
