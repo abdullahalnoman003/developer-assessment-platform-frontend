@@ -1,6 +1,10 @@
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
-import { Container, Section, SectionHeading } from "@/components/home/page-hero";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/home/page-hero";
 import { PlanCard } from "@/components/home/plan-card";
 import { CREDIT_PLANS } from "@/lib/constants";
 

@@ -4,7 +4,11 @@ import {
   SendIcon,
   SquarePenIcon,
 } from "lucide-react";
-import { Container, Section, SectionHeading } from "@/components/home/page-hero";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/home/page-hero";
 
 const STEPS = [
   {

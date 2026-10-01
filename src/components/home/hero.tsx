@@ -1,7 +1,7 @@
 import { ArrowRightIcon, TerminalIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/home/page-hero";
+import { Button } from "@/components/ui/button";
 
 const SIGNALS = [
   "MCQ auto-grading",
@@ -20,7 +20,9 @@ export function Hero() {
         </p>
 
         <h1 className="max-w-4xl font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-          <span className="text-gradient-brand">Rigorous technical screening</span>{" "}
+          <span className="text-gradient-brand">
+            Rigorous technical screening
+          </span>{" "}
           without the scheduling overhead
         </h1>
 
@@ -35,7 +37,11 @@ export function Hero() {
             Start hiring
             <ArrowRightIcon data-icon="inline-end" />
           </Button>
-          <Button render={<Link href="/how-it-works" />} size="lg" variant="outline">
+          <Button
+            render={<Link href="/how-it-works" />}
+            size="lg"
+            variant="outline"
+          >
             See how it works
           </Button>
         </div>

@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Container, Section } from "@/components/home/page-hero";
+import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
 
 export function Cta() {
@@ -14,15 +14,19 @@ export function Cta() {
           </h2>
           <p className="max-w-xl text-sm/relaxed text-muted-foreground text-pretty">
             Sign in with a demo account to walk the recruiter, candidate and
-            admin views against real seeded data, or create your own company
-            and build a question bank from scratch.
+            admin views against real seeded data, or create your own company and
+            build a question bank from scratch.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Button render={<Link href="/login" />} size="lg">
               Try a demo account
               <ArrowRightIcon data-icon="inline-end" />
             </Button>
-            <Button render={<Link href="/register" />} size="lg" variant="outline">
+            <Button
+              render={<Link href="/register" />}
+              size="lg"
+              variant="outline"
+            >
               Create an account
             </Button>
           </div>

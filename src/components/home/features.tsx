@@ -6,8 +6,12 @@ import {
   LockIcon,
   UsersIcon,
 } from "lucide-react";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/home/page-hero";
 import { Card, CardContent } from "@/components/ui/card";
-import { Container, Section, SectionHeading } from "@/components/home/page-hero";
 
 const FEATURES = [
   {

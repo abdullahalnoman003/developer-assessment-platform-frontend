@@ -1,4 +1,4 @@
-import { ArrowRightIcon, TerminalIcon } from "lucide-react";
+import { ArrowRightIcon, MenuIcon, TerminalIcon } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { APP_NAME, NAV_LINKS, ROLE_HOME, ROLE_LABELS } from "@/lib/constants";
 import { initials } from "@/lib/format";
 import type { SessionUser } from "@/lib/types";
@@ -30,6 +38,92 @@ function Brand() {
   );
 }
 
+function MobileNav({ user }: { user: SessionUser | null }) {
+  return (
+    <Sheet>
+      <SheetTrigger
+        render={
+          <Button
+            aria-label="Open navigation menu"
+            className="md:hidden"
+            size="icon"
+            variant="outline"
+          >
+            <MenuIcon className="size-4" />
+          </Button>
+        }
+      />
+      <SheetContent className="w-72" side="left">
+        <SheetHeader>
+          <SheetTitle className="font-heading text-sm">Explore</SheetTitle>
+        </SheetHeader>
+        <nav className="flex flex-col gap-1 px-4">
+          {NAV_LINKS.map((link) => (
+            <SheetClose
+              key={link.href}
+              render={
+                <Link
+                  className="rounded-none px-2 py-2 text-sm hover:bg-muted focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+                  href={link.href}
+                />
+              }
+            >
+              {link.label}
+            </SheetClose>
+          ))}
+          <SheetClose
+            render={
+              <Link
+                className="rounded-none px-2 py-2 text-sm hover:bg-muted focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+                href="/terms"
+              />
+            }
+          >
+            Terms
+          </SheetClose>
+        </nav>
+        <div className="mt-auto flex flex-col gap-2 border-t border-border p-4">
+          {user ? (
+            <SheetClose
+              render={
+                <Link
+                  className="border border-border px-3 py-2 text-center text-sm hover:bg-muted"
+                  href={ROLE_HOME[user.role]}
+                />
+              }
+            >
+              Dashboard
+            </SheetClose>
+          ) : (
+            <>
+              <SheetClose
+                render={
+                  <Link
+                    className="border border-border px-3 py-2 text-center text-sm hover:bg-muted"
+                    href="/register"
+                  />
+                }
+              >
+                Create account
+              </SheetClose>
+              <SheetClose
+                render={
+                  <Link
+                    className="bg-primary px-3 py-2 text-center text-sm text-primary-foreground hover:bg-primary/80"
+                    href="/login"
+                  />
+                }
+              >
+                Sign in
+              </SheetClose>
+            </>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 export interface NavbarProps {
   user?: SessionUser | null;
 }
@@ -38,6 +132,7 @@ export function Navbar({ user = null }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
+        <MobileNav user={user} />
         <Brand />
 
         <nav className="ml-4 hidden items-center gap-1 md:flex">

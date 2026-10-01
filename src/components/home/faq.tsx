@@ -1,12 +1,12 @@
 "use client";
 
+import { FAQ, FAQ_GROUPS, type FaqEntry } from "@/components/home/faq-content";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { FAQ, FAQ_GROUPS, type FaqEntry } from "@/components/home/faq-content";
 
 function FaqGroup({
   group,
@@ -22,9 +22,9 @@ function FaqGroup({
   return (
     <div className="flex flex-col gap-3">
       {showLabel ? (
-        <p className="font-heading text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+        <h2 className="font-heading text-sm font-semibold tracking-wider text-muted-foreground uppercase">
           {group}
-        </p>
+        </h2>
       ) : null}
       <Accordion className="border border-border bg-card px-4">
         {entries.map((entry, index) => (
@@ -32,7 +32,10 @@ function FaqGroup({
             <AccordionTrigger className="font-heading text-sm">
               {entry.question}
             </AccordionTrigger>
-            <AccordionContent className="text-sm/relaxed text-muted-foreground">
+            <AccordionContent
+              className="text-sm/relaxed text-muted-foreground"
+              keepMounted
+            >
               {entry.answer}
             </AccordionContent>
           </AccordionItem>
