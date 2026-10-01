@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
 import { MailIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Container,
-  PageHero,
-  Section,
-} from "@/components/home/page-hero";
 import { Faq } from "@/components/home/faq";
+import { Container, PageHero, Section } from "@/components/home/page-hero";
+import { Button } from "@/components/ui/button";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 

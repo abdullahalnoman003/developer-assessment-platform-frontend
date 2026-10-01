@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
 import { ClockIcon, LifeBuoyIcon, MailIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { ContactForm } from "@/app/(publicSection)/_components/contact-form";
 import {
   Container,
   PageHero,
   Section,
   SectionHeading,
 } from "@/components/home/page-hero";
-import { ContactForm } from "@/app/(publicSection)/_components/contact-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -67,7 +67,10 @@ export default function ContactPage() {
                   </a>
                   .
                 </p>
-                <Button render={<Link href={`mailto:${SUPPORT_EMAIL}`} />} variant="outline">
+                <Button
+                  render={<Link href={`mailto:${SUPPORT_EMAIL}`} />}
+                  variant="outline"
+                >
                   <MailIcon data-icon="inline-start" />
                   Open mail client
                 </Button>

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import {
   CheckCircleIcon,
   ClipboardCheckIcon,
@@ -7,15 +6,16 @@ import {
   SquarePenIcon,
   XCircleIcon,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import type { Metadata } from "next";
+import { Cta } from "@/components/home/cta";
+import { Workflow } from "@/components/home/how-it-works";
 import {
   Container,
   PageHero,
   Section,
   SectionHeading,
 } from "@/components/home/page-hero";
-import { Cta } from "@/components/home/cta";
-import { Workflow } from "@/components/home/how-it-works";
+import { Card, CardContent } from "@/components/ui/card";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -148,8 +148,12 @@ export default function HowItWorksPage() {
                   <span className="flex size-8 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
                     <Icon className="size-4" />
                   </span>
-                  <h3 className="font-heading text-sm font-semibold">{title}</h3>
-                  <p className="text-sm/relaxed text-muted-foreground">{body}</p>
+                  <h3 className="font-heading text-sm font-semibold">
+                    {title}
+                  </h3>
+                  <p className="text-sm/relaxed text-muted-foreground">
+                    {body}
+                  </p>
                 </CardContent>
               </Card>
             ))}

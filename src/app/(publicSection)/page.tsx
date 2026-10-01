@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { Container, Section, SectionHeading } from "@/components/home/page-hero";
 import { Cta } from "@/components/home/cta";
 import { Faq } from "@/components/home/faq";
 import { Features } from "@/components/home/features";
 import { Hero } from "@/components/home/hero";
+import { Workflow } from "@/components/home/how-it-works";
+import {
+  Container,
+  Section,
+  SectionHeading,
+} from "@/components/home/page-hero";
 import { PricingTeaser } from "@/components/home/pricing";
 import { Stats } from "@/components/home/stats";
-import { Workflow } from "@/components/home/how-it-works";
 import { APP_TAGLINE } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 

@@ -94,10 +94,7 @@ export function ContactForm() {
       <CardContent>
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
           {opened ? (
-            <p
-              className="flex items-start gap-2 border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-2 text-sm"
-              role="status"
-            >
+            <output className="flex items-start gap-2 border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-2 text-sm">
               <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-accent-cyan" />
               <span>
                 Your email client should now be open with the message
@@ -110,7 +107,7 @@ export function ContactForm() {
                 </a>{" "}
                 directly and paste the text in.
               </span>
-            </p>
+            </output>
           ) : null}
 
           <FieldGroup>

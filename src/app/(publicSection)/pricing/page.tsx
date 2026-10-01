@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
 import { CreditCardIcon, ShieldCheckIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Container,
   PageHero,
@@ -10,6 +8,8 @@ import {
   SectionHeading,
 } from "@/components/home/page-hero";
 import { PlanCard } from "@/components/home/plan-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { CREDIT_PLANS } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -44,6 +44,7 @@ export default function PricingPage() {
 
       <Section>
         <Container className="flex flex-col gap-10">
+          <h2 className="sr-only">Credit packs</h2>
           <div className="grid gap-4 md:grid-cols-3">
             {CREDIT_PLANS.map((plan) => (
               <PlanCard key={plan.id} planId={plan.id} />
@@ -74,8 +75,12 @@ export default function PricingPage() {
                   <span className="flex size-8 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
                     <Icon className="size-4" />
                   </span>
-                  <h3 className="font-heading text-sm font-semibold">{title}</h3>
-                  <p className="text-sm/relaxed text-muted-foreground">{body}</p>
+                  <h3 className="font-heading text-sm font-semibold">
+                    {title}
+                  </h3>
+                  <p className="text-sm/relaxed text-muted-foreground">
+                    {body}
+                  </p>
                 </CardContent>
               </Card>
             ))}

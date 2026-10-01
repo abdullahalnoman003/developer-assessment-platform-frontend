@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Card, CardContent } from "@/components/ui/card";
+import { Cta } from "@/components/home/cta";
 import {
   Container,
   PageHero,
   Section,
   SectionHeading,
 } from "@/components/home/page-hero";
-import { Cta } from "@/components/home/cta";
+import { Card, CardContent } from "@/components/ui/card";
 import { APP_NAME, APP_TAGLINE, SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
