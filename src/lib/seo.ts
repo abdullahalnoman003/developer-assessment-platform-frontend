@@ -46,3 +46,10 @@ export function pageMetadata({
     robots: noIndex ? { index: false, follow: false } : undefined,
   };
 }
+
+export function dashboardMetadata(title: string): Metadata {
+  return {
+    title,
+    robots: { index: false, follow: false },
+  };
+}

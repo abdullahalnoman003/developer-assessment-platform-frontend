@@ -128,6 +128,29 @@ export const PAYMENT_PROVIDER_LABELS: Record<PaymentProvider, string> = {
   SSLCOMMERZ: "SSLCommerz",
 };
 
+export const AUDIT_ACTIONS: readonly { value: string; label: string }[] = [
+  { value: "", label: "All actions" },
+  { value: "USER_STATUS_UPDATED", label: "User status updated" },
+  { value: "USER_DELETED", label: "User deleted" },
+  { value: "ASSESSMENT_STATUS_CHANGE", label: "Assessment status changed" },
+  { value: "RESULT_RELEASED", label: "Result released" },
+  { value: "INVITATIONS_SENT", label: "Invitations sent" },
+  { value: "PAYMENT_CONFIRMED", label: "Payment confirmed" },
+];
+
+export const AUDIT_ENTITIES: readonly { value: string; label: string }[] = [
+  { value: "", label: "All entities" },
+  { value: "User", label: "User" },
+  { value: "Assessment", label: "Assessment" },
+  { value: "Attempt", label: "Attempt" },
+  { value: "Invitation", label: "Invitation" },
+  { value: "Payment", label: "Payment" },
+];
+
+export function auditActionLabel(action: string): string {
+  return AUDIT_ACTIONS.find((entry) => entry.value === action)?.label ?? action;
+}
+
 export const DIFFICULTY_TONES: Record<Difficulty, BadgeTone> = {
   EASY: "success",
   MEDIUM: "warning",
