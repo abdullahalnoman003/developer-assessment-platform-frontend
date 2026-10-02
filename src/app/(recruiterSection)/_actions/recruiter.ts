@@ -7,23 +7,86 @@ import { toOptionList } from "@/lib/format";
 import { ACTION_MESSAGES, VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ActionState, JsonValue } from "@/lib/types";
 import {
+  assessmentDetailsSchema,
   createAssessmentSchema,
   createQuestionSchema,
+  evaluateAttemptSchema,
+  initiatePaymentSchema,
+  inviteSchema,
   upsertCompanySchema,
 } from "@/lib/validations";
 import { assessmentService } from "@/service/assessments";
+import { attemptService } from "@/service/attempts";
 import { companyService } from "@/service/company";
+import { invitationService } from "@/service/invitations";
+import { paymentService } from "@/service/payments";
 import { questionService } from "@/service/questions";
 
 function invalid(
   message: string,
   fieldErrors: Record<string, string[]>,
 ): ActionState {
-  return { status: "error", message, fieldErrors, redirectTo: null };
+  return { status: "error", message, fieldErrors, redirectTo: null, externalUrl: null };
 }
 
 function ok(message: string, redirectTo: string | null = null): ActionState {
-  return { status: "success", message, fieldErrors: {}, redirectTo };
+  return {
+    status: "success",
+    message,
+    fieldErrors: {},
+    redirectTo,
+    externalUrl: null,
+  };
+}
+
+/**
+ * An empty `<input>` posts `""`, not `undefined`, and for the two nullable
+ * fields `""` is a real instruction — *clear it*. The backend stores
+ * `description` and `passScore` as `String?`/`Int?`, so they are sent as `null`
+ * rather than dropped, otherwise clearing the description would silently do
+ * nothing.
+ *
+ * `durationMins` is a non-null `Int`, so a blank there can only mean "leave it
+ * alone" and is dropped instead.
+ */
+function nullableField(
+  formData: FormData,
+  name: string,
+): string | number | null | undefined {
+  if (!formData.has(name)) {
+    return undefined;
+  }
+  const value = formData.get(name);
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+  return value;
+}
+
+function numericField(formData: FormData, name: string): string | undefined {
+  const value = formData.get(name);
+  if (typeof value !== "string" || value.trim() === "") {
+    return undefined;
+  }
+  return value;
+}
+
+/**
+ * React cannot post a real array through `FormData` without a stringifying step,
+ * so the client components JSON-encode their list fields into a single hidden
+ * input. A malformed payload yields `[]` and fails the schema with a real
+ * message instead of throwing inside the action.
+ */
+function parseJsonArray(value: FormDataEntryValue | null): unknown[] {
+  if (typeof value !== "string" || value.trim() === "") {
+    return [];
+  }
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 function fieldErrorsFrom(error: z.ZodError): Record<string, string[]> {
@@ -424,4 +487,322 @@ export async function wizardCreateAssessmentAction(
     "Assessment published. Invite candidates when you are ready.",
     detail,
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Assessment detail — lifecycle, draft edits, invites, delete                 */
+/* -------------------------------------------------------------------------- */
+
+const idSchema = z.string().trim().min(1, "Assessment id is required");
+
+/**
+ * Lists the ids whose rendered output a given assessment can appear in, so one
+ * mutation revalidates every page that shows the number it changes. The detail
+ * page is dynamic and cannot be targeted by a static path, hence the explicit
+ * list rather than `revalidatePath("/dashboard/recruiter/assessments/[id]")`.
+ */
+function assessmentSurfaces(id: string): string[] {
+  const base = `/dashboard/recruiter/assessments/${id}`;
+  return [
+    base,
+    `${base}/results`,
+    `/dashboard/recruiter/assessments`,
+    "/dashboard/recruiter",
+  ];
+}
+
+export async function updateAssessmentStatusAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const parsed = z
+    .object({ assessmentId: idSchema, status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]) })
+    .safeParse({
+      assessmentId: formData.get("assessmentId"),
+      status: formData.get("status"),
+    });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const { assessmentId, status } = parsed.data;
+  const res = await assessmentService.setStatus(assessmentId, status);
+
+  if (!res.success) {
+    return invalid(
+      res.message || ACTION_MESSAGES.updateAssessment.failure,
+      {},
+    );
+  }
+
+  for (const path of assessmentSurfaces(assessmentId)) {
+    revalidatePath(path, "page");
+  }
+
+  // `PATCH` answers with the bare assessment row, so the new state is named here
+  // rather than read back off the response.
+  return ok(
+    status === "PUBLISHED"
+      ? "Published. It can now be invited and run by candidates."
+      : status === "CLOSED"
+        ? "Closed. No new candidates can be invited, but grading still works."
+        : "Archived. This is the final state — nothing further can be changed.",
+  );
+}
+
+export async function updateAssessmentDetailsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const assessmentId = idSchema.safeParse(formData.get("assessmentId"));
+  if (!assessmentId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      assessmentId: ["Assessment id is required"],
+    });
+  }
+
+  // `assessmentDetailsSchema`, not the four-way `updateAssessmentSchema` union:
+  // the union would happily accept a `{ status }` body here.
+  const parsed = assessmentDetailsSchema.safeParse({
+    title: formData.get("title") ?? undefined,
+    description: nullableField(formData, "description"),
+    durationMins: numericField(formData, "durationMins"),
+    passScore: nullableField(formData, "passScore"),
+  });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await assessmentService.updateDetails(
+    assessmentId.data,
+    parsed.data,
+  );
+
+  if (!res.success) {
+    return invalid(
+      res.message || ACTION_MESSAGES.updateAssessment.failure,
+      {},
+    );
+  }
+
+  for (const path of assessmentSurfaces(assessmentId.data)) {
+    revalidatePath(path, "page");
+  }
+
+  return ok(ACTION_MESSAGES.updateAssessment.success);
+}
+
+export async function updateAssessmentQuestionsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const assessmentId = idSchema.safeParse(formData.get("assessmentId"));
+  if (!assessmentId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      assessmentId: ["Assessment id is required"],
+    });
+  }
+
+  const questionIds = parseJsonArray(formData.get("questionIds"));
+  const parsed = z
+    .object({ questionIds: z.array(z.string().trim().min(1)).max(200) })
+    .safeParse({ questionIds });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await assessmentService.setQuestions(
+    assessmentId.data,
+    parsed.data.questionIds,
+  );
+
+  if (!res.success) {
+    return invalid(
+      res.message || ACTION_MESSAGES.updateAssessment.failure,
+      {},
+    );
+  }
+
+  for (const path of assessmentSurfaces(assessmentId.data)) {
+    revalidatePath(path, "page");
+  }
+
+  const count = parsed.data.questionIds.length;
+  return ok(
+    count === 0
+      ? "Question list emptied. A draft needs at least one question before it can be published."
+      : `Question list saved — ${count} question${count === 1 ? "" : "s"}, 1 point each.`,
+  );
+}
+
+export async function deleteAssessmentAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const assessmentId = idSchema.safeParse(formData.get("assessmentId"));
+  if (!assessmentId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      assessmentId: ["Assessment id is required"],
+    });
+  }
+
+  const res = await assessmentService.remove(assessmentId.data);
+
+  if (!res.success) {
+    return invalid(
+      res.message || ACTION_MESSAGES.deleteAssessment.failure,
+      {},
+    );
+  }
+
+  for (const path of assessmentSurfaces(assessmentId.data)) {
+    revalidatePath(path, "page");
+  }
+  revalidatePath("/dashboard/recruiter/assessments", "page");
+  revalidatePath("/dashboard/recruiter", "page");
+
+  return ok(ACTION_MESSAGES.deleteAssessment.success, "/dashboard/recruiter/assessments");
+}
+
+export async function inviteCandidatesAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const assessmentId = idSchema.safeParse(formData.get("assessmentId"));
+  if (!assessmentId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      assessmentId: ["Assessment id is required"],
+    });
+  }
+
+  const parsed = inviteSchema.safeParse({
+    candidateEmails: parseJsonArray(formData.get("candidateEmails")),
+  });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await invitationService.invite(assessmentId.data, {
+    candidateEmails: parsed.data.candidateEmails,
+  });
+
+  if (!res.success) {
+    return invalid(res.message || ACTION_MESSAGES.inviteCandidates.failure, {});
+  }
+
+  for (const path of assessmentSurfaces(assessmentId.data)) {
+    revalidatePath(path, "page");
+  }
+
+  const sent = res.data?.length ?? 0;
+  return ok(
+    sent === 1
+      ? "Invitation sent."
+      : `${sent} invitations sent. They appear in the results table once each candidate starts the assessment.`,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Grading                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export async function evaluateAttemptAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const attemptId = idSchema.safeParse(formData.get("attemptId"));
+  if (!attemptId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, { attemptId: ["Attempt id is required"] });
+  }
+
+  const parsed = evaluateAttemptSchema.safeParse({
+    scores: parseJsonArray(formData.get("scores")).map((entry) =>
+      entry && typeof entry === "object"
+        ? {
+            answerId: (entry as Record<string, JsonValue>).answerId,
+            points: (entry as Record<string, JsonValue>).points,
+          }
+        : entry,
+    ),
+    releaseResult: formData.get("releaseResult") === "on",
+  });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await attemptService.evaluate(attemptId.data, {
+    scores: parsed.data.scores,
+    releaseResult: parsed.data.releaseResult,
+  });
+
+  if (!res.success || !res.data) {
+    return invalid(res.message || ACTION_MESSAGES.evaluateAttempt.failure, {});
+  }
+
+  // Grading moves the attempt to EVALUATED, which changes the results table and
+  // the release column, so both are revalidated. An attempt carries no
+  // `assessmentId` of its own — the link runs through the invitation.
+  for (const path of assessmentSurfaces(res.data.invitation.assessment.id)) {
+    revalidatePath(path, "page");
+  }
+
+  return ok(
+    `${ACTION_MESSAGES.evaluateAttempt.success} ${
+      res.data.resultReleased
+        ? "Results released — the candidate can see the score now."
+        : "Results stay private. Releasing is a one-shot action, so this cannot be changed later."
+    }`,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Billing                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export async function initiatePaymentAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireRecruiter();
+
+  const parsed = initiatePaymentSchema.safeParse({
+    plan: formData.get("plan"),
+  });
+
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await paymentService.initiate({ plan: parsed.data.plan });
+
+  if (!res.success || !res.data?.checkoutUrl) {
+    return invalid(
+      res.message || ACTION_MESSAGES.initiatePayment.failure,
+      {},
+    );
+  }
+
+  // No revalidation: nothing is stored until Stripe's webhook confirms the
+  // payment. The PENDING row it just created is read on the billing page.
+  return {
+    ...ok(ACTION_MESSAGES.initiatePayment.success),
+    externalUrl: res.data.checkoutUrl,
+  };
 }
