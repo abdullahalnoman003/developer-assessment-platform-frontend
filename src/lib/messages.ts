@@ -127,6 +127,18 @@ export const EMPTY_STATES = {
     title: "No results yet",
     body: "Once an evaluator releases your result you will see the score here.",
   },
+  myInvitations: {
+    title: "No invitations yet",
+    body: "When a recruiter invites you to an assessment it appears here, and you can accept it to start.",
+  },
+  myAttempts: {
+    title: "No attempts yet",
+    body: "Accept an invitation to start an assessment. Once you begin, the attempt and its status show up here.",
+  },
+  unreleasedResult: {
+    title: "Your result is not out yet",
+    body: "Your attempt has been submitted and is waiting for an evaluator. Nothing is shown here until they release it.",
+  },
   company: {
     title: "No company yet",
     body: "Recruiters need a company before they can create questions or assessments.",
