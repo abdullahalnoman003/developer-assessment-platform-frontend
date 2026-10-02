@@ -11,14 +11,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { PaginatedMeta } from "@/lib/types";
+import type { PaginatedMeta, UrlParamRecord } from "@/lib/types";
 
 function buildHref(
   pathname: string,
-  searchParams: URLSearchParams,
+  searchParams: UrlParamRecord,
   page: number,
 ): string {
-  const params = new URLSearchParams(searchParams.toString());
+  const params = new URLSearchParams(searchParams);
   if (page <= 1) {
     params.delete("page");
   } else {
@@ -59,7 +59,7 @@ export function PaginationBar({
 }: {
   meta: PaginatedMeta;
   pathname: string;
-  searchParams: URLSearchParams;
+  searchParams: UrlParamRecord;
   label?: string;
 }) {
   const { page, limit, total, totalPages } = meta;
@@ -137,7 +137,7 @@ export function PageSizeNote({
   options = [10, 25, 50],
 }: {
   pathname: string;
-  searchParams: URLSearchParams;
+  searchParams: UrlParamRecord;
   limit: number;
   options?: readonly number[];
 }) {
@@ -145,7 +145,7 @@ export function PageSizeNote({
     <div className="flex items-center gap-2">
       <span className="text-xs text-muted-foreground">Per page</span>
       {options.map((option) => {
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(searchParams);
         params.set("limit", String(option));
         params.delete("page");
         return (

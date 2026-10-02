@@ -1,0 +1,152 @@
+"use client";
+
+import { BarChart3Icon, PieChartIcon } from "lucide-react";
+import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  ASSESSMENT_STATUS_LABELS,
+  ATTEMPT_STATUS_LABELS,
+} from "@/lib/constants";
+import { CHART_COLORS } from "@/lib/dashboard-nav";
+import type {
+  AssessmentStatus,
+  AttemptStatus,
+  CompanyDashboard,
+} from "@/lib/types";
+
+/**
+ * Recruiter charts are deliberately separate from `admin-charts.tsx`: the two
+ * read different payloads and have different empties, and merging them would
+ * give one component two shapes and two vocabularies. Both read their colours
+ * from `CHART_COLORS` so they follow the light/dark tokens.
+ */
+
+const FUNNEL_CONFIG = {
+  draft: { label: "Draft", color: CHART_COLORS[0] },
+  published: { label: "Published", color: CHART_COLORS[1] },
+  closed: { label: "Closed", color: CHART_COLORS[2] },
+  archived: { label: "Archived", color: CHART_COLORS[3] },
+} satisfies ChartConfig;
+
+const ATTEMPT_CONFIG = {
+  not_started: { label: "Not started", color: CHART_COLORS[0] },
+  in_progress: { label: "In progress", color: CHART_COLORS[1] },
+  submitted: { label: "Submitted", color: CHART_COLORS[2] },
+  evaluated: { label: "Evaluated", color: CHART_COLORS[3] },
+  expired: { label: "Expired", color: CHART_COLORS[4] },
+} satisfies ChartConfig;
+
+const FUNNEL_ORDER: readonly AssessmentStatus[] = [
+  "DRAFT",
+  "PUBLISHED",
+  "CLOSED",
+  "ARCHIVED",
+];
+
+export function AssessmentFunnelChart({ stats }: { stats: CompanyDashboard }) {
+  // Only the statuses the API actually returned, so a company with no archived
+  // assessments gets a 1-bar chart rather than 4 bars of zero.
+  const data = FUNNEL_ORDER.map((status) => ({
+    key: status,
+    label: ASSESSMENT_STATUS_LABELS[status],
+    value: stats.assessmentsByStatus[status] ?? 0,
+  })).filter((entry) => entry.value > 0);
+
+  if (data.length === 0) {
+    return (
+      <EmptyChart
+        Icon={BarChart3Icon}
+        message="No assessments yet. Create one to start tracking it here."
+      />
+    );
+  }
+
+  return (
+    <ChartContainer className="aspect-auto h-56 w-full" config={FUNNEL_CONFIG}>
+      <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }}>
+        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+        <XAxis hide type="number" />
+        <YAxis
+          axisLine={false}
+          dataKey="label"
+          tickLine={false}
+          tickMargin={8}
+          type="category"
+          width={78}
+        />
+        <Bar dataKey="value" radius={2}>
+          {data.map((entry, index) => (
+            <Cell
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+              key={entry.key}
+            />
+          ))}
+        </Bar>
+      </BarChart>
+    </ChartContainer>
+  );
+}
+
+const ATTEMPT_ORDER: readonly AttemptStatus[] = [
+  "NOT_STARTED",
+  "IN_PROGRESS",
+  "SUBMITTED",
+  "EVALUATED",
+  "EXPIRED",
+];
+
+export function AttemptsDonutChart({ stats }: { stats: CompanyDashboard }) {
+  const data = ATTEMPT_ORDER.map((status) => ({
+    key: status,
+    label: ATTEMPT_STATUS_LABELS[status],
+    value: stats.attemptsByStatus[status] ?? 0,
+  })).filter((entry) => entry.value > 0);
+
+  if (data.length === 0) {
+    return (
+      <EmptyChart
+        Icon={PieChartIcon}
+        message="No candidate attempts yet. Publish an assessment and send an invitation to get one."
+      />
+    );
+  }
+
+  return (
+    <ChartContainer
+      className="mx-auto aspect-square max-h-64 w-full"
+      config={ATTEMPT_CONFIG}
+    >
+      <PieChart>
+        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+        <Pie data={data} dataKey="value" innerRadius={44} nameKey="label">
+          {data.map((entry, index) => (
+            <Cell
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+              key={entry.key}
+            />
+          ))}
+        </Pie>
+      </PieChart>
+    </ChartContainer>
+  );
+}
+
+function EmptyChart({
+  Icon,
+  message,
+}: {
+  Icon: typeof PieChartIcon;
+  message: string;
+}) {
+  return (
+    <div className="flex min-h-40 flex-col items-center justify-center gap-2 border border-dashed border-border p-6 text-center">
+      <Icon aria-hidden className="size-5 text-muted-foreground" />
+      <p className="text-sm/relaxed text-muted-foreground">{message}</p>
+    </div>
+  );
+}

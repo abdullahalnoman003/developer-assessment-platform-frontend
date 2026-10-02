@@ -11,7 +11,13 @@ import { cn } from "@/lib/utils";
 
 export interface DataTableColumn<T> {
   key: string;
-  header: string;
+  /**
+   * Rendered inside a `<th scope="col">`. Typed as `ReactNode` rather than
+   * `string` so a column can carry a real control — a sortable link, for
+   * instance — instead of forcing sort controls into a separate toolbar. Every
+   * plain column still passes a string.
+   */
+  header: ReactNode;
   className?: string;
   headerClassName?: string;
   cell: (row: T) => ReactNode;
