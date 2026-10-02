@@ -26,7 +26,13 @@ function invalid(
   message: string,
   fieldErrors: Record<string, string[]>,
 ): ActionState {
-  return { status: "error", message, fieldErrors, redirectTo: null, externalUrl: null };
+  return {
+    status: "error",
+    message,
+    fieldErrors,
+    redirectTo: null,
+    externalUrl: null,
+  };
 }
 
 function ok(message: string, redirectTo: string | null = null): ActionState {
@@ -518,7 +524,10 @@ export async function updateAssessmentStatusAction(
   await requireRecruiter();
 
   const parsed = z
-    .object({ assessmentId: idSchema, status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]) })
+    .object({
+      assessmentId: idSchema,
+      status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]),
+    })
     .safeParse({
       assessmentId: formData.get("assessmentId"),
       status: formData.get("status"),
@@ -532,10 +541,7 @@ export async function updateAssessmentStatusAction(
   const res = await assessmentService.setStatus(assessmentId, status);
 
   if (!res.success) {
-    return invalid(
-      res.message || ACTION_MESSAGES.updateAssessment.failure,
-      {},
-    );
+    return invalid(res.message || ACTION_MESSAGES.updateAssessment.failure, {});
   }
 
   for (const path of assessmentSurfaces(assessmentId)) {
@@ -585,10 +591,7 @@ export async function updateAssessmentDetailsAction(
   );
 
   if (!res.success) {
-    return invalid(
-      res.message || ACTION_MESSAGES.updateAssessment.failure,
-      {},
-    );
+    return invalid(res.message || ACTION_MESSAGES.updateAssessment.failure, {});
   }
 
   for (const path of assessmentSurfaces(assessmentId.data)) {
@@ -626,10 +629,7 @@ export async function updateAssessmentQuestionsAction(
   );
 
   if (!res.success) {
-    return invalid(
-      res.message || ACTION_MESSAGES.updateAssessment.failure,
-      {},
-    );
+    return invalid(res.message || ACTION_MESSAGES.updateAssessment.failure, {});
   }
 
   for (const path of assessmentSurfaces(assessmentId.data)) {
@@ -660,10 +660,7 @@ export async function deleteAssessmentAction(
   const res = await assessmentService.remove(assessmentId.data);
 
   if (!res.success) {
-    return invalid(
-      res.message || ACTION_MESSAGES.deleteAssessment.failure,
-      {},
-    );
+    return invalid(res.message || ACTION_MESSAGES.deleteAssessment.failure, {});
   }
 
   for (const path of assessmentSurfaces(assessmentId.data)) {
@@ -672,7 +669,10 @@ export async function deleteAssessmentAction(
   revalidatePath("/dashboard/recruiter/assessments", "page");
   revalidatePath("/dashboard/recruiter", "page");
 
-  return ok(ACTION_MESSAGES.deleteAssessment.success, "/dashboard/recruiter/assessments");
+  return ok(
+    ACTION_MESSAGES.deleteAssessment.success,
+    "/dashboard/recruiter/assessments",
+  );
 }
 
 export async function inviteCandidatesAction(
@@ -728,7 +728,9 @@ export async function evaluateAttemptAction(
 
   const attemptId = idSchema.safeParse(formData.get("attemptId"));
   if (!attemptId.success) {
-    return invalid(VALIDATION_MESSAGES.generic, { attemptId: ["Attempt id is required"] });
+    return invalid(VALIDATION_MESSAGES.generic, {
+      attemptId: ["Attempt id is required"],
+    });
   }
 
   const parsed = evaluateAttemptSchema.safeParse({
@@ -793,10 +795,7 @@ export async function initiatePaymentAction(
   const res = await paymentService.initiate({ plan: parsed.data.plan });
 
   if (!res.success || !res.data?.checkoutUrl) {
-    return invalid(
-      res.message || ACTION_MESSAGES.initiatePayment.failure,
-      {},
-    );
+    return invalid(res.message || ACTION_MESSAGES.initiatePayment.failure, {});
   }
 
   // No revalidation: nothing is stored until Stripe's webhook confirms the

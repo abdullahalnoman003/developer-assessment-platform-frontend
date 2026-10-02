@@ -5,7 +5,7 @@ import { z } from "zod";
 import { requireRole } from "@/lib/dashboard-session";
 import { ACTION_MESSAGES, VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ActionState } from "@/lib/types";
-import { respondInvitationSchema } from "@/lib/validations";
+import { respondInvitationSchema, saveAnswersSchema } from "@/lib/validations";
 import { attemptService } from "@/service/attempts";
 import { invitationService } from "@/service/invitations";
 
@@ -160,5 +160,97 @@ export async function startAttemptAction(
   return ok(
     ACTION_MESSAGES.startAttempt.success,
     `/dashboard/candidate/attempts/${res.data.id}`,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Autosave / submit                                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Flush the candidate's local responses to the server. The payload is the full
+ * set of answers for this attempt — `{ questionId, response }[]` — so the server
+ * state always mirrors what the candidate last typed. MCQ responses are the
+ * option **text**, byte-identical to `correctAnswer` (§1.1 X1); an index would
+ * score 0.
+ *
+ * The `saveAnswersSchema` requires at least one answer, so the hook only calls
+ * this when the local map is non-empty.
+ */
+export async function saveAnswersAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireCandidate();
+
+  const attemptId = formData.get("attemptId")?.toString() ?? "";
+  const parsedId = idSchema.safeParse(attemptId);
+  if (!parsedId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      attemptId: ["Attempt id is required"],
+    });
+  }
+
+  const raw = formData.get("answers")?.toString() ?? "[]";
+  let answers: unknown;
+  try {
+    answers = JSON.parse(raw);
+  } catch {
+    return invalid(VALIDATION_MESSAGES.generic, {});
+  }
+
+  const parsed = saveAnswersSchema.safeParse({ answers });
+  if (!parsed.success) {
+    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
+  }
+
+  const res = await attemptService.save(parsedId.data, parsed.data.answers);
+
+  if (!res.success) {
+    return invalid(res.message || ACTION_MESSAGES.saveAnswers.failure, {});
+  }
+
+  return ok(ACTION_MESSAGES.saveAnswers.success);
+}
+
+/**
+ * Locks the attempt by setting `status: "SUBMITTED"`. The backend refuses:
+ *
+ * - a second submission with `400 "Cannot update an attempt with status SUBMITTED"`;
+ * - a submission past the deadline with `400 "Attempt has expired before submission"`.
+ *
+ * On the expiry path the candidate is sent to the result page, which owns the
+ * "locked" view — the attempt was never submitted, so nothing is scored yet.
+ */
+export async function submitAttemptAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireCandidate();
+
+  const attemptId = formData.get("attemptId")?.toString() ?? "";
+  const parsedId = idSchema.safeParse(attemptId);
+  if (!parsedId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      attemptId: ["Attempt id is required"],
+    });
+  }
+
+  const res = await attemptService.submit(parsedId.data);
+
+  if (!res.success) {
+    const expired = /attempt has expired/i.test(res.message ?? "");
+    if (expired) {
+      return ok(
+        ACTION_MESSAGES.submitAttempt.failure,
+        `/dashboard/candidate/attempts/${parsedId.data}/result`,
+      );
+    }
+    return invalid(res.message || ACTION_MESSAGES.submitAttempt.failure, {});
+  }
+
+  return ok(
+    ACTION_MESSAGES.submitAttempt.success,
+    `/dashboard/candidate/attempts/${parsedId.data}/result`,
   );
 }
