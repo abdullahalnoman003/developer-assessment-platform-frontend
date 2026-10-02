@@ -78,6 +78,54 @@ export const ASSESSMENT_STATUS_TONES: Record<AssessmentStatus, BadgeTone> = {
   ARCHIVED: "danger",
 };
 
+/**
+ * The backend lifecycle is a **strict linear chain**, not a free-for-all enum:
+ * `DRAFT → PUBLISHED → CLOSED → ARCHIVED`, with `ARCHIVED` terminal. Anything
+ * else is refused with `"Cannot transition assessment from X to Y"`, so the
+ * detail page only ever offers the single legal next step (§0.8 verified).
+ */
+export const ASSESSMENT_LIFECYCLE = [
+  "DRAFT",
+  "PUBLISHED",
+  "CLOSED",
+  "ARCHIVED",
+] as const satisfies readonly AssessmentStatus[];
+
+/** The only statuses a `PATCH` is allowed to move an assessment *to*. */
+export type AdvanceableAssessmentStatus = Extract<
+  AssessmentStatus,
+  "PUBLISHED" | "CLOSED" | "ARCHIVED"
+>;
+
+export const ASSESSMENT_NEXT_STATUS: Partial<
+  Record<AssessmentStatus, AdvanceableAssessmentStatus>
+> = {
+  DRAFT: "PUBLISHED",
+  PUBLISHED: "CLOSED",
+  CLOSED: "ARCHIVED",
+};
+
+export const ASSESSMENT_STATUS_HELP: Record<AssessmentStatus, string> = {
+  DRAFT:
+    "Still being built. Details and the question list are editable, and the assessment cannot be invited yet.",
+  PUBLISHED:
+    "Live. Candidates can be invited and run the assessment; details and questions are locked from here on.",
+  CLOSED:
+    "No longer accepting new candidates. Existing attempts can still be graded.",
+  ARCHIVED:
+    "Terminal state. Nothing further can be changed or invited — archive it to stop all work on it.",
+};
+
+/**
+ * Only these two types are graded by hand. A multiple-choice answer is scored
+ * by the backend at save time (`JSON.stringify(response) ===
+ * JSON.stringify(correctAnswer)`, §1.1 X1) and can never be edited by hand.
+ */
+export const MANUAL_QUESTION_TYPES: readonly QuestionType[] = [
+  "WRITTEN",
+  "CODING",
+];
+
 export const INVITATION_STATUS_LABELS: Record<InvitationStatus, string> = {
   PENDING: "Pending",
   ACCEPTED: "Accepted",

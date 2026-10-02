@@ -44,7 +44,7 @@ export const ACTION_MESSAGES = {
     failure: "Could not update the assessment.",
   },
   deleteAssessment: {
-    success: "Assessment deleted.",
+    success: "Assessment deleted. Its attempts and results are kept.",
     failure: "Could not delete the assessment.",
   },
   inviteCandidates: {
@@ -68,7 +68,10 @@ export const ACTION_MESSAGES = {
     failure: "Could not submit the attempt.",
   },
   evaluateAttempt: {
-    success: "Scores saved and results released.",
+    // The action appends "Results released." / "Results stay private." itself,
+    // because `releaseResult` is optional and an unreleased evaluation is
+    // final — a single static string would be wrong half the time.
+    success: "Scores saved.",
     failure: "Could not save the evaluation.",
   },
   initiatePayment: {

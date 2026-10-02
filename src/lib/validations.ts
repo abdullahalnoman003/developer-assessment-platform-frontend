@@ -171,6 +171,46 @@ const assessmentDetails = {
   passScore: createAssessmentSchema.shape.passScore,
 };
 
+/**
+ * The details-only branch of the overloaded `PATCH /assessments/:id`. It is
+ * exported on its own because the edit dialog needs to parse *this* variant
+ * rather than the union: the four `PATCH` bodies are four separate concerns,
+ * and a union would let `{ status }` satisfy a details edit.
+ */
+export const assessmentDetailsSchema = z
+  .object(assessmentDetails)
+  .refine((value) => Object.values(value).some((v) => v !== undefined), {
+    message: "Nothing to update",
+  });
+export type AssessmentDetailsInput = z.infer<typeof assessmentDetailsSchema>;
+
+/**
+ * Form-side twin of `assessmentDetailsSchema`, used by the draft edit dialog.
+ * It differs in exactly one way: a blank number input is treated as "no value"
+ * rather than being coerced to `0` by `z.coerce.number()`, which would surface
+ * a nonsense "at least 1 minute" error on an untouched empty field. The dialog
+ * posts the raw strings and the action re-parses with the strict schema, so
+ * this never becomes an API payload on its own.
+ */
+const blankableNumber = <T extends z.ZodType>(schema: T) =>
+  z.preprocess(
+    (value) =>
+      typeof value === "string" && value.trim() === "" ? undefined : value,
+    schema,
+  );
+
+export const assessmentDetailsFormSchema = z.object({
+  title: createAssessmentSchema.shape.title,
+  description: createAssessmentSchema.shape.description,
+  durationMins: blankableNumber(
+    createAssessmentSchema.shape.durationMins.optional(),
+  ),
+  passScore: blankableNumber(createAssessmentSchema.shape.passScore),
+});
+export type AssessmentDetailsFormInput = z.infer<
+  typeof assessmentDetailsFormSchema
+>;
+
 export const updateAssessmentSchema = z.union([
   z.object({ status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]) }),
   z.object({
@@ -178,11 +218,7 @@ export const updateAssessmentSchema = z.union([
       .array(z.string().trim().min(1))
       .max(200, "Too many questions"),
   }),
-  z
-    .object(assessmentDetails)
-    .refine((value) => Object.values(value).some((v) => v !== undefined), {
-      message: "Nothing to update",
-    }),
+  assessmentDetailsSchema,
   z.object({ deletedAt: z.literal("now") }),
 ]);
 export type UpdateAssessmentInput = z.infer<typeof updateAssessmentSchema>;
@@ -297,3 +333,14 @@ export const auditLogQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
 });
+
+/**
+ * Assessment results and billing history are pure pagination — no filters, no
+ * search, no sort. They deliberately keep the page size fixed in the service
+ * layer instead of taking it from the URL, so the only shareable state is
+ * `?page=`.
+ */
+export const pagedQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+});
+export type PagedQuery = z.infer<typeof pagedQuerySchema>;

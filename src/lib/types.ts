@@ -130,6 +130,14 @@ export interface ActionState {
   message: string;
   fieldErrors: Record<string, string[]>;
   redirectTo: string | null;
+  /**
+   * An absolute off-site URL the caller must send the browser to — currently
+   * only Stripe's `checkoutUrl`. It is deliberately a *different* field from
+   * `redirectTo`: `redirectTo` is an internal path, and mixing an external
+   * host into it would let a generic `router.push` treat `https://…` as a
+   * same-origin route. Optional so every existing action literal still parses.
+   */
+  externalUrl?: string | null;
 }
 
 export const IDLE_ACTION_STATE: ActionState = {
@@ -137,6 +145,7 @@ export const IDLE_ACTION_STATE: ActionState = {
   message: "",
   fieldErrors: {},
   redirectTo: null,
+  externalUrl: null,
 };
 
 export interface CompanyDashboard {
