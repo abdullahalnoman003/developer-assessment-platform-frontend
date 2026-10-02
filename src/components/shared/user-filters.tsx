@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   ClearFiltersButton,
   FilterSelect,
@@ -11,10 +10,10 @@ import {
 export function UserFilters() {
   const { query, setQuery, setParam, clearFilters, params, pending } =
     useUrlState();
-  const [limit, setLimit] = useState(params.get("limit") ?? "10");
   const role = params.get("role") ?? "";
   const status = params.get("status") ?? "";
   const page = params.get("page") ?? "1";
+  const limit = params.get("limit") ?? "10";
 
   const isFiltered = Boolean(query || role || status || page !== "1");
 
@@ -54,7 +53,6 @@ export function UserFilters() {
       <FilterSelect
         label="Per page"
         onChange={(value) => {
-          setLimit(value);
           setParam("limit", value === "10" ? null : value);
         }}
         options={[
