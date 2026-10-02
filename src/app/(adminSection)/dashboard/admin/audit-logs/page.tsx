@@ -18,7 +18,7 @@ import {
 } from "@/components/shared/pagination-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { auditActionLabel } from "@/lib/constants";
-import { formatDateTime, initials } from "@/lib/format";
+import { formatDateTime, initials, toUrlParamRecord } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import type { AuditLog, JsonValue } from "@/lib/types";
@@ -140,6 +140,7 @@ export default async function AdminAuditLogsPage({
     const single = first(value);
     if (single) params.set(key, single);
   }
+  const urlParams = toUrlParamRecord(params);
 
   if (!res.success || !res.data) {
     return (
@@ -196,13 +197,13 @@ export default async function AdminAuditLogsPage({
               <PageSizeNote
                 limit={meta.limit}
                 pathname="/dashboard/admin/audit-logs"
-                searchParams={params}
+                searchParams={urlParams}
               />
               <PaginationBar
                 label="entries"
                 meta={meta}
                 pathname="/dashboard/admin/audit-logs"
-                searchParams={params}
+                searchParams={urlParams}
               />
             </div>
           </>

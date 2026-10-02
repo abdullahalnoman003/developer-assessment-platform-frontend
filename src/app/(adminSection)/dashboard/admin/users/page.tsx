@@ -23,7 +23,7 @@ import {
 } from "@/components/shared/status-badge";
 import { UserFilters } from "@/components/shared/user-filters";
 import { UserStatusAction } from "@/components/shared/user-status-action";
-import { formatDate, initials } from "@/lib/format";
+import { formatDate, initials, toUrlParamRecord } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import type { AdminUser } from "@/lib/types";
@@ -134,6 +134,7 @@ export default async function AdminUsersPage({
     const single = first(value);
     if (single) params.set(key, single);
   }
+  const urlParams = toUrlParamRecord(params);
 
   if (!res.success || !res.data) {
     return (
@@ -200,13 +201,13 @@ export default async function AdminUsersPage({
               <PageSizeNote
                 limit={meta.limit}
                 pathname="/dashboard/admin/users"
-                searchParams={params}
+                searchParams={urlParams}
               />
               <PaginationBar
                 label="users"
                 meta={meta}
                 pathname="/dashboard/admin/users"
-                searchParams={params}
+                searchParams={urlParams}
               />
             </div>
           </>
