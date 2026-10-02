@@ -44,6 +44,13 @@ export interface Paginated<T> {
   meta: PaginatedMeta;
 }
 
+/**
+ * URL state handed from a Server Component to a `"use client"` component.
+ * A `URLSearchParams` instance cannot cross the RSC boundary — React collapses it
+ * into one mangled key — so pages convert it with `toUrlParamRecord` first.
+ */
+export type UrlParamRecord = Record<string, string>;
+
 export interface Company {
   id: string;
   name: string;

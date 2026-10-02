@@ -255,6 +255,14 @@ export function isValidHttpUrl(value: string | null | undefined): boolean {
   return zodUrl(value);
 }
 
+export function toUrlParamRecord(
+  params: URLSearchParams,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of params) out[key] = value;
+  return out;
+}
+
 function zodUrl(value: string): boolean {
   try {
     const url = new URL(value);
