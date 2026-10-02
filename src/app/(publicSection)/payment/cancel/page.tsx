@@ -1,15 +1,47 @@
+import { XCircleIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { dashboardMetadata } from "@/lib/seo";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = dashboardMetadata("Checkout cancelled");
+export const metadata: Metadata = pageMetadata({
+  title: "Checkout cancelled",
+  description: "Your CodeArena credit purchase was cancelled.",
+  path: "/payment/cancel",
+  noIndex: true,
+});
 
 export default function PaymentCancelPage() {
   return (
-    <>
-      <h1>Checkout cancelled</h1>
-      <p>
-        TODO: explain the cancel and link back to the recruiter billing page.
-      </p>
-    </>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 border border-border bg-card p-6">
+        <XCircleIcon className="size-6 text-accent-cyan" />
+        <h1 className="font-heading text-lg font-semibold">
+          Checkout cancelled
+        </h1>
+        <p className="text-sm/relaxed text-muted-foreground">
+          Nothing was charged and no credits were added. Cancelling the Stripe
+          checkout does not delete the payment record the API created when
+          checkout started — it stays PENDING in your billing history until the
+          provider marks it failed.
+        </p>
+        <p className="text-sm/relaxed text-muted-foreground">
+          You can buy credits whenever you are ready; nothing about your
+          assessments or invitations changes in the meantime.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Button render={<Link href="/dashboard/recruiter/billing" />}>
+          Back to billing
+        </Button>
+        <Button
+          render={<Link href="/dashboard/recruiter/assessments" />}
+          variant="outline"
+        >
+          Back to assessments
+        </Button>
+      </div>
+    </div>
   );
 }
