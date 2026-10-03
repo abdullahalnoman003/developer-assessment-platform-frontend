@@ -118,9 +118,6 @@ export default async function CandidateAttemptResultPage({
               </div>
             )}
 
-            {/* The pass mark is the target, not the result, so it is shown in
-                both branches — otherwise a locked page carries no information
-                at all. */}
             <PassMarkNote attempt={attempt} />
           </DashboardPanel>
 
@@ -177,15 +174,10 @@ export default async function CandidateAttemptResultPage({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-
 function ScoreSummary({ attempt }: { attempt: AttemptDetail }) {
   const { score, maxScore } = attempt;
   const scored = score !== null;
   const percent = scored && maxScore ? (score / maxScore) * 100 : null;
-  // `passScore` is stored in **points**, not percent — the recruiter form labels
-  // it "Pass mark (points)". The API never evaluates it, so the comparison is
-  // made here and labelled as such rather than guessed.
   const passScore = attempt.invitation.assessment.passScore;
   const passed = scored && passScore !== null && score >= passScore;
 
@@ -214,14 +206,6 @@ function ScoreSummary({ attempt }: { attempt: AttemptDetail }) {
   );
 }
 
-/**
- * Rendered in both the locked and the released branch. The pass mark is the
- * target rather than the result, so hiding it behind the release would leave
- * the locked page with nothing to say. It states plainly that the API stores
- * the mark without evaluating it, and calls out the case where the mark cannot
- * be reached — the seeded "Backend Engineer Test" carries `passScore: 70` on a
- * 3-point assessment, and rendering that as a plain failure would mislead.
- */
 function PassMarkNote({ attempt }: { attempt: AttemptDetail }) {
   const passScore = attempt.invitation.assessment.passScore;
   const maxScore = attempt.maxScore;

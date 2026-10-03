@@ -39,7 +39,6 @@ function toQueryRecord(
   return toUrlParamRecord(params);
 }
 
-/** The API validates `status` itself; the same message is shown when it 400s. */
 const FILTER_COPY: Record<string, { title: string; body: string }> = {
   PENDING: {
     title: "Nothing waiting for you",
@@ -79,8 +78,6 @@ export default async function CandidateInvitationsPage({
     limit: filters.limit ?? PAGE_SIZE,
   });
 
-  // `PaginationBar` is a client component and a `URLSearchParams` cannot cross
-  // the RSC boundary (§0.7 D), so the params are converted to a plain record.
   const urlParams = toQueryRecord(raw);
   const activeStatus = parsed.success ? filters.status : undefined;
 

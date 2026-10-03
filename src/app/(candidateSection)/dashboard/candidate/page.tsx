@@ -27,14 +27,8 @@ import { invitationService } from "@/service/invitations";
 
 export const metadata: Metadata = dashboardMetadata("Candidate dashboard");
 
-/**
- * `GET /invitations/me` refuses anything above 100 (`400 "limit: Too big…"`),
- * so the overview reads the whole list in one request and tells the truth about
- * the ceiling rather than silently showing a partial total (§0.7 A).
- */
 const MAX_INVITATIONS = 100;
 
-/** Only the invitations still awaiting a reply are shown in full on the overview. */
 const PENDING_PREVIEW = 3;
 
 export default async function CandidateDashboardPage() {
@@ -52,8 +46,6 @@ export default async function CandidateDashboardPage() {
   }
 
   const { items, meta } = res.data;
-  // `GET /invitations/me` is the only candidate-scoped read the API exposes, so
-  // every count below is derived from it rather than from a second endpoint.
   const pending = items.filter((item) => item.status === "PENDING");
   const started = items.filter((item) => item.attempt !== null);
   const inProgress = started.filter(
@@ -207,8 +199,6 @@ export default async function CandidateDashboardPage() {
     </>
   );
 }
-
-/* -------------------------------------------------------------------------- */
 
 function PendingInvitationList({
   invitations,

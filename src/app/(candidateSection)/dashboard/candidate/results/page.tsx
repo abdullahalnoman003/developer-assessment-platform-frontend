@@ -32,10 +32,6 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 const PAGE_SIZE = 10;
 
-/**
- * `GET /invitations/me` refuses `limit > 100`, so the whole candidate history is
- * read in one request and the ceiling is reported rather than hidden.
- */
 const MAX_INVITATIONS = 100;
 
 interface ResultRow {
@@ -48,7 +44,6 @@ interface ResultRow {
   maxScore: number | null;
   submittedAt: string | null;
   startedAt: string | null;
-  /** `false` when the per-attempt read failed; the row still renders. */
   detailLoaded: boolean;
 }
 
@@ -67,16 +62,6 @@ function toQueryRecord(
   return toUrlParamRecord(params);
 }
 
-/**
- * There is no candidate-scoped results endpoint — `GET /assessments/:id/results`
- * is `403` for a candidate (§1.1 X3), so the page is assembled from
- * `GET /invitations/me` → `attempt.id` → `GET /attempts/:id`.
- *
- * The N+1 is bounded on purpose: only the rows **on the current page** are
- * hydrated, so a render costs `1 + PAGE_SIZE` API calls no matter how long the
- * candidate's history is. Hydrating every attempt would breach the 100 req / 15
- * min rate limit on a single page view (final.md Risk 2 / §0.8 F).
- */
 async function loadPage(rows: ResultRow[]): Promise<ResultRow[]> {
   const hydrated = await Promise.all(
     rows.map(async (row) => {
@@ -223,9 +208,6 @@ export default async function CandidateResultsPage({
 
   const { items, meta: invitationMeta } = res.data;
 
-  // Every invitation that actually carries an attempt, newest invitation first.
-  // The `attempt` sub-object on `/invitations/me` carries no score or
-  // timestamps, which is exactly what the bounded hydration below fills in.
   const all: ResultRow[] = items
     .filter((item) => item.attempt !== null)
     .map((item) => ({
@@ -258,13 +240,6 @@ export default async function CandidateResultsPage({
   const releasedCount = all.filter((row) => row.resultReleased).length;
   const failedReads = rows.filter((row) => !row.detailLoaded).length;
 
-  /**
-   * Each assessment has its own `maxScore`, so averaging raw points across
-   * assessments would compare a 3-point test against a 40-point one. The
-   * average is therefore taken over **per-row percentages**, which are
-   * comparable, and it covers only the rows on this page — the rest are never
-   * fetched, so pretending otherwise would be inventing data.
-   */
   const percents = rows
     .filter(
       (row) =>
