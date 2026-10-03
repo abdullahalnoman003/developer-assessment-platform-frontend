@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
+import { isValidElement } from "react";
 import { cn } from "cn";
 
 const buttonVariants = cva(
@@ -37,16 +38,24 @@ const buttonVariants = cva(
   },
 );
 
+function rendersAnchor(render: React.ReactNode): boolean {
+  return isValidElement(render) && "href" in (render.props as Record<string, unknown>);
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  render,
+  nativeButton,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  const shouldUseNativeButton = nativeButton ?? !rendersAnchor(render as React.ReactNode);
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      nativeButton={shouldUseNativeButton}
       {...props}
     />
   );
