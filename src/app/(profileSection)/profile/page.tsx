@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dashboardMetadata } from "@/lib/seo";
 import { authService } from "@/service/auth";
+import { companyService } from "@/service/company";
 import { CandidateProfileForm } from "../_components/candidate-form";
 import { CompanyPanel } from "../_components/company-panel";
 import { IdentityForm } from "../_components/identity-form";
@@ -15,6 +16,16 @@ import { IdentityForm } from "../_components/identity-form";
 export const metadata: Metadata = dashboardMetadata("Profile");
 
 export const dynamic = "force-dynamic";
+
+async function CompanyPanelLoader() {
+  // independent reads, issued together to halve the render wait
+  const [company, dashboard] = await Promise.all([
+    companyService.get(),
+    companyService.dashboard(),
+  ]);
+
+  return <CompanyPanel company={company} dashboard={dashboard} />;
+}
 
 export default async function ProfilePage() {
   const user = await authService.requireUser();
@@ -78,7 +89,7 @@ export default async function ProfilePage() {
                 title="Company"
               >
                 <Suspense fallback={<Spinner />}>
-                  <CompanyPanel />
+                  <CompanyPanelLoader />
                 </Suspense>
               </DashboardPanel>
             </TabsContent>

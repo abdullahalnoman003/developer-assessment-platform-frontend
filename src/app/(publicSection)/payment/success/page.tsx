@@ -126,14 +126,6 @@ export default async function PaymentSuccessPage({
     );
   }
 
-  /**
-   * The API has no "look up a payment by Stripe session id" endpoint and no
-   * admin payment list, so the session is resolved by scanning this company's
-   * history for a matching `providerRef`. 100 is the endpoint's maximum page
-   * size; a company with more than 100 payments would need the billing page's
-   * own pagination, which is why the fallback below points there rather than
-   * claiming nothing was found.
-   */
   const history = await paymentService.history(1, 100);
 
   if (history.statusCode === 401) {

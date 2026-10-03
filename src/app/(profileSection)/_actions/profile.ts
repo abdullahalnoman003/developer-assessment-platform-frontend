@@ -29,12 +29,7 @@ function ok(message: string): ActionState {
   };
 }
 
-/**
- * A blank optional URL is an instruction to *clear* it — the backend treats
- * an explicit `null` as "clear this column" (verified against `PUT /companies/me`
- * in Phase 3; the same rule applies to `PATCH /users/me`), so a blank must be
- * sent as `null` rather than dropped, or a field can never be removed.
- */
+// a blank optional field is sent as null, which is how the API clears a column
 function nullableField(
   formData: FormData,
   name: string,
@@ -45,24 +40,41 @@ function nullableField(
   return value;
 }
 
-/**
- * Any authenticated user can update their own profile — the Identity tab
- * (name, avatarUrl) is available to all roles, and the candidate-specific
- * fields (phone, bio, skills, resumeUrl, githubUrl) are only surfaced on the
- * candidate tab. The server action accepts both, but the tabs gate the UI.
- */
+// undefined means the field was absent, null means it could not be read
+function parseJsonStringList(
+  value: FormDataEntryValue | null,
+): string[] | null | undefined {
+  if (value === null) return undefined;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "") return [];
+  try {
+    const parsed: unknown = JSON.parse(trimmed);
+    return Array.isArray(parsed) ? parsed.map(String) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function updateProfileAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   await authService.requireUser();
 
+  const skills = parseJsonStringList(formData.get("skills"));
+  if (skills === null) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      skills: ["Skills could not be read. Please try again."],
+    });
+  }
+
   const parsed = updateProfileSchema.safeParse({
     name: formData.get("name"),
     avatarUrl: formData.get("avatarUrl") ?? undefined,
     phone: nullableField(formData, "phone"),
     bio: nullableField(formData, "bio"),
-    skills: JSON.parse((formData.get("skills") as string) ?? "[]") as string[],
+    skills,
     resumeUrl: nullableField(formData, "resumeUrl"),
     githubUrl: nullableField(formData, "githubUrl"),
   });

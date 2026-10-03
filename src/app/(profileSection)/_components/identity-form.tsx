@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useActionToast } from "@/hooks/use-action-toast";
+import { isValidHttpUrl } from "@/lib/format";
 import { updateProfileSchema } from "@/lib/validations";
 
 type FormValues = z.input<typeof updateProfileSchema>;
@@ -98,7 +99,10 @@ export function IdentityForm({
         </Field>
       </FieldGroup>
 
-      <AvatarPreview src={form.watch("avatarUrl")} name={user.name} />
+      <AvatarPreview
+        src={form.watch("avatarUrl") ?? undefined}
+        name={user.name}
+      />
 
       <Button disabled={isPending} type="submit">
         {isPending ? <Spinner /> : null}
@@ -117,13 +121,13 @@ function AvatarPreview({
 }) {
   const [broken, setBroken] = useState(false);
 
-  if (!src || broken) {
+  if (!isValidHttpUrl(src) || broken) {
     return null;
   }
 
   return (
     <Avatar size="lg">
-      <AvatarImage alt={name} onError={() => setBroken(true)} src={src} />
+      <AvatarImage alt="" onError={() => setBroken(true)} src={src} />
       <AvatarFallback>{name?.charAt(0) ?? "U"}</AvatarFallback>
     </Avatar>
   );

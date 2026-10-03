@@ -7,13 +7,16 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { StatsCards } from "@/components/shared/stats-cards";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatNumber } from "@/lib/format";
+import { formatDate, formatNumber, isValidHttpUrl } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
-import { companyService } from "@/service/company";
+import type { ApiResponse, Company, CompanyDashboard } from "@/lib/types";
 
-export async function CompanyPanel() {
-  const res = await companyService.get();
+export interface CompanyPanelProps {
+  company: ApiResponse<Company>;
+  dashboard: ApiResponse<CompanyDashboard>;
+}
 
+export function CompanyPanel({ company: res, dashboard }: CompanyPanelProps) {
   if (!res.success || !res.data) {
     const isOnboarding = res.statusCode === 404 || res.statusCode === 403;
 
@@ -43,7 +46,6 @@ export async function CompanyPanel() {
 
   const company = res.data;
 
-  const dashboard = await companyService.dashboard();
   const credits =
     dashboard.success && dashboard.data
       ? dashboard.data.company.creditsRemaining
@@ -108,7 +110,7 @@ export async function CompanyPanel() {
                 <p className="truncate font-heading text-sm font-semibold">
                   {company.name}
                 </p>
-                {company.website ? (
+                {isValidHttpUrl(company.website) ? (
                   <a
                     className="truncate text-xs text-primary underline underline-offset-4"
                     href={company.website}
@@ -119,7 +121,7 @@ export async function CompanyPanel() {
                   </a>
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    No website set
+                    {company.website || "No website set"}
                   </p>
                 )}
               </div>
