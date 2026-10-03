@@ -30,20 +30,18 @@ import { cn } from "@/lib/utils";
 
 const TONE_CLASS: Record<BadgeTone, string> = {
   neutral: "border-border bg-muted text-muted-foreground",
-  success:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  warning:
-    "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  success: "border-success/40 bg-success/10 text-success",
+  warning: "border-warning/40 bg-warning/10 text-warning",
   danger: "border-destructive/40 bg-destructive/10 text-destructive",
-  info: "border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400",
+  info: "border-info/40 bg-info/10 text-info",
 };
 
 const DOT_CLASS: Record<BadgeTone, string> = {
   neutral: "bg-muted-foreground/60",
-  success: "bg-emerald-500",
-  warning: "bg-amber-500",
+  success: "bg-success",
+  warning: "bg-warning",
   danger: "bg-destructive",
-  info: "bg-sky-500",
+  info: "bg-info",
 };
 
 export function StatusBadge({

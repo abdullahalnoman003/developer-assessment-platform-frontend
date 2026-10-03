@@ -44,11 +44,6 @@ export interface Paginated<T> {
   meta: PaginatedMeta;
 }
 
-/**
- * URL state handed from a Server Component to a `"use client"` component.
- * A `URLSearchParams` instance cannot cross the RSC boundary — React collapses it
- * into one mangled key — so pages convert it with `toUrlParamRecord` first.
- */
 export type UrlParamRecord = Record<string, string>;
 
 export interface Company {
@@ -130,13 +125,6 @@ export interface ActionState {
   message: string;
   fieldErrors: Record<string, string[]>;
   redirectTo: string | null;
-  /**
-   * An absolute off-site URL the caller must send the browser to — currently
-   * only Stripe's `checkoutUrl`. It is deliberately a *different* field from
-   * `redirectTo`: `redirectTo` is an internal path, and mixing an external
-   * host into it would let a generic `router.push` treat `https://…` as a
-   * same-origin route. Optional so every existing action literal still parses.
-   */
   externalUrl?: string | null;
 }
 

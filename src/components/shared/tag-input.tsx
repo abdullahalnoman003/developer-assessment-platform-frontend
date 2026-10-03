@@ -6,15 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-/**
- * A controlled tag editor. It is intentionally not a hook: the parent already
- * owns the value through React Hook Form, and a second source of truth for the
- * list is how tag fields drift out of sync with the submitted payload.
- *
- * The hidden input is what actually reaches the server action — the visible
- * chips are decoration. It is kept in the DOM at all times so a form that
- * submits with JavaScript disabled still carries the tags.
- */
 export function TagInput({
   id,
   value,
@@ -40,7 +31,7 @@ export function TagInput({
     const tag = raw.trim();
     if (!tag) return;
     if (tag.length > maxLength) return;
-    // Case-insensitive de-dupe so "React" and "react" cannot both be stored.
+    // case-insensitive de-dupe so "React" and "react" cannot both be stored
     if (
       value.some((existing) => existing.toLowerCase() === tag.toLowerCase())
     ) {
@@ -86,7 +77,6 @@ export function TagInput({
           ))}
         </ul>
       ) : null}
-
       <div className="flex items-center gap-2">
         <Input
           aria-describedby={`${id}-hint`}
@@ -118,7 +108,7 @@ export function TagInput({
           Add
         </Button>
       </div>
-
+      {/* this hidden input is what reaches the server action */}
       <input name="tags" type="hidden" value={JSON.stringify(value)} />
       <p className="text-xs/relaxed text-muted-foreground" id={`${id}-hint`}>
         {value.length} of {max} tags. Press Enter or comma to add. Backspace

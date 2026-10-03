@@ -150,6 +150,8 @@ export function PageSizeNote({
         params.delete("page");
         return (
           <Button
+            aria-current={option === limit ? "true" : undefined}
+            aria-label={`${option} results per page`}
             key={option}
             render={<Link href={`${pathname}?${params.toString()}`} />}
             size="sm"

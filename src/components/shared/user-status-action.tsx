@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { ActionState, UserStatus } from "@/lib/types";
 import { IDLE_ACTION_STATE } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 const COPY: Record<
   UserStatus,
@@ -110,18 +111,19 @@ export function UserStatusAction({
         </Button>
       )}
 
-      {state.status === "idle" ? null : (
-        <span
-          aria-live="polite"
-          className={
-            state.status === "success"
-              ? "text-xs/relaxed text-emerald-600 dark:text-emerald-400"
-              : "text-xs/relaxed text-destructive"
-          }
-        >
-          {state.message}
-        </span>
-      )}
+      <span
+        aria-live="polite"
+        className={cn(
+          "text-xs/relaxed",
+          state.status === "idle"
+            ? "sr-only"
+            : state.status === "success"
+              ? "text-success"
+              : "text-destructive",
+        )}
+      >
+        {state.status === "idle" ? "" : state.message}
+      </span>
 
       <span className="sr-only" ref={doneRef} tabIndex={-1} />
     </form>

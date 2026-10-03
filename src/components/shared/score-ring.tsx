@@ -4,22 +4,12 @@ const RADIUS = 42;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const TONE_CLASS = {
-  success: "text-emerald-600 dark:text-emerald-400",
+  success: "text-success",
   danger: "text-destructive",
-  warning: "text-amber-600 dark:text-amber-400",
+  warning: "text-warning",
   neutral: "text-muted-foreground",
 } as const;
 
-/**
- * A server-rendered progress ring for a score. Plain SVG plus an HTML overlay
- * for the label, so it needs neither a chart library nor a client component: a
- * candidate's result page renders fully on the server and the number is already
- * known.
- *
- * `tone` is supplied by the caller rather than derived here — the same score can
- * be a pass or a fail depending on the assessment's pass mark, and a component
- * that guessed would contradict the pass mark shown beside it.
- */
 export function ScoreRing({
   value,
   percent,
@@ -28,14 +18,10 @@ export function ScoreRing({
   label,
   className,
 }: {
-  /** The big number in the middle, already formatted by the caller. */
   value: string;
-  /** Fill fraction, 0–1. Clamped; a missing or NaN value renders an empty ring. */
   percent?: number | null;
-  /** The unit line under the number, e.g. "of 3 points". */
   caption?: string;
   tone?: keyof typeof TONE_CLASS;
-  /** Accessible name for the graphic. Defaults to a description of the value. */
   label?: string;
   className?: string;
 }) {
@@ -51,7 +37,6 @@ export function ScoreRing({
         className,
       )}
     >
-      {/* The ring is rotated; the label is a sibling so it stays upright. */}
       <svg
         aria-label={description}
         className="absolute inset-0 size-full -rotate-90"

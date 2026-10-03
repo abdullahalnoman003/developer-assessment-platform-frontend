@@ -11,16 +11,32 @@ import { cn } from "@/lib/utils";
 
 export interface DataTableColumn<T> {
   key: string;
-  /**
-   * Rendered inside a `<th scope="col">`. Typed as `ReactNode` rather than
-   * `string` so a column can carry a real control — a sortable link, for
-   * instance — instead of forcing sort controls into a separate toolbar. Every
-   * plain column still passes a string.
-   */
   header: ReactNode;
   className?: string;
   headerClassName?: string;
+  // label for the stacked mobile card; inferred from header when it is text
+  mobileLabel?: string;
   cell: (row: T) => ReactNode;
+}
+
+function mobileLabelOf(
+  header: ReactNode,
+  explicit: string | undefined,
+): string | null {
+  if (explicit) return explicit;
+  if (typeof header === "string" || typeof header === "number") {
+    return String(header);
+  }
+  return null;
+}
+
+// a cell sized for a table column does not fit a stacked card
+function mobileCellClass(className: string | undefined): string | undefined {
+  return className
+    ?.replace(/\btext-(?:right|center)\b/g, "text-left")
+    .replace(/\bwhitespace-nowrap\b/g, "whitespace-normal")
+    .replace(/\b(?:w|min-w)-[\w./[\]-]+\b/g, "")
+    .trim();
 }
 
 export function DataTable<T>({
@@ -43,34 +59,74 @@ export function DataTable<T>({
   }
 
   return (
-    <div className={cn("w-full overflow-x-auto", className)}>
-      <Table>
-        <caption className="sr-only">{caption}</caption>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHead
-                className={column.headerClassName}
-                key={column.key}
-                scope="col"
-              >
-                {column.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={getRowKey(row)}>
+    <>
+      {/* display:none keeps the hidden branch out of the accessibility tree */}
+      <div className={cn("hidden w-full overflow-x-auto md:block", className)}>
+        <Table>
+          <caption className="sr-only">{caption}</caption>
+          <TableHeader>
+            <TableRow>
               {columns.map((column) => (
-                <TableCell className={column.className} key={column.key}>
-                  {column.cell(row)}
-                </TableCell>
+                <TableHead
+                  className={column.headerClassName}
+                  key={column.key}
+                  scope="col"
+                >
+                  {column.header}
+                </TableHead>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={getRowKey(row)}>
+                {columns.map((column) => (
+                  <TableCell className={column.className} key={column.key}>
+                    {column.cell(row)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <ul aria-label={caption} className="flex flex-col gap-2 md:hidden">
+        {rows.map((row) => (
+          <li className="border border-border bg-card p-3" key={getRowKey(row)}>
+            <dl className="flex flex-col gap-2">
+              {columns.map((column) => {
+                const label = mobileLabelOf(column.header, column.mobileLabel);
+                return (
+                  <div
+                    className={
+                      label
+                        ? "grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-2"
+                        : undefined
+                    }
+                    key={column.key}
+                  >
+                    {label ? (
+                      <dt className="text-xs font-medium text-muted-foreground">
+                        {label}
+                      </dt>
+                    ) : null}
+                    <dd
+                      className={cn(
+                        "min-w-0 text-xs break-words",
+                        label ? "min-w-0" : "col-span-2",
+                        mobileCellClass(column.className),
+                      )}
+                    >
+                      {column.cell(row)}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

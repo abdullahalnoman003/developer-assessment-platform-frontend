@@ -41,23 +41,37 @@ export function UsersByRoleChart({ stats }: { stats: AdminStats }) {
   }
 
   return (
-    <ChartContainer
-      className="mx-auto aspect-square max-h-64 w-full"
-      config={ROLE_CONFIG}
+    <div
+      aria-label={describeData(data, "Registered accounts by role")}
+      role="img"
     >
-      <PieChart>
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-        <Pie data={data} dataKey="value" innerRadius={44} nameKey="label">
-          {data.map((entry, index) => (
-            <Cell
-              fill={CHART_COLORS[index % CHART_COLORS.length]}
-              key={entry.key}
-            />
-          ))}
-        </Pie>
-      </PieChart>
-    </ChartContainer>
+      <ChartContainer
+        className="mx-auto aspect-square max-h-64 w-full"
+        config={ROLE_CONFIG}
+      >
+        <PieChart>
+          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+          <Pie data={data} dataKey="value" innerRadius={44} nameKey="label">
+            {data.map((entry, index) => (
+              <Cell
+                fill={CHART_COLORS[index % CHART_COLORS.length]}
+                key={entry.key}
+              />
+            ))}
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+    </div>
   );
+}
+
+function describeData(
+  data: readonly { label: string; value: number }[],
+  subject: string,
+): string {
+  return `${subject}: ${data
+    .map((entry) => `${entry.label} ${entry.value}`)
+    .join(", ")}.`;
 }
 
 export function ContentVolumeChart({ stats }: { stats: AdminStats }) {
@@ -80,28 +94,33 @@ export function ContentVolumeChart({ stats }: { stats: AdminStats }) {
   }
 
   return (
-    <ChartContainer className="aspect-auto h-56 w-full" config={CONTENT_CONFIG}>
-      <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }}>
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-        <XAxis type="number" hide />
-        <YAxis
-          axisLine={false}
-          dataKey="label"
-          tickLine={false}
-          tickMargin={8}
-          type="category"
-          width={92}
-        />
-        <Bar dataKey="value" radius={2}>
-          {data.map((entry, index) => (
-            <Cell
-              fill={CHART_COLORS[index % CHART_COLORS.length]}
-              key={entry.key}
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ChartContainer>
+    <div aria-label={describeData(data, "Total content created")} role="img">
+      <ChartContainer
+        className="aspect-auto h-56 w-full"
+        config={CONTENT_CONFIG}
+      >
+        <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }}>
+          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+          <XAxis type="number" hide />
+          <YAxis
+            axisLine={false}
+            dataKey="label"
+            tickLine={false}
+            tickMargin={8}
+            type="category"
+            width={92}
+          />
+          <Bar dataKey="value" radius={2}>
+            {data.map((entry, index) => (
+              <Cell
+                fill={CHART_COLORS[index % CHART_COLORS.length]}
+                key={entry.key}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ChartContainer>
+    </div>
   );
 }
 

@@ -13,18 +13,16 @@ export interface StatCardItem {
 const TONE_FRAME = {
   default: "border-border bg-card",
   accent: "border-primary/40 bg-primary/5",
-  warning: "border-amber-500/40 bg-amber-500/5",
-  success: "border-emerald-500/40 bg-emerald-500/5",
+  warning: "border-warning/40 bg-warning/5",
+  success: "border-success/40 bg-success/5",
   danger: "border-destructive/40 bg-destructive/5",
 } as const;
 
 const TONE_ICON = {
   default: "border-border bg-muted text-muted-foreground",
   accent: "border-primary/40 bg-primary/10 text-primary",
-  warning:
-    "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  success:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  warning: "border-warning/40 bg-warning/10 text-warning",
+  success: "border-success/40 bg-success/10 text-success",
   danger: "border-destructive/40 bg-destructive/10 text-destructive",
 } as const;
 

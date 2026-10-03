@@ -20,14 +20,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
 
-/**
- * Destructive confirmations are posted through a real `<form>` so they keep
- * working before hydration, and are still a plain server action afterwards.
- *
- * On success the dialog closes and either follows `state.redirectTo` or just
- * refreshes the current route — both are driven by the action's return value,
- * so no component has to special-case which kind of mutation it triggered.
- */
 export function ConfirmFormDialog({
   action,
   fields,
@@ -45,7 +37,6 @@ export function ConfirmFormDialog({
   confirmLabel: string;
   pendingLabel?: string;
   destructive?: boolean;
-  /** A single element — `AlertDialogTrigger` needs a `render` target. */
   trigger: ReactElement;
 }) {
   const [open, setOpen] = useState(false);

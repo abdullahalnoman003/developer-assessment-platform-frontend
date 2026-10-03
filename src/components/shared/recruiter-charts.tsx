@@ -19,13 +19,6 @@ import type {
   CompanyDashboard,
 } from "@/lib/types";
 
-/**
- * Recruiter charts are deliberately separate from `admin-charts.tsx`: the two
- * read different payloads and have different empties, and merging them would
- * give one component two shapes and two vocabularies. Both read their colours
- * from `CHART_COLORS` so they follow the light/dark tokens.
- */
-
 const FUNNEL_CONFIG = {
   draft: { label: "Draft", color: CHART_COLORS[0] },
   published: { label: "Published", color: CHART_COLORS[1] },
@@ -49,8 +42,6 @@ const FUNNEL_ORDER: readonly AssessmentStatus[] = [
 ];
 
 export function AssessmentFunnelChart({ stats }: { stats: CompanyDashboard }) {
-  // Only the statuses the API actually returned, so a company with no archived
-  // assessments gets a 1-bar chart rather than 4 bars of zero.
   const data = FUNNEL_ORDER.map((status) => ({
     key: status,
     label: ASSESSMENT_STATUS_LABELS[status],
@@ -67,29 +58,44 @@ export function AssessmentFunnelChart({ stats }: { stats: CompanyDashboard }) {
   }
 
   return (
-    <ChartContainer className="aspect-auto h-56 w-full" config={FUNNEL_CONFIG}>
-      <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }}>
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-        <XAxis hide type="number" />
-        <YAxis
-          axisLine={false}
-          dataKey="label"
-          tickLine={false}
-          tickMargin={8}
-          type="category"
-          width={78}
-        />
-        <Bar dataKey="value" radius={2}>
-          {data.map((entry, index) => (
-            <Cell
-              fill={CHART_COLORS[index % CHART_COLORS.length]}
-              key={entry.key}
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ChartContainer>
+    // Recharts draws raw SVG with no text, so the numbers are spoken here
+    <div aria-label={describeData(data, "Assessments by status")} role="img">
+      <ChartContainer
+        className="aspect-auto h-56 w-full"
+        config={FUNNEL_CONFIG}
+      >
+        <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }}>
+          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+          <XAxis hide type="number" />
+          <YAxis
+            axisLine={false}
+            dataKey="label"
+            tickLine={false}
+            tickMargin={8}
+            type="category"
+            width={78}
+          />
+          <Bar dataKey="value" radius={2}>
+            {data.map((entry, index) => (
+              <Cell
+                fill={CHART_COLORS[index % CHART_COLORS.length]}
+                key={entry.key}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ChartContainer>
+    </div>
   );
+}
+
+function describeData(
+  data: readonly { label: string; value: number }[],
+  subject: string,
+): string {
+  return `${subject}: ${data
+    .map((entry) => `${entry.label} ${entry.value}`)
+    .join(", ")}.`;
 }
 
 const ATTEMPT_ORDER: readonly AttemptStatus[] = [
@@ -117,22 +123,24 @@ export function AttemptsDonutChart({ stats }: { stats: CompanyDashboard }) {
   }
 
   return (
-    <ChartContainer
-      className="mx-auto aspect-square max-h-64 w-full"
-      config={ATTEMPT_CONFIG}
-    >
-      <PieChart>
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-        <Pie data={data} dataKey="value" innerRadius={44} nameKey="label">
-          {data.map((entry, index) => (
-            <Cell
-              fill={CHART_COLORS[index % CHART_COLORS.length]}
-              key={entry.key}
-            />
-          ))}
-        </Pie>
-      </PieChart>
-    </ChartContainer>
+    <div aria-label={describeData(data, "Attempts by status")} role="img">
+      <ChartContainer
+        className="mx-auto aspect-square max-h-64 w-full"
+        config={ATTEMPT_CONFIG}
+      >
+        <PieChart>
+          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+          <Pie data={data} dataKey="value" innerRadius={44} nameKey="label">
+            {data.map((entry, index) => (
+              <Cell
+                fill={CHART_COLORS[index % CHART_COLORS.length]}
+                key={entry.key}
+              />
+            ))}
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+    </div>
   );
 }
 
