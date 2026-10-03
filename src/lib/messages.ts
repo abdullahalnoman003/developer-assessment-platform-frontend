@@ -68,9 +68,6 @@ export const ACTION_MESSAGES = {
     failure: "Could not submit the attempt.",
   },
   evaluateAttempt: {
-    // The action appends "Results released." / "Results stay private." itself,
-    // because `releaseResult` is optional and an unreleased evaluation is
-    // final — a single static string would be wrong half the time.
     success: "Scores saved.",
     failure: "Could not save the evaluation.",
   },

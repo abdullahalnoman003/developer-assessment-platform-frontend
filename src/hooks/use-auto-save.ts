@@ -9,15 +9,10 @@ import { IDLE_ACTION_STATE } from "@/lib/types";
 const DEFAULT_INTERVAL_MS = 20_000;
 
 export interface UseAutoSaveResult {
-  /** True when there are unsaved changes in the local state. */
   dirty: boolean;
-  /** True while a save request is in flight. */
   saving: boolean;
-  /** ISO timestamp of the last successful save, for the "Saved Xs ago" label. */
   lastSaved: Date | null;
-  /** Flushes immediately. Returns the action result. */
   saveNow: () => Promise<ActionState>;
-  /** Marks the current state as clean (e.g. after a successful submit). */
   markClean: () => void;
 }
 
@@ -33,6 +28,7 @@ function toFormData(
 ): FormData {
   const formData = new FormData();
   formData.set("attemptId", attemptId);
+  // blank answers are dropped: the save schema needs at least one entry
   formData.set(
     "answers",
     JSON.stringify(
@@ -44,18 +40,6 @@ function toFormData(
   return formData;
 }
 
-/**
- * Debounced autosave for the attempt runner. Every 20 s and on every question
- * change, the local answer map is pushed to the server via
- * `saveAnswersAction`. A `beforeunload` banner fires when there is pending
- * work so the browser asks before the tab closes.
- *
- * Only answered questions are sent — a blank `response` is stripped before the
- * request, because the backend schema requires `answers.length >= 1` and an
- * empty array would 400. An unanswered question is simply absent from the
- * payload, which leaves any previously-saved answer untouched (the backend
- * upserts by `questionId`).
- */
 export function useAutoSave({
   attemptId,
   answers,
@@ -86,7 +70,6 @@ export function useAutoSave({
       return IDLE_ACTION_STATE;
     }
 
-    // Snapshot of what we'd send, for dirty comparison
     const payloadMap: Record<string, JsonValue> = Object.fromEntries(
       Object.entries(current).filter(([, response]) => !isBlank(response)),
     );

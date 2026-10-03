@@ -79,7 +79,7 @@ export async function clearAuthCookies(): Promise<void> {
   store.delete(REFRESH_COOKIE);
 }
 
-export async function getAccessToken(): Promise<string | null> {
+async function getAccessToken(): Promise<string | null> {
   return readCookie(ACCESS_COOKIE);
 }
 

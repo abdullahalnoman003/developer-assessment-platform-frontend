@@ -1,22 +1,39 @@
 import { z } from "zod";
 
-const trimmed = (max: number) => z.string().trim().max(max);
+const httpUrl = z.url({ protocol: /^https?$/ });
 const optionalUrl = (max = 500) =>
   z
     .string()
     .trim()
     .max(max, `Must be at most ${max} characters`)
     .refine(
-      (value) => value === "" || z.url().safeParse(value).success,
+      (value) => value === "" || httpUrl.safeParse(value).success,
       "Enter a valid URL",
     )
     .transform((value) => (value === "" ? null : value));
+
+const nullableHttpUrl = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .refine((value) => value === "" || httpUrl.safeParse(value).success, {
+      message: "Enter a valid URL",
+    })
+    .nullable();
 
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address").trim().toLowerCase(),
   password: z.string().min(1, "Password is required"),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
+
+// bound to a "use server" argument, so the role needs a runtime check
+export const googleLoginSchema = z.object({
+  idToken: z.string().min(1, "Google sign-in returned no credential"),
+  role: z.enum(["CANDIDATE", "RECRUITER"]).optional(),
+});
+export type GoogleLoginInput = z.infer<typeof googleLoginSchema>;
 
 export const registerSchema = z.object({
   name: z
@@ -40,15 +57,15 @@ export const updateProfileSchema = z.object({
     .min(1, "Name cannot be empty")
     .max(100, "Name is too long")
     .optional(),
-  avatarUrl: trimmed(1000).optional(),
+  avatarUrl: nullableHttpUrl(1000).optional(),
   phone: z.string().trim().max(500, "Phone is too long").nullable().optional(),
   bio: z.string().trim().max(500, "Bio is too long").nullable().optional(),
   skills: z
     .array(z.string().trim().min(1).max(50))
     .max(50, "At most 50 skills")
     .optional(),
-  resumeUrl: z.string().trim().max(500).nullable().optional(),
-  githubUrl: z.string().trim().max(500).nullable().optional(),
+  resumeUrl: nullableHttpUrl(500).optional(),
+  githubUrl: nullableHttpUrl(500).optional(),
 });
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
@@ -171,12 +188,6 @@ const assessmentDetails = {
   passScore: createAssessmentSchema.shape.passScore,
 };
 
-/**
- * The details-only branch of the overloaded `PATCH /assessments/:id`. It is
- * exported on its own because the edit dialog needs to parse *this* variant
- * rather than the union: the four `PATCH` bodies are four separate concerns,
- * and a union would let `{ status }` satisfy a details edit.
- */
 export const assessmentDetailsSchema = z
   .object(assessmentDetails)
   .refine((value) => Object.values(value).some((v) => v !== undefined), {
@@ -184,14 +195,6 @@ export const assessmentDetailsSchema = z
   });
 export type AssessmentDetailsInput = z.infer<typeof assessmentDetailsSchema>;
 
-/**
- * Form-side twin of `assessmentDetailsSchema`, used by the draft edit dialog.
- * It differs in exactly one way: a blank number input is treated as "no value"
- * rather than being coerced to `0` by `z.coerce.number()`, which would surface
- * a nonsense "at least 1 minute" error on an untouched empty field. The dialog
- * posts the raw strings and the action re-parses with the strict schema, so
- * this never becomes an API payload on its own.
- */
 const blankableNumber = <T extends z.ZodType>(schema: T) =>
   z.preprocess(
     (value) =>
@@ -334,12 +337,34 @@ export const auditLogQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).optional(),
 });
 
-/**
- * Assessment results and billing history are pure pagination — no filters, no
- * search, no sort. They deliberately keep the page size fixed in the service
- * layer instead of taking it from the URL, so the only shareable state is
- * `?page=`.
- */
+// a cuid/nanoid-ish identifier, so a pasted sentence never reaches the API
+export const recordIdSchema = z.object({
+  id: z
+    .string()
+    .trim()
+    .min(1, "Enter an identifier")
+    .max(64, "That identifier is too long")
+    .regex(
+      /^[A-Za-z0-9_-]+$/,
+      "Identifiers contain only letters, numbers, - and _",
+    ),
+});
+export type RecordIdInput = z.infer<typeof recordIdSchema>;
+
+// shared with assessment-questions-dialog.tsx so both sides agree
+export const ASSESSMENT_QUESTION_LIMIT = 200;
+export const assessmentQuestionsSchema = z.object({
+  questionIds: z.array(z.string().trim().min(1)).max(ASSESSMENT_QUESTION_LIMIT),
+});
+export type AssessmentQuestionsInput = z.infer<
+  typeof assessmentQuestionsSchema
+>;
+
+export const assessmentStatusSchema = z.object({
+  status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]),
+});
+export type AssessmentStatusInput = z.infer<typeof assessmentStatusSchema>;
+
 export const pagedQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
 });

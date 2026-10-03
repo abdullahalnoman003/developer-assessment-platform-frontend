@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useId, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -11,26 +11,29 @@ export interface UrlStateOptions {
   resetKeys?: readonly string[];
 }
 
+// hoisted so the default keeps one identity across renders
+const DEFAULT_RESET_KEYS: readonly string[] = ["page"];
+
 export function useUrlState({
   debounceMs = 400,
-  resetKeys = ["page"],
+  resetKeys = DEFAULT_RESET_KEYS,
 }: UrlStateOptions = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
-  const first = useRef(true);
+  const urlQuery = searchParams.get("q") ?? "";
 
+  // the URL wins, so back/forward and external links stay in sync
   useEffect(() => {
-    setQuery(searchParams.get("q") ?? "");
-  }, [searchParams]);
+    setQuery(urlQuery);
+  }, [urlQuery]);
 
+  // only push when the typed query actually diverged from the URL, otherwise
+  // a pagination or filter change would be reset right back again
   useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
+    if (query === urlQuery) return;
 
     const handle = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
@@ -49,7 +52,7 @@ export function useUrlState({
     }, debounceMs);
 
     return () => clearTimeout(handle);
-  }, [query, debounceMs, pathname, router, resetKeys, searchParams]);
+  }, [query, urlQuery, debounceMs, pathname, router, resetKeys, searchParams]);
 
   const setParam = useCallback(
     (key: string, value: string | null) => {
@@ -101,11 +104,13 @@ export function SearchInput({
   placeholder?: string;
   label: string;
 }) {
+  // per-instance id so two filter bars never collide
+  const id = useId();
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:max-w-xs">
       <label
         className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
-        htmlFor="search-input"
+        htmlFor={id}
       >
         {label}
       </label>
@@ -113,7 +118,7 @@ export function SearchInput({
         <Input
           autoComplete="off"
           className="pr-8"
-          id="search-input"
+          id={id}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           type="search"
@@ -138,17 +143,18 @@ export function FilterSelect({
   options: readonly { value: string; label: string }[];
   onChange: (value: string) => void;
 }) {
+  const id = useId();
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
       <label
         className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
-        htmlFor={`filter-${label}`}
+        htmlFor={id}
       >
         {label}
       </label>
       <select
         className="h-9 w-full rounded-none border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
-        id={`filter-${label}`}
+        id={id}
         onChange={(event) => onChange(event.target.value)}
         value={value}
       >

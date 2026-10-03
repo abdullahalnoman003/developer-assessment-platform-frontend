@@ -6,58 +6,54 @@ import { formatCountdown, toDate } from "@/lib/format";
 export type WarningLevel = "normal" | "warning" | "critical";
 
 export interface CountdownState {
-  /** `HH:MM:SS` formatted remaining time. "Time expired" when the deadline passed. */
   label: string;
-  /** True when the deadline is in the past. */
   expired: boolean;
-  /** 0–1 fill fraction for a visual progress ring. */
   percentRemaining: number;
-  /** Ramps up as the deadline nears: `critical` under 5 min. */
   warningLevel: WarningLevel;
 }
 
-/**
- * Ticking countdown for the attempt runner. The deadline is server-derived and
- * re-anchored on every server response; this client hook merely re-renders the
- * server-rendered instant once per second so the number ticks down smoothly.
- *
- * Warning levels: `critical` below 5 minutes, `warning` below 10 minutes.
- */
+const ASSUMED_WINDOW_MS = 4 * 60 * 60 * 1000;
+
+function compute(parsed: number): CountdownState {
+  const remaining = parsed - Date.now();
+
+  if (remaining <= 0) {
+    return {
+      label: "Time expired",
+      expired: true,
+      percentRemaining: 0,
+      warningLevel: "critical",
+    };
+  }
+
+  const minutes = Math.floor(remaining / 1000) / 60;
+  const warningLevel: WarningLevel =
+    minutes < 5 ? "critical" : minutes < 10 ? "warning" : "normal";
+
+  return {
+    label: formatCountdown(new Date(parsed)),
+    expired: false,
+    percentRemaining: Math.max(0, Math.min(1, remaining / ASSUMED_WINDOW_MS)),
+    warningLevel,
+  };
+}
+
 export function useCountdown(
   deadline: string | null | undefined,
 ): CountdownState {
-  const target = (toDate(deadline)?.getTime() ?? 0) || Date.now();
+  const parsed = toDate(deadline)?.getTime() ?? null;
 
-  const compute = (): CountdownState => {
-    const remaining = target - Date.now();
-    if (remaining <= 0) {
-      return {
-        label: "Time expired",
-        expired: true,
-        percentRemaining: 0,
-        warningLevel: "critical",
-      };
-    }
-
-    const totalSeconds = Math.floor(remaining / 1000);
-    const minutes = totalSeconds / 60;
-    const warningLevel: WarningLevel =
-      minutes < 5 ? "critical" : minutes < 10 ? "warning" : "normal";
-
-    return {
-      label: formatCountdown(deadline ?? undefined),
-      expired: false,
-      percentRemaining: Math.max(0, Math.min(1, totalSeconds / (60 * 60 * 4))),
-      warningLevel,
-    };
-  };
-
-  const [state, setState] = useState<CountdownState>(compute);
+  const [state, setState] = useState<CountdownState>(() =>
+    compute(parsed ?? Date.now()),
+  );
 
   useEffect(() => {
-    const handle = setInterval(() => setState(compute()), 1000);
+    if (parsed === null) return;
+
+    setState(compute(parsed));
+    const handle = setInterval(() => setState(compute(parsed)), 1000);
     return () => clearInterval(handle);
-  });
+  }, [parsed]);
 
   return state;
 }

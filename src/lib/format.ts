@@ -213,16 +213,6 @@ export function formatNumber(
   return new Intl.NumberFormat("en-US").format(value);
 }
 
-export function formatPercent(
-  value: number | null | undefined,
-  digits = 0,
-  fallback = "—",
-): string {
-  if (value === null || value === undefined || Number.isNaN(value))
-    return fallback;
-  return `${value.toFixed(digits)}%`;
-}
-
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
@@ -250,7 +240,9 @@ export function pluralize(
   return `${formatNumber(count)} ${count === 1 ? singular : plural}`;
 }
 
-export function isValidHttpUrl(value: string | null | undefined): boolean {
+export function isValidHttpUrl(
+  value: string | null | undefined,
+): value is string {
   if (!value) return false;
   return zodUrl(value);
 }

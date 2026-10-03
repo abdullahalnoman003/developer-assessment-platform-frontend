@@ -26,6 +26,26 @@ export function pageMetadata({
   path?: string;
   noIndex?: boolean;
 }): Metadata {
+  // a noIndex page must not ship a canonical, or it tells crawlers the
+  // opposite of what robots says about the same URL
+  if (noIndex) {
+    return {
+      title,
+      description,
+      openGraph: {
+        title: `${title} | ${APP_NAME}`,
+        description,
+        siteName: APP_NAME,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${title} | ${APP_NAME}`,
+        description,
+      },
+      robots: { index: false, follow: false },
+    };
+  }
   const url = absoluteUrl(path);
   return {
     title,
