@@ -46,10 +46,6 @@ function ChartFallback() {
   );
 }
 
-/**
- * Flow A checklist (final.md §6). Every tick is derived from a real count the
- * API returned — there is no local "onboarded" flag that can drift.
- */
 function OnboardingRail({
   stats,
   questionCount,
@@ -92,7 +88,7 @@ function OnboardingRail({
             aria-hidden
             className={
               step.done
-                ? "mt-0.5 flex size-5 shrink-0 items-center justify-center border border-emerald-500/40 bg-emerald-500/10 font-mono text-[11px] text-emerald-600 dark:text-emerald-400"
+                ? "mt-0.5 flex size-5 shrink-0 items-center justify-center border border-success/40 bg-success/10 font-mono text-[11px] text-success"
                 : "mt-0.5 size-5 shrink-0 border border-border"
             }
           >
@@ -117,8 +113,6 @@ function OnboardingRail({
 }
 
 export default async function RecruiterOverviewPage() {
-  // Two reads, issued together. The dashboard carries every count except the
-  // question-bank size, which only `GET /questions` reports.
   const [dashboard, questions] = await Promise.all([
     companyService.dashboard(),
     questionService.list({ limit: 1 }),
@@ -138,10 +132,6 @@ export default async function RecruiterOverviewPage() {
   const stats = dashboard.data;
   const questionCount = questions.data?.meta.total ?? 0;
 
-  // The backend refuses every company-scoped write for a recruiter who has not
-  // onboarded, so the dashboard itself is a 403 in that case. That is a
-  // resource-level denial, not a role one — the role gate already passed — so
-  // it renders as an onboarding card rather than a full-page 403 (final.md §6).
   if (dashboard.statusCode === 403 || !stats.company.id) {
     return (
       <>
@@ -314,7 +304,7 @@ export default async function RecruiterOverviewPage() {
                 >
                   <item.Icon
                     aria-hidden
-                    className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400"
+                    className="mt-0.5 size-4 shrink-0 text-warning"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium">{item.title}</p>

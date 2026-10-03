@@ -133,10 +133,26 @@ export default async function RecruiterBillingPage({
     );
   }
 
+  // a persistent company-endpoint outage must not look like a zero balance
+  if (!company.success) {
+    return (
+      <>
+        <DashboardPageHeader
+          description="Credits are spent one per accepted candidate invitation. Checkout runs on Stripe; this page only ever reads the result."
+          title="Billing"
+        />
+        <ErrorState
+          message={
+            company.message ||
+            "Your company record could not be loaded, so credits cannot be shown."
+          }
+        />
+      </>
+    );
+  }
+
   const { items, meta } = history.data;
-  const credits = company.success
-    ? (company.data?.creditsRemaining ?? 0)
-    : null;
+  const credits = company.data?.creditsRemaining ?? 0;
   const paid = items
     .filter((payment) => payment.status === "PAID")
     .reduce((sum, payment) => sum + Number(payment.amount), 0);
@@ -152,13 +168,10 @@ export default async function RecruiterBillingPage({
         items={[
           {
             label: "Credits remaining",
-            value: credits === null ? "—" : formatNumber(credits),
-            hint:
-              credits === null
-                ? "Could not load your company"
-                : "Exactly what the API has stored — nothing is simulated here",
+            value: formatNumber(credits),
+            hint: "Exactly what the API has stored, nothing is simulated here",
             Icon: CoinsIcon,
-            tone: (credits ?? 0) > 0 ? "success" : "warning",
+            tone: credits > 0 ? "success" : "warning",
           },
           {
             label: "Payments",

@@ -73,12 +73,6 @@ export default async function GradeAttemptPage({ params }: { params: Params }) {
     (a, b) => a.order - b.order,
   );
 
-  /**
-   * The API returns the attempt's `answers` and the assessment's `questions` as
-   * two independent lists, so they are joined here on `questionId`. A question
-   * with no matching answer still appears — an unanswered question is
-   * information, not something to hide.
-   */
   const items: GradingQuestion[] = ordered.map((entry) => {
     const answer = attempt.answers.find(
       (candidate) => candidate.questionId === entry.questionId,

@@ -44,11 +44,6 @@ function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-/**
- * `_count` is present on the list payload (verified against the live API) but
- * absent from every `PATCH /assessments/:id` response, so counts are only ever
- * read from the list route or the detail route.
- */
 function buildColumns(
   urlParams: UrlParamRecord,
   sortBy: string,
@@ -57,6 +52,7 @@ function buildColumns(
   return [
     {
       key: "title",
+      mobileLabel: "Assessment",
       header: (
         <SortableHeader
           column="title"
@@ -128,6 +124,7 @@ function buildColumns(
     },
     {
       key: "createdAt",
+      mobileLabel: "Created",
       header: (
         <SortableHeader
           column="createdAt"

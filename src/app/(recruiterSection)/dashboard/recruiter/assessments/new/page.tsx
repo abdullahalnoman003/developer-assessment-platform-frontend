@@ -17,16 +17,6 @@ import { questionService } from "@/service/questions";
 
 export const metadata: Metadata = dashboardMetadata("New assessment");
 
-/**
- * The picker is a search-and-list over the whole bank, so it needs the full
- * list rather than one page of it.
- *
- * `100` is the backend's hard ceiling — `GET /questions` answers
- * `limit: Too big: expected number to be <=100` for anything higher, and
- * `questionQuerySchema` mirrors that `.max(100)`. A larger bank is therefore
- * filtered client-side inside the wizard and flagged to the user below, rather
- * than silently showing the first slice as if it were everything.
- */
 const PICKER_LIMIT = 100;
 
 export default async function NewAssessmentPage() {
@@ -68,7 +58,7 @@ export default async function NewAssessmentPage() {
       ) : (
         <>
           {truncated ? (
-            <p className="border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+            <p className="border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
               Your bank holds {res.data.meta.total} questions but the API serves
               at most {PICKER_LIMIT} per request, so the first{" "}
               {questions.length} are loaded here. Search and the type and
@@ -77,8 +67,6 @@ export default async function NewAssessmentPage() {
           ) : null}
 
           <DashboardPanel contentClassName="p-4 sm:p-6">
-            {/* The wizard reads `?step=` through useSearchParams, so it needs a
-                Suspense boundary to keep the rest of the page streamable. */}
             <Suspense
               fallback={
                 <>

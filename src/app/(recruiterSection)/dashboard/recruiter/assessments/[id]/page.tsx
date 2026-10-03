@@ -113,9 +113,6 @@ export default async function RecruiterAssessmentDetailPage({
   const actionLabels = ACTION_LABELS[assessment.status] ?? null;
   const totalPoints = assessment.questions.length;
 
-  // The question bank and the credit balance are only needed by the dialogs
-  // that can actually open here, so neither is fetched for a closed or archived
-  // assessment.
   const [bank, company] = await Promise.all([
     isDraft
       ? questionService.list({ limit: 100 })
@@ -128,11 +125,6 @@ export default async function RecruiterAssessmentDetailPage({
   const bankTruncated =
     isDraft && bank.success && (bank.data?.meta.total ?? 0) > questions.length;
 
-  /**
-   * The dialog claims an empty bank when it has none. That is only true if the
-   * fetch actually succeeded, so it is not rendered when the request failed —
-   * the page says the request failed instead of blaming the user's bank.
-   */
   const questionsDialog =
     isDraft && bank.success ? (
       <AssessmentQuestionsDialog
@@ -254,10 +246,7 @@ export default async function RecruiterAssessmentDetailPage({
             value={
               assessment.passScore === null
                 ? "Not set"
-                : // Deliberately not phrased as "X of N points": the API never
-                  // validates passScore against the question total, and the
-                  // seeded data really does contain passes above the maximum.
-                  `${assessment.passScore} points, as stored`
+                : `${assessment.passScore} points, as stored`
             }
           />
           <DetailRow

@@ -132,8 +132,6 @@ export default async function AssessmentResultsPage({
   const parsed = pagedQuerySchema.safeParse({ page: first(raw.page) });
   const page = parsed.success ? parsed.data.page : undefined;
 
-  // The service always sends an explicit page/limit pair, so the default of 1
-  // covers an absent or invalid `?page=`.
   const res = await assessmentService.results(id, page ?? 1, PAGE_SIZE);
 
   const urlParams = toUrlParamRecord(new URLSearchParams(toQueryString(raw)));

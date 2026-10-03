@@ -9,7 +9,7 @@ import {
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { StatsCards } from "@/components/shared/stats-cards";
-import { formatDate, formatNumber } from "@/lib/format";
+import { formatDate, formatNumber, isValidHttpUrl } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import { companyService } from "@/service/company";
@@ -20,9 +20,6 @@ export default async function RecruiterCompanyPage() {
   const res = await companyService.get();
 
   if (!res.success || !res.data) {
-    // A recruiter who has not created a company yet gets a 404 from
-    // `GET /companies/me`. That is onboarding, not failure, so it renders as
-    // the create form rather than an error (final.md §6).
     const isOnboarding = res.statusCode === 404 || res.statusCode === 403;
 
     if (!isOnboarding) {
@@ -125,7 +122,7 @@ export default async function RecruiterCompanyPage() {
                 <p className="truncate font-heading text-sm font-semibold">
                   {company.name}
                 </p>
-                {company.website ? (
+                {isValidHttpUrl(company.website) ? (
                   <a
                     className="truncate text-xs text-primary underline underline-offset-4"
                     href={company.website}
@@ -136,7 +133,7 @@ export default async function RecruiterCompanyPage() {
                   </a>
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    No website set
+                    {company.website || "No website set"}
                   </p>
                 )}
               </div>
