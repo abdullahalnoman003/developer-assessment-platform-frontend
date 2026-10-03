@@ -22,6 +22,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ActionState, Question } from "@/lib/types";
 import { IDLE_ACTION_STATE } from "@/lib/types";
+import {
+  ASSESSMENT_QUESTION_LIMIT,
+  assessmentQuestionsSchema,
+} from "@/lib/validations";
 
 function SaveQuestionsButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
@@ -33,15 +37,6 @@ function SaveQuestionsButton({ disabled }: { disabled: boolean }) {
   );
 }
 
-/**
- * Replaces the whole question list. The API has no per-question attach or
- * detach verb — `PUT`-style `questionIds` is the only shape it accepts — so
- * this is an all-or-nothing save, and the copy says so.
- *
- * The picked order becomes `AssessmentQuestion.order` and every question is
- * stored at 1 point: the backend hard-codes `points: 1` on attach and never
- * reads a per-question value from the client.
- */
 export function AssessmentQuestionsDialog({
   assessmentId,
   questions,
@@ -69,8 +64,6 @@ export function AssessmentQuestionsDialog({
     }
   }, [state, router]);
 
-  // Re-seed from the server copy each time the dialog opens, so a cancelled
-  // edit never leaks a half-picked list into the next attempt.
   useEffect(() => {
     if (open) {
       setPicked(selectedIds);
@@ -86,6 +79,9 @@ export function AssessmentQuestionsDialog({
   };
 
   const titleById = new Map(questions.map((q) => [q.id, q.title]));
+  const overLimit = !assessmentQuestionsSchema.safeParse({
+    questionIds: picked,
+  }).success;
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -130,6 +126,9 @@ export function AssessmentQuestionsDialog({
               Selected — {picked.length} question
               {picked.length === 1 ? "" : "s"} · {picked.length} point
               {picked.length === 1 ? "" : "s"} total
+              {picked.length > ASSESSMENT_QUESTION_LIMIT
+                ? ` · over the ${ASSESSMENT_QUESTION_LIMIT} question limit`
+                : ""}
             </p>
             {picked.length > 0 ? (
               <ol className="flex flex-col gap-1">
@@ -155,8 +154,9 @@ export function AssessmentQuestionsDialog({
               </ol>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Nothing selected. Saving an empty list is allowed, but the
-                assessment then cannot be published.
+                Nothing selected. An assessment with no questions cannot be
+                published, so the save button stays disabled until you pick at
+                least one.
               </p>
             )}
           </div>
@@ -171,9 +171,17 @@ export function AssessmentQuestionsDialog({
 
           {picked.length === 0 ? (
             <InlineNotice
-              body="An assessment with no questions cannot be published — the API rejects it. Saving now is only useful if you are about to re-pick."
-              title="This will leave the assessment empty"
+              body="An assessment with no questions cannot be published, because the API rejects it. Pick at least one question before saving."
+              title="This would leave the assessment empty"
               tone="warning"
+            />
+          ) : null}
+
+          {overLimit ? (
+            <InlineNotice
+              body={`The API accepts at most ${ASSESSMENT_QUESTION_LIMIT} questions per assessment. You have ${picked.length} selected.`}
+              title="Too many questions"
+              tone="danger"
             />
           ) : null}
 
@@ -185,7 +193,7 @@ export function AssessmentQuestionsDialog({
             >
               Cancel
             </Button>
-            <SaveQuestionsButton disabled={picked.length === 0} />
+            <SaveQuestionsButton disabled={picked.length === 0 || overLimit} />
           </DialogFooter>
         </form>
       </DialogContent>

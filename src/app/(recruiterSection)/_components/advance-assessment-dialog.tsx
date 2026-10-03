@@ -84,8 +84,6 @@ export function AdvanceAssessmentDialog({
   const router = useRouter();
   const copy = COPY[target];
 
-  // Publishing a questionless assessment is refused by the backend, so the
-  // button is disabled with the reason rather than letting it fail on click.
   const blocked = target === "PUBLISHED" && questionCount === 0;
 
   useEffect(() => {

@@ -12,15 +12,6 @@ import { truncate } from "@/lib/format";
 import { EMPTY_STATES } from "@/lib/messages";
 import type { Difficulty, Question, QuestionType } from "@/lib/types";
 
-/**
- * Select-the-questions browser shared by the create wizard and the draft
- * "Change questions" dialog on the assessment detail page.
- *
- * It is deliberately **not** a server component: the bank it filters is the one
- * page already loaded, so toggling is instant and the chosen order is held in
- * component state until submit. `idPrefix` keeps the two hosts from emitting
- * colliding DOM ids when both are on the page.
- */
 export function QuestionPicker({
   questions,
   selectedIds,

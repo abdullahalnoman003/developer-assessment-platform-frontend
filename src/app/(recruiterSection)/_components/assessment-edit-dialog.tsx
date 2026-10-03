@@ -43,11 +43,6 @@ function SaveButton() {
   );
 }
 
-/**
- * Editing is offered only while the assessment is a draft — the backend refuses
- * any details `PATCH` on a published, closed, or archived assessment, so the
- * page does not render this component at all in those states.
- */
 export function AssessmentEditDialog({
   assessment,
 }: {
@@ -63,8 +58,6 @@ export function AssessmentEditDialog({
   );
   const router = useRouter();
 
-  // No explicit generic: the resolver's *output* type is the form's value type
-  // here, and naming it by hand fights the `z.coerce`/`preprocess` pipelines.
   const form = useForm({
     resolver: zodResolver(assessmentDetailsFormSchema),
     defaultValues: {
@@ -86,8 +79,6 @@ export function AssessmentEditDialog({
     }
   }, [state, router]);
 
-  // `null` from the API means "no pass mark"; the form speaks in strings, so the
-  // refetched value is pushed back in whenever the dialog is reopened.
   useEffect(() => {
     if (open) {
       form.reset({

@@ -29,11 +29,6 @@ import type {
 } from "@/lib/types";
 import { IDLE_ACTION_STATE } from "@/lib/types";
 
-/**
- * A response is stored as free-form `Json`, so a hand-typed MCQ answer, a
- * written essay, and a structured payload all arrive the same way. Rendering
- * has to cope with all three instead of assuming a string.
- */
 function renderResponse(response: JsonValue | null | undefined): string {
   if (isJsonEmpty(response)) return "No answer";
   if (typeof response === "string") return response;
@@ -60,7 +55,6 @@ function SubmitEvaluationButton({ disabled }: { disabled: boolean }) {
 export interface GradingQuestion {
   entry: AssessmentQuestion;
   answer: Answer | undefined;
-  /** Pre-filled from `pointsAwarded` when re-showing an already-graded attempt. */
   awarded: number | null;
 }
 
@@ -117,9 +111,9 @@ function GradingRow({
                   className={[
                     "flex items-start gap-2 border px-2 py-1 text-sm",
                     isKey
-                      ? "border-emerald-500/40 bg-emerald-500/10"
+                      ? "border-success/40 bg-success/10"
                       : chosen
-                        ? "border-amber-500/40 bg-amber-500/10"
+                        ? "border-warning/40 bg-warning/10"
                         : "border-border",
                   ].join(" ")}
                   key={`${question.id}-${optionIndex}`}
@@ -127,13 +121,13 @@ function GradingRow({
                   <span className="font-mono text-xs text-muted-foreground">
                     {String.fromCharCode(65 + optionIndex)}
                   </span>
-                  <span className="min-w-0 flex-1">{option}</span>
+                  <span className="min-w-0 flex-1 break-words">{option}</span>
                   {isKey ? (
-                    <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                    <span className="font-mono text-[11px] text-success">
                       correct
                     </span>
                   ) : chosen ? (
-                    <span className="font-mono text-[11px] text-amber-600 dark:text-amber-400">
+                    <span className="font-mono text-[11px] text-warning">
                       wrong
                     </span>
                   ) : null}
@@ -192,9 +186,6 @@ function GradingRow({
               />
             </div>
           ) : (
-            // No `answers` row means the candidate never reached this question.
-            // There is no answerId to attach a score to, so the input would be a
-            // lie: any number typed here could not be submitted.
             <p className="shrink-0 font-mono text-[11px] text-muted-foreground sm:w-32 sm:text-right">
               Skipped · 0 pts
             </p>
@@ -239,14 +230,8 @@ export function GradingWorkspace({
     [items],
   );
 
-  /**
-   * A question the candidate skipped has no row in `answers`, so it has no
-   * `answerId` to score. The API's schema requires a non-empty `answerId`, so
-   * including one of these would fail the *whole* evaluation with a message
-   * about a question the evaluator never touched. Unanswered manual questions
-   * are therefore graded as zero and kept out of the payload entirely.
-   */
   const gradeable = useMemo(
+    // a skipped question has no answer row, so it has no answerId to score
     () => manualItems.filter((item) => Boolean(item.answer?.id)),
     [manualItems],
   );
@@ -257,11 +242,7 @@ export function GradingWorkspace({
 
   const editable = status === "SUBMITTED";
 
-  /**
-   * The API's `scores` array has a minimum length of 1, so an attempt with
-   * nothing to grade by hand cannot be submitted at all — the form is disabled
-   * and says exactly why instead of letting the request fail.
-   */
+  // the API rejects an empty scores array, so nothing to grade means no submit
   const canSubmit = editable && gradeable.length > 0;
 
   const awardedTotal = gradeable.reduce(
@@ -360,19 +341,10 @@ export function GradingWorkspace({
 
           {editable ? (
             <div className="flex items-start gap-3 border-t border-border pt-3">
-              {/*
-                A custom toggle is a `<button role="switch">`, not a native
-                input, so a wrapping `<label>` would associate with nothing.
-                Pointing aria-labelledby/aria-describedby at the two text nodes
-                gives it the same accessible name and description a `<label>`
-                would have given an input.
-              */}
               <Switch
                 aria-describedby="release-help"
                 aria-labelledby="release-label"
                 checked={release}
-                // The result can never be released after the fact: the attempt
-                // becomes EVALUATED either way and a second call is refused.
                 disabled={gradeable.length === 0}
                 onCheckedChange={setRelease}
               />

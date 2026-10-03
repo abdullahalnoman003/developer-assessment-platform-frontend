@@ -20,20 +20,9 @@ import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
 import { upsertCompanySchema } from "@/lib/validations";
 
-/**
- * `upsertCompanySchema` transforms an empty optional URL into `null`, so its
- * input and output types differ. RHF's third generic expresses that split:
- * `useForm` registers the raw string inputs, while `handleSubmit` hands back
- * the validated output where a blank URL is already `null`.
- */
 type CompanyFormValues = z.input<typeof upsertCompanySchema>;
 type CompanyFormOutput = z.output<typeof upsertCompanySchema>;
 
-/**
- * A recruiter without a company is a first-class state, not an error, so the
- * same form creates and edits. `PUT /companies/me` is an upsert on the backend;
- * the copy changes to match.
- */
 export function CompanyForm({
   defaults,
   isNew,
@@ -54,9 +43,7 @@ export function CompanyForm({
 
   const onSubmit = handleSubmit((values) => {
     const data = new FormData();
-    // All three fields always go out. The backend treats an explicit `null` as
-    // "clear this column" (verified against the live API), so omitting a
-    // blank one would make a field impossible to remove.
+    // all three always go out so a blank one clears the stored column
     data.set("name", values.name ?? "");
     data.set("website", values.website ?? "");
     data.set("logoUrl", values.logoUrl ?? "");

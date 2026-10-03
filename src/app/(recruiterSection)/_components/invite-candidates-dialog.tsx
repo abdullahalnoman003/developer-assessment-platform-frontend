@@ -30,12 +30,7 @@ import { VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ActionState } from "@/lib/types";
 import { IDLE_ACTION_STATE } from "@/lib/types";
 
-/**
- * Splits the textarea into emails, lowercasing and de-duplicating so the same
- * address typed twice fails locally with a clear reason instead of coming back
- * as a backend 409 for the whole batch.
- */
-export function parseEmailList(raw: string): {
+function parseEmailList(raw: string): {
   emails: string[];
   invalid: string[];
   duplicates: string[];
@@ -48,8 +43,6 @@ export function parseEmailList(raw: string): {
   for (const line of raw.split(/[\n,;]+/)) {
     const value = line.trim().toLowerCase();
     if (value === "") continue;
-    // Deliberately permissive: the server owns the real validation, and a
-    // stricter client regex would reject addresses the API would accept.
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       invalid.push(line.trim());
       continue;
@@ -81,12 +74,6 @@ export function InviteCandidatesDialog({
   alreadyInvited,
 }: {
   assessmentId: string;
-  /**
-   * `company.creditsRemaining` minus every invitation already sent. This is a
-   * deliberate under-estimate: declined and expired invitations may or may not
-   * have been refunded, and the API is the only authority on the real balance.
-   * Blocking on the estimate keeps a short balance from failing server-side.
-   */
   remainingCredits: number;
   alreadyInvited: number;
 }) {
@@ -100,6 +87,7 @@ export function InviteCandidatesDialog({
 
   const parsed = parseEmailList(raw);
   const atCap = parsed.emails.length > 100;
+  // credits left minus invites already sent, so the button fails before the API does
   const outOfCredits = parsed.emails.length > remainingCredits;
   const blocked = parsed.emails.length === 0 || atCap || outOfCredits;
 

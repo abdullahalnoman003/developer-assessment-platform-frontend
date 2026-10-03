@@ -33,11 +33,6 @@ function ReceiptRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-/**
- * The history rows already carry every field the detail endpoint would return,
- * so the receipt is rendered from the row rather than re-fetching it — that
- * avoids one request per receipt opened and keeps the dialog instant.
- */
 export function PaymentReceiptDialog({ payment }: { payment: Payment }) {
   const [open, setOpen] = useState(false);
 

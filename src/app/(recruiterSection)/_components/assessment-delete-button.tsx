@@ -5,11 +5,6 @@ import { deleteAssessmentAction } from "@/app/(recruiterSection)/_actions/recrui
 import { ConfirmFormDialog } from "@/components/shared/confirm-form-dialog";
 import { Button } from "@/components/ui/button";
 
-/**
- * The backend deletes an assessment with `PATCH { deletedAt: "now" }`, so this
- * is a soft delete: invitations and attempts keep their own copies and stay
- * readable, and nothing here is reversible from the UI.
- */
 export function AssessmentDeleteButton({
   assessmentId,
   title,

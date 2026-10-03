@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   ClearFiltersButton,
   FilterSelect,
@@ -8,15 +7,11 @@ import {
   useUrlState,
 } from "@/hooks/use-url-state";
 
-/**
- * URL state per final.md §7: `q`, `type`, `difficulty`, `page`, `limit`. Every
- * filter is a shareable link and the server always wins on render, so a stale
- * client value can never show the wrong rows.
- */
 export function QuestionFilters() {
   const { query, setQuery, setParam, clearFilters, params, pending } =
     useUrlState();
-  const [limit, setLimit] = useState(params.get("limit") ?? "10");
+  // derived, not seeded, so a <Link> page-size change stays in sync
+  const limit = params.get("limit") ?? "10";
   const type = params.get("type") ?? "";
   const difficulty = params.get("difficulty") ?? "";
   const page = params.get("page") ?? "1";
@@ -61,10 +56,7 @@ export function QuestionFilters() {
 
       <FilterSelect
         label="Per page"
-        onChange={(value) => {
-          setLimit(value);
-          setParam("limit", value === "10" ? null : value);
-        }}
+        onChange={(value) => setParam("limit", value === "10" ? null : value)}
         options={[
           { value: "10", label: "10" },
           { value: "25", label: "25" },

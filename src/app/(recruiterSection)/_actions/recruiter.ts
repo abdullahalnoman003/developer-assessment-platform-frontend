@@ -5,9 +5,12 @@ import { z } from "zod";
 import { requireRole } from "@/lib/dashboard-session";
 import { toOptionList } from "@/lib/format";
 import { ACTION_MESSAGES, VALIDATION_MESSAGES } from "@/lib/messages";
+import { safeExternalUrl } from "@/lib/redirect";
 import type { ActionState, JsonValue } from "@/lib/types";
 import {
   assessmentDetailsSchema,
+  assessmentQuestionsSchema,
+  assessmentStatusSchema,
   createAssessmentSchema,
   createQuestionSchema,
   evaluateAttemptSchema,
@@ -45,16 +48,7 @@ function ok(message: string, redirectTo: string | null = null): ActionState {
   };
 }
 
-/**
- * An empty `<input>` posts `""`, not `undefined`, and for the two nullable
- * fields `""` is a real instruction — *clear it*. The backend stores
- * `description` and `passScore` as `String?`/`Int?`, so they are sent as `null`
- * rather than dropped, otherwise clearing the description would silently do
- * nothing.
- *
- * `durationMins` is a non-null `Int`, so a blank there can only mean "leave it
- * alone" and is dropped instead.
- */
+// a blank box posts "", which the API reads as "clear this column"
 function nullableField(
   formData: FormData,
   name: string,
@@ -69,6 +63,7 @@ function nullableField(
   return value;
 }
 
+// non-null Int, so a blank here means "leave it alone" and is dropped
 function numericField(formData: FormData, name: string): string | undefined {
   const value = formData.get(name);
   if (typeof value !== "string" || value.trim() === "") {
@@ -77,12 +72,6 @@ function numericField(formData: FormData, name: string): string | undefined {
   return value;
 }
 
-/**
- * React cannot post a real array through `FormData` without a stringifying step,
- * so the client components JSON-encode their list fields into a single hidden
- * input. A malformed payload yields `[]` and fails the schema with a real
- * message instead of throwing inside the action.
- */
 function parseJsonArray(value: FormDataEntryValue | null): unknown[] {
   if (typeof value !== "string" || value.trim() === "") {
     return [];
@@ -107,20 +96,9 @@ function fieldErrorsFrom(error: z.ZodError): Record<string, string[]> {
   );
 }
 
-/**
- * Every mutation re-checks the role server-side. `requireRole` is the same
- * helper the role layouts use, so an action gate can never drift from the page
- * gate (AGENTS.md rule 7). It throws `UnauthenticatedError` on a dead session,
- * which `proxy.ts` turns into a login redirect, and redirects a wrong-role
- * caller to their own dashboard.
- */
 function requireRecruiter() {
   return requireRole("RECRUITER");
 }
-
-/* -------------------------------------------------------------------------- */
-/* Company                                                                    */
-/* -------------------------------------------------------------------------- */
 
 export async function upsertCompanyAction(
   _prev: ActionState,
@@ -138,9 +116,6 @@ export async function upsertCompanyAction(
     return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
   }
 
-  // `optionalUrl` transforms an empty box to `null`, not `undefined`, so an
-  // all-blank submit would otherwise be sent as a no-op PUT that clears the
-  // existing name. Reject it before it reaches the API.
   if (
     parsed.data.name === undefined &&
     parsed.data.website == null &&
@@ -163,26 +138,16 @@ export async function upsertCompanyAction(
   return ok(ACTION_MESSAGES.upsertCompany.success);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Questions                                                                  */
-/* -------------------------------------------------------------------------- */
-
 const questionIdSchema = z.object({
   questionId: z.string().trim().min(1, "Question id is required"),
 });
 
-/**
- * MCQ option lists and the correct answer are Prisma `Json`, so they arrive as
- * `unknown` and are validated here rather than trusted from the client. The
- * correct answer is stored as the **option text** byte-identical to the option,
- * because the backend auto-grades MCQs with
- * `JSON.stringify(response) === JSON.stringify(correctAnswer)` (§1.1 X1).
- */
 function parseQuestionFields(formData: FormData) {
   const options = toOptionList(toRawJson(formData.get("options"))).map(
     (option) => option.trim(),
   );
   const correctAnswerRaw = toRawJson(formData.get("correctAnswer"));
+  // the MCQ answer is stored as the option text, byte for byte
   const correctAnswer =
     typeof correctAnswerRaw === "string" ? correctAnswerRaw : null;
   const tags = toOptionList(toRawJson(formData.get("tags")))
@@ -192,20 +157,11 @@ function parseQuestionFields(formData: FormData) {
   return { options: options.filter(Boolean), correctAnswer, tags };
 }
 
-/**
- * Reads a form field that carries a JSON-encoded list (options, tags) or a
- * bare string (the correct MCQ answer). Returning `JsonValue` rather than
- * `unknown` keeps the payload typed all the way to `lib/format.ts`.
- *
- * A value that starts with `[` is treated as JSON, because that is exactly what
- * `TagInput` and the option builder submit. Anything else stays a plain string,
- * so an MCQ option whose text legitimately begins with a bracket round-trips
- * unchanged.
- */
 function toRawJson(value: FormDataEntryValue | null): JsonValue | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
   if (!trimmed) return null;
+  // a leading "[" means JSON; anything else stays a plain string
   if (trimmed.startsWith("[")) {
     try {
       return JSON.parse(trimmed) as JsonValue;
@@ -230,10 +186,6 @@ export async function createQuestionAction(
     difficulty: formData.get("difficulty"),
     title: formData.get("title"),
     body: formData.get("body"),
-    // Only an MCQ carries a pick-one option list. A written or coding question
-    // still stores `correctAnswer` — the backend keeps it, and the grading
-    // workspace in Phase 5 shows it to the evaluator as a reference — so it is
-    // deliberately not nulled here.
     options: type === "MCQ" ? fields.options : null,
     correctAnswer: fields.correctAnswer,
     tags: fields.tags,
@@ -289,9 +241,6 @@ export async function updateQuestionAction(
     return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
   }
 
-  // The edit dialog always submits the full record, so one create-schema parse
-  // covers both verbs — a PATCH carrying the whole body is a single concern,
-  // unlike the four overloaded variants `PATCH /assessments/:id` accepts.
   const res = await questionService.update(id.data.questionId, {
     type: parsed.data.type,
     difficulty: parsed.data.difficulty,
@@ -337,61 +286,6 @@ export async function deleteQuestionAction(
   return ok(ACTION_MESSAGES.deleteQuestion.success);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Assessments                                                                */
-/* -------------------------------------------------------------------------- */
-
-export async function createAssessmentAction(
-  _prev: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  await requireRecruiter();
-
-  const parsed = createAssessmentSchema.safeParse({
-    title: formData.get("title"),
-    description: formData.get("description") || null,
-    durationMins: formData.get("durationMins"),
-    passScore:
-      formData.get("passScore") === "" || formData.get("passScore") === null
-        ? null
-        : formData.get("passScore"),
-  });
-
-  if (!parsed.success) {
-    return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
-  }
-
-  const res = await assessmentService.create(parsed.data);
-
-  if (!res.success || !res.data) {
-    return invalid(res.message || ACTION_MESSAGES.createAssessment.failure, {});
-  }
-
-  revalidatePath("/dashboard/recruiter/assessments", "page");
-  revalidatePath("/dashboard/recruiter", "page");
-
-  return ok(
-    ACTION_MESSAGES.createAssessment.success,
-    `/dashboard/recruiter/assessments/${res.data.id}`,
-  );
-}
-
-/**
- * The wizard's single commit (Flow A, step 3). The backend has no
- * "create-with-questions" endpoint, so this is three sequential calls on one
- * freshly created draft:
- *
- *   POST /assessments            -> draft id
- *   PATCH /assessments/:id       -> { questionIds }
- *   PATCH /assessments/:id       -> { status: "PUBLISHED" }
- *
- * They cannot be batched: every step needs the previous id, and the backend
- * refuses to publish a draft with no questions (verified — §0.7).
- *
- * The draft is left in place if a later step fails, so the user can recover on
- * the detail page rather than retyping the wizard. `publish` is optional: a
- * "Save as draft" submit skips step 3 and lands on the detail page.
- */
 const wizardSubmitSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(300),
   description: z.string().trim().max(5000).nullable().optional(),
@@ -460,8 +354,6 @@ export async function wizardCreateAssessmentAction(
     parsed.data.questionIds,
   );
   if (!attached.success) {
-    // The draft exists and is reachable; tell the user where rather than
-    // pretending nothing happened.
     return invalid(
       `${attached.message || ACTION_MESSAGES.updateAssessment.failure} A draft assessment was created — open it to fix the question list.`,
       {},
@@ -495,18 +387,8 @@ export async function wizardCreateAssessmentAction(
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Assessment detail — lifecycle, draft edits, invites, delete                 */
-/* -------------------------------------------------------------------------- */
-
 const idSchema = z.string().trim().min(1, "Assessment id is required");
 
-/**
- * Lists the ids whose rendered output a given assessment can appear in, so one
- * mutation revalidates every page that shows the number it changes. The detail
- * page is dynamic and cannot be targeted by a static path, hence the explicit
- * list rather than `revalidatePath("/dashboard/recruiter/assessments/[id]")`.
- */
 function assessmentSurfaces(id: string): string[] {
   const base = `/dashboard/recruiter/assessments/${id}`;
   return [
@@ -523,33 +405,31 @@ export async function updateAssessmentStatusAction(
 ): Promise<ActionState> {
   await requireRecruiter();
 
-  const parsed = z
-    .object({
-      assessmentId: idSchema,
-      status: z.enum(["PUBLISHED", "CLOSED", "ARCHIVED"]),
-    })
-    .safeParse({
-      assessmentId: formData.get("assessmentId"),
-      status: formData.get("status"),
+  const assessmentId = idSchema.safeParse(formData.get("assessmentId"));
+  if (!assessmentId.success) {
+    return invalid(VALIDATION_MESSAGES.generic, {
+      assessmentId: ["Assessment id is required"],
     });
+  }
 
+  const parsed = assessmentStatusSchema.safeParse({
+    status: formData.get("status"),
+  });
   if (!parsed.success) {
     return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
   }
 
-  const { assessmentId, status } = parsed.data;
-  const res = await assessmentService.setStatus(assessmentId, status);
+  const { status } = parsed.data;
+  const res = await assessmentService.setStatus(assessmentId.data, status);
 
   if (!res.success) {
     return invalid(res.message || ACTION_MESSAGES.updateAssessment.failure, {});
   }
 
-  for (const path of assessmentSurfaces(assessmentId)) {
+  for (const path of assessmentSurfaces(assessmentId.data)) {
     revalidatePath(path, "page");
   }
 
-  // `PATCH` answers with the bare assessment row, so the new state is named here
-  // rather than read back off the response.
   return ok(
     status === "PUBLISHED"
       ? "Published. It can now be invited and run by candidates."
@@ -572,8 +452,6 @@ export async function updateAssessmentDetailsAction(
     });
   }
 
-  // `assessmentDetailsSchema`, not the four-way `updateAssessmentSchema` union:
-  // the union would happily accept a `{ status }` body here.
   const parsed = assessmentDetailsSchema.safeParse({
     title: formData.get("title") ?? undefined,
     description: nullableField(formData, "description"),
@@ -614,10 +492,9 @@ export async function updateAssessmentQuestionsAction(
     });
   }
 
-  const questionIds = parseJsonArray(formData.get("questionIds"));
-  const parsed = z
-    .object({ questionIds: z.array(z.string().trim().min(1)).max(200) })
-    .safeParse({ questionIds });
+  const parsed = assessmentQuestionsSchema.safeParse({
+    questionIds: parseJsonArray(formData.get("questionIds")),
+  });
 
   if (!parsed.success) {
     return invalid(VALIDATION_MESSAGES.generic, fieldErrorsFrom(parsed.error));
@@ -716,10 +593,6 @@ export async function inviteCandidatesAction(
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Grading                                                                     */
-/* -------------------------------------------------------------------------- */
-
 export async function evaluateAttemptAction(
   _prev: ActionState,
   formData: FormData,
@@ -758,9 +631,6 @@ export async function evaluateAttemptAction(
     return invalid(res.message || ACTION_MESSAGES.evaluateAttempt.failure, {});
   }
 
-  // Grading moves the attempt to EVALUATED, which changes the results table and
-  // the release column, so both are revalidated. An attempt carries no
-  // `assessmentId` of its own — the link runs through the invitation.
   for (const path of assessmentSurfaces(res.data.invitation.assessment.id)) {
     revalidatePath(path, "page");
   }
@@ -773,10 +643,6 @@ export async function evaluateAttemptAction(
     }`,
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/* Billing                                                                     */
-/* -------------------------------------------------------------------------- */
 
 export async function initiatePaymentAction(
   _prev: ActionState,
@@ -798,10 +664,13 @@ export async function initiatePaymentAction(
     return invalid(res.message || ACTION_MESSAGES.initiatePayment.failure, {});
   }
 
-  // No revalidation: nothing is stored until Stripe's webhook confirms the
-  // payment. The PENDING row it just created is read on the billing page.
+  const checkoutUrl = safeExternalUrl(res.data.checkoutUrl);
+  if (!checkoutUrl) {
+    return invalid(VALIDATION_MESSAGES.unknown, {});
+  }
+
   return {
     ...ok(ACTION_MESSAGES.initiatePayment.success),
-    externalUrl: res.data.checkoutUrl,
+    externalUrl: checkoutUrl,
   };
 }

@@ -73,13 +73,6 @@ interface Seed {
   type: QuestionType;
 }
 
-/**
- * An editable option row. The stored shape is a bare `string[]`, but the editor
- * needs a stable identity per row: without one, deleting option 2 makes React
- * reuse the DOM node of the row that moved up, and the controlled inputs plus
- * the `A/B/C` letters end up describing different rows. The `id` exists only in
- * the client — the payload is still the plain text list.
- */
 interface OptionRow {
   id: string;
   text: string;
@@ -95,7 +88,6 @@ const toRows = (texts: readonly string[]): OptionRow[] =>
     ? texts.map((text) => newOption(text))
     : [newOption(), newOption()];
 
-/** Flattens any stored `correctAnswer` shape into the text the editor edits. */
 function seedFromQuestion(question?: Question): Seed {
   const options = toOptionList(question?.options);
   const raw: JsonValue | null = question?.correctAnswer ?? null;
@@ -111,28 +103,13 @@ function seedFromQuestion(question?: Question): Seed {
   };
 }
 
-/**
- * One dialog serves create and edit. It is a client component because the MCQ
- * option builder is inherently interactive, but the mutation is a server action
- * that re-parses with `createQuestionSchema` — the same schema this form
- * resolves against, so the client is only a fast-fail.
- *
- * The option list and the answer are mirrored into React Hook Form with
- * `setValue` rather than living only in local state. That is what lets the
- * shared schema's `superRefine` (an MCQ needs at least two options and a marked
- * answer) block the submit before it leaves the browser. The local `options`
- * array remains the single source of truth for rendering, and the payload is
- * assembled from it.
- */
 export function QuestionDialog({ question }: { question?: Question }) {
   const isEdit = Boolean(question);
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<ActionState>(IDLE_ACTION_STATE);
   const [pending, startTransition] = useTransition();
 
-  // Memoised on the question identity so the reset effect below has a stable
-  // dependency. Recomputing the seed inline would give the effect a new object
-  // every render and loop forever.
+  // memoised on the question so the reset effect below has a stable seed
   const seed = useMemo(() => seedFromQuestion(question), [question]);
 
   const [rows, setRows] = useState<OptionRow[]>(() => toRows(seed.options));
@@ -155,7 +132,6 @@ export function QuestionDialog({ question }: { question?: Question }) {
   const type = watch("type");
   const isMcq = type === "MCQ";
 
-  // Reopening must show the record, not the leftovers of the last edit.
   useEffect(() => {
     if (!open) return;
     reset({
@@ -191,8 +167,6 @@ export function QuestionDialog({ question }: { question?: Question }) {
   const changeType = (next: QuestionType) => {
     setValue("type", next, { shouldDirty: true, shouldValidate: true });
     if (next !== "MCQ") {
-      // A non-MCQ has no option list. Clear it rather than leaving an MCQ's
-      // options attached to a written question.
       syncRows([]);
     } else if (rows.length === 0) {
       syncRows([newOption(), newOption()]);
@@ -205,8 +179,7 @@ export function QuestionDialog({ question }: { question?: Question }) {
     data.set("difficulty", values.difficulty);
     data.set("title", values.title);
     data.set("body", values.body);
-    // Only rows with text become options: a blank row is an unfinished edit,
-    // not a choice, and an empty string would be stored as a real option.
+    // only rows with text become options, a blank row is an unfinished edit
     data.set(
       "options",
       JSON.stringify(rows.map((row) => row.text.trim()).filter(Boolean)),
@@ -381,9 +354,6 @@ export function QuestionDialog({ question }: { question?: Question }) {
                             const next = [...rows];
                             next[index] = { ...row, text: event.target.value };
                             syncRows(next);
-                            // Editing a marked option moves the mark with the
-                            // text, so the stored answer stays byte-identical
-                            // to the option it points at.
                             if (wasCorrect) syncAnswer(event.target.value);
                           }}
                           placeholder={`Option ${index + 1}`}

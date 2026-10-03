@@ -7,13 +7,6 @@ import {
 } from "@/lib/constants";
 import type { AssessmentStatus } from "@/lib/types";
 
-/**
- * A read-only rendering of the backend's linear lifecycle. The chain is not
- * decorative: `PATCH /assessments/:id` refuses any status that is not the
- * immediate successor, so showing four freely clickable states would promise
- * the user something the API will not do. The one legal next step is offered
- * by the sibling action bar.
- */
 export function AssessmentLifecycleRail({
   status,
 }: {
@@ -45,10 +38,7 @@ export function AssessmentLifecycleRail({
                   {`0${index + 1}`}
                 </span>
                 {isDone ? (
-                  <CheckIcon
-                    aria-label="Already completed"
-                    className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                  />
+                  <CheckIcon aria-hidden className="size-3.5 text-success" />
                 ) : null}
               </div>
               <AssessmentStatusBadge value={step} />

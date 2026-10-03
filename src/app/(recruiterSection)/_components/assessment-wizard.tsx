@@ -70,12 +70,6 @@ const EMPTY_DRAFT: Draft = {
   title: "",
 };
 
-/**
- * Flow A step 3. The backend has no "create with questions" endpoint, so
- * `wizardCreateAssessmentAction` runs the three sequential calls itself
- * (create draft → attach questions → publish) and returns `redirectTo` for the
- * detail page.
- */
 export function AssessmentWizard({ questions }: { questions: Question[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -90,37 +84,15 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
       : 1;
 
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [hydrated, setHydrated] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(createAssessmentSchema),
     defaultValues: { description: "", durationMins: 60, title: "" },
     mode: "onBlur",
   });
-  const { handleSubmit, register, setError, trigger, formState } = form;
-
-  /**
-   * Only the *step* lives in the URL. The draft itself is persisted to
-   * `sessionStorage` so an accidental refresh mid-way does not discard a typed
-   * description or a hand-picked question list. It is deliberately not in the
-   * URL: a 5000-character description has no business in a query string, and a
-   * link to someone else's half-built assessment would be meaningless.
-   */
-  useEffect(() => {
-    const raw = window.sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    try {
-      const parsed: unknown = JSON.parse(raw);
-      if (parsed && typeof parsed === "object") {
-        setDraft({ ...EMPTY_DRAFT, ...(parsed as Partial<Draft>) });
-      }
-    } catch {
-      window.sessionStorage.removeItem(STORAGE_KEY);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-  }, [draft]);
+  const { handleSubmit, register, reset, setError, trigger, formState } = form;
+  const title = form.watch("title");
 
   const goToStep = useCallback(
     (next: number) => {
@@ -131,6 +103,42 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
     },
     [router],
   );
+
+  // the deepest step the current draft can actually justify
+  const reachableStep =
+    title.trim() === "" ? 1 : draft.questionIds.length === 0 ? 2 : TOTAL_STEPS;
+
+  useEffect(() => {
+    let restored = EMPTY_DRAFT;
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      try {
+        const parsed: unknown = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          restored = { ...EMPTY_DRAFT, ...(parsed as Partial<Draft>) };
+        }
+      } catch {
+        window.sessionStorage.removeItem(STORAGE_KEY);
+      }
+    }
+    setDraft(restored);
+    reset({
+      title: restored.title,
+      description: restored.description,
+      durationMins: restored.durationMins,
+    });
+    setHydrated(true);
+  }, [reset]);
+
+  // a hand-typed ?step=3 must not skip step 1 and 2
+  useEffect(() => {
+    if (!hydrated) return;
+    if (step > reachableStep) goToStep(reachableStep);
+  }, [hydrated, step, reachableStep, goToStep]);
+
+  useEffect(() => {
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+  }, [draft]);
 
   const byId = useMemo(
     () => new Map(questions.map((question) => [question.id, question])),
@@ -223,7 +231,6 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
     });
   });
 
-  /** Step 1 cannot be left until the details parse. */
   const leaveStepOne = async () => {
     const ok = await trigger();
     if (!ok) {
@@ -305,9 +312,10 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
               <Input
                 id="wizard-title"
                 maxLength={300}
-                placeholder="Senior backend engineer — screening"
+                placeholder="Senior backend engineer, screening"
                 type="text"
                 {...register("title")}
+                onChange={(event) => patch({ title: event.target.value })}
               />
               <FieldDescription>
                 Candidates see this on their invitation and on the attempt

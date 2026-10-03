@@ -33,11 +33,6 @@ import { VALIDATION_MESSAGES } from "@/lib/messages";
 import type { Question } from "@/lib/types";
 import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
 
-/**
- * Recruiters are the only role that ever sees `correctAnswer`
- * (backend finding #10), so the preview is recruiter-scoped by construction:
- * this component is only ever rendered from `/dashboard/recruiter/questions`.
- */
 function QuestionPreview({ question }: { question: Question }) {
   const options = toOptionList(question.options);
   const correct = correctAnswerLabel(question.correctAnswer, options);
@@ -62,7 +57,7 @@ function QuestionPreview({ question }: { question: Question }) {
               <li
                 className={
                   isCorrect
-                    ? "flex items-start gap-2 border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1.5 text-sm"
+                    ? "flex items-start gap-2 border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
                     : "flex items-start gap-2 border border-border px-2.5 py-1.5 text-sm"
                 }
                 key={`${question.id}-option-${index}`}
@@ -72,7 +67,7 @@ function QuestionPreview({ question }: { question: Question }) {
                 </span>
                 <span className="min-w-0 flex-1">{option}</span>
                 {isCorrect ? (
-                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                  <span className="font-mono text-[11px] text-success">
                     correct
                   </span>
                 ) : null}
@@ -123,12 +118,6 @@ function DeleteSubmit() {
   );
 }
 
-/**
- * Soft delete, confirmed in an `AlertDialog`. The backend implements this as
- * `PATCH /questions/:id` with `{ deletedAt: "now" }`, so a removed question
- * disappears from the bank but any assessment already referencing it keeps
- * working — the copy says so rather than implying a hard delete.
- */
 function QuestionDelete({ question }: { question: Question }) {
   const [state, formAction] = useActionState<ActionState, FormData>(
     deleteQuestionAction,

@@ -2,7 +2,6 @@
 
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import {
   ClearFiltersButton,
   FilterSelect,
@@ -16,14 +15,10 @@ const STATUS_OPTIONS = Object.entries(ASSESSMENT_STATUS_LABELS) as readonly [
   string,
 ][];
 
-/**
- * Sorting lives in the table header as a link (see `SortableHeader`), so this
- * bar owns only the filters. URL state per final.md §7:
- * `status`, `sortBy`, `sortOrder`, `page`, `limit`.
- */
 export function AssessmentFilters() {
   const { setParam, clearFilters, params, pending } = useUrlState();
-  const [limit, setLimit] = useState(params.get("limit") ?? "10");
+  // derived, not seeded, so a <Link> page-size change stays in sync
+  const limit = params.get("limit") ?? "10";
   const status = params.get("status") ?? "";
   const sortBy = params.get("sortBy") ?? "";
   const sortOrder = params.get("sortOrder") ?? "";
@@ -77,10 +72,7 @@ export function AssessmentFilters() {
 
       <FilterSelect
         label="Per page"
-        onChange={(value) => {
-          setLimit(value);
-          setParam("limit", value === "10" ? null : value);
-        }}
+        onChange={(value) => setParam("limit", value === "10" ? null : value)}
         options={[
           { value: "10", label: "10" },
           { value: "25", label: "25" },
@@ -100,10 +92,6 @@ export function AssessmentFilters() {
   );
 }
 
-/**
- * A sortable table header. Rendered as a link so the ordering lives in the URL
- * and works with JavaScript disabled, matching the `PaginationBar` pattern.
- */
 export function SortableHeader({
   column,
   label,
