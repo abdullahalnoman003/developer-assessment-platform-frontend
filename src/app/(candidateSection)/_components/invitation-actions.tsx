@@ -33,11 +33,6 @@ function Submit({
   );
 }
 
-/**
- * The non-destructive half of the invitation controls. Accepting is a single
- * real `<form action={…}>`, so it still works before hydration and needs no
- * dialog — only declining is worth a confirmation.
- */
 function InvitationFormButton({
   action,
   fields,
@@ -82,22 +77,6 @@ function InvitationFormButton({
   );
 }
 
-/**
- * The candidate's per-invitation controls.
- *
- * Which controls exist is derived from the API's own state machine rather than
- * from a client-side guess:
- *
- * - `PENDING` → accept / decline. The backend refuses both once the invitation
- *   has left `PENDING` (`400 "This invitation is no longer pending"`), so the
- *   buttons disappear rather than erroring.
- * - `ACCEPTED` with no attempt → start. `POST /invitations/:id/start` is the
- *   only way an attempt is created.
- * - `ACCEPTED` with an `IN_PROGRESS` attempt → resume. Never a second start:
- *   that answers `400 "An attempt already exists for this invitation"` (§1.1 H6).
- * - any attempt that reached `SUBMITTED`, `EVALUATED` or `EXPIRED` → its result
- *   page, which owns both the released and the locked state.
- */
 export function InvitationActions({
   invitationId,
   status,
@@ -115,7 +94,6 @@ export function InvitationActions({
     | "EVALUATED"
     | "EXPIRED"
     | null;
-  /** Server-computed: `expiresAt` is already in the past. */
   expired: boolean;
 }) {
   if (status === "PENDING") {
@@ -176,9 +154,6 @@ export function InvitationActions({
     );
   }
 
-  // Accepted, nothing started. `expired` is derived server-side from the same
-  // `expiresAt` the API uses to answer `400 "This invitation has expired"`, so
-  // the button is hidden exactly when the call would fail.
   if (expired) {
     return (
       <Button disabled size="sm" variant="outline">

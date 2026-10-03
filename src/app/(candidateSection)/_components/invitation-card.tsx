@@ -8,12 +8,6 @@ import {
 import { formatDateTime, isPast } from "@/lib/format";
 import type { InvitationWithAssessment } from "@/lib/types";
 
-/**
- * One invitation, rendered on the server. It shows only what
- * `GET /invitations/me` returns for the assessment — `title`, `description`,
- * `durationMins` and `status` — because that is the whole candidate-visible
- * shape: there is no candidate-scoped assessment endpoint, and deliberately so.
- */
 export function InvitationCard({
   invitation,
 }: {
@@ -63,7 +57,7 @@ export function InvitationCard({
       </dl>
 
       {closed ? (
-        <p className="border border-amber-500/40 bg-amber-500/5 px-2.5 py-2 text-xs/relaxed text-muted-foreground">
+        <p className="border border-warning/40 bg-warning/5 px-2.5 py-2 text-xs/relaxed text-muted-foreground">
           The recruiter has moved this assessment to{" "}
           <span className="font-medium text-foreground">
             {assessment.status.toLowerCase()}

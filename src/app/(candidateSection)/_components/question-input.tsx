@@ -11,21 +11,11 @@ const CHAR_LIMIT = 2000;
 
 interface QuestionInputProps {
   question: AssessmentQuestion;
-  /** Current answer value; `null` = unanswered. */
   response: JsonValue | null;
-  /** New value for this question's response. */
   onChange: (response: JsonValue | null) => void;
-  /** Focuses the first input when the candidate navigates to this question. */
   autoFocus?: boolean;
 }
 
-/**
- * Renders the correct input shape for MCQ, WRITTEN and CODING.
- *
- * The response type is always the option **text** for MCQs — never an index.
- * The backend auto-grades with `JSON.stringify(response) === JSON.stringify(correctAnswer)`
- * (§1.1 X1), so storing `"Paris"` instead of `0` is what makes a selection score.
- */
 export function QuestionInput({
   question,
   response,
@@ -40,6 +30,7 @@ export function QuestionInput({
         <McuInput
           options={toOptionList(q.options)}
           onChange={onChange}
+          questionId={question.questionId}
           response={response}
         />
       );
@@ -50,6 +41,7 @@ export function QuestionInput({
           body={q.body}
           maxLength={CHAR_LIMIT}
           onChange={(value) => onChange(value)}
+          questionId={question.questionId}
           response={response}
         />
       );
@@ -59,6 +51,7 @@ export function QuestionInput({
           autoFocus={autoFocus}
           body={q.body}
           onChange={(value) => onChange(value)}
+          questionId={question.questionId}
           response={response}
         />
       );
@@ -71,30 +64,31 @@ function McuInput({
   options,
   response,
   onChange,
+  questionId,
 }: {
   options: string[];
   response: JsonValue | null;
   onChange: (response: JsonValue | null) => void;
+  questionId: string;
 }) {
   const current = typeof response === "string" ? response : "";
   return (
+    // the stored response is the option text, never an index
     <RadioGroup value={current} onValueChange={(value) => onChange(value)}>
       {options.map((option, index) => {
         const label = String.fromCharCode(65 + index);
+        // id from position: option text can repeat, contain spaces, or collide
+        const inputId = `mcq-${questionId}-${index}`;
         return (
           <label
-            key={`${label}-${option}`}
-            htmlFor={option}
+            key={inputId}
+            htmlFor={inputId}
             className={cn(
               "flex cursor-pointer items-start gap-3 border border-border p-3 text-sm",
               current === option && "border-primary bg-primary/5",
             )}
           >
-            <RadioGroupItem
-              id={option}
-              aria-label={`Option ${label}`}
-              value={option}
-            />
+            <RadioGroupItem id={inputId} value={option} />
             <span
               aria-hidden
               className="font-mono text-xs text-muted-foreground"
@@ -115,12 +109,14 @@ function WrittenInput({
   response,
   onChange,
   autoFocus,
+  questionId,
 }: {
   body: string;
   maxLength: number;
   response: JsonValue | null;
   onChange: (value: string) => void;
   autoFocus?: boolean;
+  questionId: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const text = typeof response === "string" ? response : "";
@@ -149,7 +145,9 @@ function WrittenInput({
       <Textarea
         ref={textareaRef}
         autoFocus={autoFocus}
+        aria-label="Your written answer"
         className="min-h-[8rem] resize-none font-mono text-sm"
+        id={`written-${questionId}`}
         maxLength={maxLength}
         placeholder="Start typing your answer…"
         rows={6}
@@ -175,11 +173,13 @@ function CodingInput({
   response,
   onChange,
   autoFocus,
+  questionId,
 }: {
   body: string;
   response: JsonValue | null;
   onChange: (value: string) => void;
   autoFocus?: boolean;
+  questionId: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const text = typeof response === "string" ? response : "";
@@ -217,7 +217,9 @@ function CodingInput({
         <Textarea
           ref={textareaRef}
           autoFocus={autoFocus}
+          aria-label="Your code answer"
           className="font-mono text-xs"
+          id={`coding-${questionId}`}
           placeholder="Write your code here. Tab inserts a tab character."
           rows={Math.max(10, lineCount)}
           value={text}

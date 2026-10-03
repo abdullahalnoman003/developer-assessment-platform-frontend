@@ -7,6 +7,7 @@ import { ACTION_MESSAGES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { safeRedirect } from "@/lib/redirect";
 import type { ActionState } from "@/lib/types";
 import {
+  googleLoginSchema,
   type LoginInput,
   loginSchema,
   type RegisterInput,
@@ -178,11 +179,12 @@ export async function googleLoginAction(
   idToken: string,
   role?: "CANDIDATE" | "RECRUITER",
 ): Promise<ActionState> {
-  if (!idToken) {
+  const parsed = googleLoginSchema.safeParse({ idToken, role });
+  if (!parsed.success) {
     return failed(ACTION_MESSAGES.google.failure);
   }
 
-  const res = await authService.google(idToken, role);
+  const res = await authService.google(parsed.data.idToken, parsed.data.role);
   if (!res.success || !res.data) {
     return failed(res.message || ACTION_MESSAGES.google.failure);
   }

@@ -110,6 +110,12 @@
   --color-card: var(--card);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -135,6 +141,13 @@
   --accent: oklch(0.95 0.02 272);
   --accent-foreground: oklch(0.24 0.04 276);
   --destructive: oklch(0.577 0.245 27.325);
+  /* semantic state colours, tuned to clear WCAG AA on their own backgrounds */
+  --success: oklch(0.48 0.11 165);
+  --success-foreground: oklch(0.99 0.01 165);
+  --warning: oklch(0.47 0.1 70);
+  --warning-foreground: oklch(0.99 0.01 70);
+  --info: oklch(0.45 0.09 250);
+  --info-foreground: oklch(0.99 0.01 250);
   --border: oklch(0.915 0.008 272);
   --input: oklch(0.915 0.008 272);
   --ring: oklch(0.58 0.17 276);
@@ -177,6 +190,12 @@
   --accent: oklch(0.28 0.03 272);
   --accent-foreground: oklch(0.97 0.005 272);
   --destructive: oklch(0.704 0.191 22.216);
+  --success: oklch(0.78 0.14 165);
+  --success-foreground: oklch(0.18 0.03 165);
+  --warning: oklch(0.8 0.13 75);
+  --warning-foreground: oklch(0.19 0.03 75);
+  --info: oklch(0.76 0.11 250);
+  --info-foreground: oklch(0.18 0.03 250);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.68 0.16 278);
@@ -266,4 +285,30 @@
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent)
     transparent;
+}
+
+/* Collapse decorative motion for users who asked the OS to stop it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: user motion preference must override utility classes */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: user motion preference must override utility classes */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: user motion preference must override utility classes */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: user motion preference must override utility classes */
+    scroll-behavior: auto !important;
+  }
+
+  .animate-marquee,
+  .animate-float,
+  .animate-float-slow,
+  .animate-shimmer,
+  .animate-spin-slow,
+  .animate-pulse-soft {
+    /* biome-ignore lint/complexity/noImportantStyles: motion preference must win over utilities */
+    animation: none !important;
+  }
 }

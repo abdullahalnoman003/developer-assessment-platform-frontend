@@ -7,12 +7,6 @@ import {
 import { correctAnswerLabel, toOptionList } from "@/lib/format";
 import type { Answer, AssessmentQuestion, JsonValue } from "@/lib/types";
 
-/**
- * The stored `response` is a `Prisma.JsonValue`, and for a multiple-choice
- * question it is the **option text**, not an index (§1.1 X1). Everything here
- * resolves display text only — nothing on this path is ever written back, so the
- * byte-identical save rule cannot be broken by reading.
- */
 function responseText(value: JsonValue | null | undefined): string {
   if (value === null || value === undefined) return "";
   if (typeof value === "string") return value;
@@ -48,7 +42,7 @@ function QuestionOutcomeIcon({ answer }: { answer: Answer | undefined }) {
     return (
       <CheckCircle2Icon
         aria-hidden
-        className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+        className="mt-0.5 size-4 shrink-0 text-success"
       />
     );
   }
@@ -63,23 +57,11 @@ function QuestionOutcomeIcon({ answer }: { answer: Answer | undefined }) {
   return (
     <CircleMinusIcon
       aria-hidden
-      className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400"
+      className="mt-0.5 size-4 shrink-0 text-warning"
     />
   );
 }
 
-/**
- * The per-question review shown once an evaluator has released a result.
- *
- * Two rules are load-bearing:
- *
- * 1. **Every question in the assessment appears, answered or not.** An omitted
- *    question reads as "nothing to report", which hides the one thing a
- *    candidate most wants to know after a low score.
- * 2. **The answer key is only rendered when `released` is true.** The API
- *    returns `correctAnswer` on `GET /attempts/:id` for candidates too, so the
- *    locked branch deliberately does not read it at all (backend finding #10).
- */
 export function ResultReview({
   questions,
   answers,
@@ -99,6 +81,7 @@ export function ResultReview({
         const answer = byQuestion.get(entry.question.id);
         const options = toOptionList(entry.question.options);
         const yourAnswer = responseText(answer?.response);
+        // the answer key is read only once the evaluator has released it
         const correct =
           released && entry.question.correctAnswer !== null
             ? correctAnswerLabel(entry.question.correctAnswer, options)
@@ -137,7 +120,7 @@ export function ResultReview({
                       <li
                         className={
                           isKey
-                            ? "flex items-start gap-2 border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1.5 text-sm"
+                            ? "flex items-start gap-2 border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
                             : chosen
                               ? "border border-primary/50 bg-primary/5 px-2.5 py-1.5 text-sm"
                               : "border border-border px-2.5 py-1.5 text-sm"
@@ -147,9 +130,11 @@ export function ResultReview({
                         <span className="font-mono text-xs text-muted-foreground">
                           {String.fromCharCode(65 + optionIndex)}
                         </span>
-                        <span className="min-w-0 flex-1">{option}</span>
+                        <span className="min-w-0 flex-1 break-words">
+                          {option}
+                        </span>
                         {isKey ? (
-                          <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                          <span className="font-mono text-[11px] text-success">
                             correct answer
                           </span>
                         ) : chosen ? (

@@ -44,23 +44,12 @@ function fieldErrorsFrom(error: z.ZodError): Record<string, string[]> {
   );
 }
 
-/**
- * Every mutation re-checks the role server-side. `requireRole` is the same
- * helper the candidate layout uses, so an action gate can never drift from the
- * page gate (AGENTS.md rule 7).
- */
 function requireCandidate() {
   return requireRole("CANDIDATE");
 }
 
 const idSchema = z.string().trim().min(1, "Invitation id is required");
 
-/**
- * The three candidate surfaces an invitation or attempt can appear on. Written
- * out rather than using `revalidatePath("/dashboard/candidate", "layout")`
- * because the attempt pages are dynamic segments: a layout revalidation would
- * also throw away the candidate section's shell on every accept/decline.
- */
 function candidateSurfaces(): string[] {
   return [
     "/dashboard/candidate",
@@ -69,15 +58,6 @@ function candidateSurfaces(): string[] {
   ];
 }
 
-/* -------------------------------------------------------------------------- */
-/* Invitations                                                                 */
-/* -------------------------------------------------------------------------- */
-
-/**
- * `PATCH /invitations/:id` accepts exactly `ACCEPTED | DECLINED` (§1.1 H4) and
- * only while the invitation is still `PENDING` — anything else is the backend's
- * `400 "This invitation is no longer pending"`, which is surfaced verbatim.
- */
 export async function respondInvitationAction(
   _prev: ActionState,
   formData: FormData,
@@ -121,19 +101,6 @@ export async function respondInvitationAction(
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Attempts                                                                    */
-/* -------------------------------------------------------------------------- */
-
-/**
- * `POST /invitations/:id/start` is the only way to create an attempt. It is
- * **not** idempotent: calling it twice for the same invitation answers
- * `400 "An attempt already exists for this invitation"` (§1.1 H6), which is why
- * resuming is a link to `GET /attempts/:id` and never a second start.
- *
- * On success the browser is sent to the attempt runner, which re-reads the
- * attempt from the API — so the page can never show a stale attempt id.
- */
 export async function startAttemptAction(
   _prev: ActionState,
   formData: FormData,
@@ -163,20 +130,6 @@ export async function startAttemptAction(
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Autosave / submit                                                          */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Flush the candidate's local responses to the server. The payload is the full
- * set of answers for this attempt — `{ questionId, response }[]` — so the server
- * state always mirrors what the candidate last typed. MCQ responses are the
- * option **text**, byte-identical to `correctAnswer` (§1.1 X1); an index would
- * score 0.
- *
- * The `saveAnswersSchema` requires at least one answer, so the hook only calls
- * this when the local map is non-empty.
- */
 export async function saveAnswersAction(
   _prev: ActionState,
   formData: FormData,
@@ -213,15 +166,6 @@ export async function saveAnswersAction(
   return ok(ACTION_MESSAGES.saveAnswers.success);
 }
 
-/**
- * Locks the attempt by setting `status: "SUBMITTED"`. The backend refuses:
- *
- * - a second submission with `400 "Cannot update an attempt with status SUBMITTED"`;
- * - a submission past the deadline with `400 "Attempt has expired before submission"`.
- *
- * On the expiry path the candidate is sent to the result page, which owns the
- * "locked" view — the attempt was never submitted, so nothing is scored yet.
- */
 export async function submitAttemptAction(
   _prev: ActionState,
   formData: FormData,

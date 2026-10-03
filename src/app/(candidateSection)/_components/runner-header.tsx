@@ -8,17 +8,14 @@ interface RunnerHeaderProps {
   questionIndex: number;
   totalQuestions: number;
   countdown: CountdownState;
-  /** Whether an autosave is in flight. */
   saving: boolean;
-  /** ISO timestamp of the last successful save. */
   lastSaved: Date | null;
-  /** Whether there are unsaved changes. */
   dirty: boolean;
 }
 
 const WARNING_CLASS: Record<CountdownState["warningLevel"], string> = {
   normal: "text-muted-foreground",
-  warning: "text-amber-500",
+  warning: "text-warning",
   critical: "text-destructive",
 };
 
@@ -29,6 +26,35 @@ function timeAgo(date: Date): string {
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
   return `${hours}h ago`;
+}
+
+function spokenRemaining(countdown: CountdownState): string {
+  if (countdown.expired) return "Time expired";
+  const match = /^(\d+):(\d+):(\d+)$/.exec(countdown.label);
+  if (!match) return countdown.label;
+  const [, hours, minutes] = match;
+  const total = Number(hours) * 60 + Number(minutes);
+  if (total <= 0) return "Less than a minute remaining";
+  const hoursLeft = Math.floor(total / 60);
+  const minutesLeft = total % 60;
+  const parts = [
+    hoursLeft > 0 ? `${hoursLeft} hour${hoursLeft === 1 ? "" : "s"}` : "",
+    minutesLeft > 0
+      ? `${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}`
+      : "",
+  ].filter(Boolean);
+  return `${parts.join(" ")} remaining`;
+}
+
+function spokenSaveState(
+  saving: boolean,
+  dirty: boolean,
+  lastSaved: Date | null,
+): string {
+  if (saving) return "Saving your answers";
+  if (dirty) return "Unsaved changes";
+  if (lastSaved) return "All changes saved";
+  return "No changes to save yet";
 }
 
 export function RunnerHeader({
@@ -49,9 +75,9 @@ export function RunnerHeader({
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
       <div className="flex items-center gap-4 overflow-hidden">
-        <h1 className="font-heading text-sm font-semibold tracking-tight truncate">
+        <p className="font-heading text-sm font-semibold tracking-tight truncate">
           {title}
-        </h1>
+        </p>
         <span className="font-mono text-xs text-muted-foreground">
           Question <span className="tabular-nums">{questionIndex + 1}</span> of{" "}
           <span className="tabular-nums">{totalQuestions}</span>
@@ -59,12 +85,9 @@ export function RunnerHeader({
       </div>
 
       <div className="flex items-center gap-4">
-        <output
-          aria-live="polite"
-          aria-label={countdown.expired ? "Time expired" : "Time remaining"}
-          className="flex items-center gap-2"
-        >
+        <div className="flex items-center gap-2">
           <span
+            aria-hidden
             className={cn(
               "font-mono text-sm tabular-nums",
               countdown.expired
@@ -83,10 +106,12 @@ export function RunnerHeader({
               />
             </div>
           )}
-        </output>
+          <span aria-live="polite" className="sr-only">
+            {spokenRemaining(countdown)}
+          </span>
+        </div>
 
-        <output
-          aria-label={timeLabel}
+        <div
           className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground"
           title={
             lastSaved
@@ -98,12 +123,15 @@ export function RunnerHeader({
             aria-hidden
             className={cn(
               "size-2 rounded-full",
-              dirty ? "bg-amber-500" : "bg-emerald-500",
-              saving && "animate-pulse",
+              dirty ? "bg-warning" : "bg-success",
+              saving && "animate-pulse motion-reduce:animate-none",
             )}
           />
-          {timeLabel}
-        </output>
+          <span aria-hidden>{timeLabel}</span>
+          <span aria-live="polite" className="sr-only">
+            {spokenSaveState(saving, dirty, lastSaved)}
+          </span>
+        </div>
       </div>
     </header>
   );

@@ -20,6 +20,7 @@ import { formatCurrency, formatDateTime, formatNumber } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import type { PaymentDetail } from "@/lib/types";
+import { recordIdSchema } from "@/lib/validations";
 import { paymentService } from "@/service/payments";
 
 export const metadata: Metadata = dashboardMetadata("Payment lookup");
@@ -82,12 +83,19 @@ export default async function AdminPaymentLookupPage({
   searchParams: SearchParams;
 }) {
   const raw = await searchParams;
-  const id = (first(raw.id) ?? "").trim();
+  const submitted = (first(raw.id) ?? "").trim();
+  const parsedId = recordIdSchema.safeParse({ id: submitted });
+  // an absent param is fine, anything present must be a real identifier
+  const id = submitted !== "" && parsedId.success ? parsedId.data.id : "";
+  const idError =
+    submitted !== "" && !parsedId.success
+      ? (parsedId.error.issues[0]?.message ?? VALIDATION_MESSAGES.unknown)
+      : null;
 
   let payment: PaymentDetail | null = null;
-  let error: string | null = null;
+  let error: string | null = idError;
 
-  if (id) {
+  if (id && !idError) {
     const res = await paymentService.detail(id);
     if (res.success && res.data) {
       payment = res.data;
@@ -110,7 +118,7 @@ export default async function AdminPaymentLookupPage({
         description="Paste a full payment identifier. The request is scoped to your admin session."
         title="Find a payment"
       >
-        <PaymentLookupForm defaultValue={id} error={error} />
+        <PaymentLookupForm defaultValue={submitted} error={error} />
       </DashboardPanel>
 
       {payment ? (
@@ -118,12 +126,20 @@ export default async function AdminPaymentLookupPage({
       ) : (
         <EmptyState
           body={
-            id
-              ? "Nothing was returned for that identifier."
-              : "Enter an identifier above to load a payment. Recruiter billing history lives on the recruiter billing page."
+            idError
+              ? "Nothing was looked up, because that is not a valid identifier."
+              : id
+                ? "Nothing was returned for that identifier."
+                : "Enter an identifier above to load a payment. Recruiter billing history lives on the recruiter billing page."
           }
-          Icon={id ? CreditCardIcon : ReceiptIcon}
-          title={id ? "Payment not found" : "No payment selected"}
+          Icon={submitted ? CreditCardIcon : ReceiptIcon}
+          title={
+            idError
+              ? "Check the identifier"
+              : id
+                ? "Payment not found"
+                : "No payment selected"
+          }
           action={
             <Link
               className="text-xs underline underline-offset-4"

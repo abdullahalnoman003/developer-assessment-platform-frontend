@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { RegisterForm } from "@/app/(authentication)/_components/register-form";
 import { ROLE_HOME } from "@/lib/constants";
 import { safeRedirect } from "@/lib/redirect";
+import { pageMetadata } from "@/lib/seo";
 import { authService } from "@/service/auth";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Create account",
   description: "Create a CodeArena account as a candidate or recruiter.",
-};
+  path: "/register",
+  noIndex: true,
+});
 
 export default async function RegisterPage({
   searchParams,

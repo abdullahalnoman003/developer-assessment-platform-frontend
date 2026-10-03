@@ -22,17 +22,9 @@ interface AttemptSubmitDialogProps {
   attemptId: string;
   questions: readonly AssessmentQuestion[];
   responses: Record<string, JsonValue>;
-  /** The candidate's current response text for the dialog's trigger label. */
   trigger: ReactElement;
 }
 
-/**
- * Wraps the `PATCH { status: "SUBMITTED" }` call in a confirmation dialog that
- * lists every unanswered question. The dialog stays open on failure (e.g. a
- * 400 "already submitted" from another tab) and the error toast is surfaced by
- * `useActionToast`. On success the dialog closes and the hook redirects to the
- * result page.
- */
 export function AttemptSubmitDialog({
   attemptId,
   questions,

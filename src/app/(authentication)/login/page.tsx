@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/app/(authentication)/_components/login-form";
 import { ROLE_HOME } from "@/lib/constants";
 import { safeRedirect } from "@/lib/redirect";
+import { pageMetadata } from "@/lib/seo";
 import { authService } from "@/service/auth";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Sign in",
   description: "Sign in to your CodeArena account.",
-};
+  path: "/login",
+  noIndex: true,
+});
 
 export default async function LoginPage({
   searchParams,

@@ -13,15 +13,6 @@ const STATUS_OPTIONS = Object.entries(INVITATION_STATUS_LABELS) as readonly [
   string,
 ][];
 
-/**
- * The candidate's only filterable list state, per final.md §7: `status` and
- * `page`. `useUrlState` already resets `page` to 1 whenever `status` changes,
- * so the bar never has to do it itself.
- *
- * The select reads its value from the URL on every render rather than from a
- * local `useState`, which is the drift §0.7 D warned about for the admin page
- * size — the server is always the source of truth.
- */
 export function InvitationFilters() {
   const { setParam, clearFilters, params, pending } = useUrlState();
   const status = params.get("status") ?? "";

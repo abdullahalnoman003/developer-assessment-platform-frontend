@@ -9,7 +9,6 @@ interface QuestionNavigatorProps {
   responses: Record<string, JsonValue>;
   currentQuestionId: string;
   onNavigate: (index: number) => void;
-  /** Client-only flagged question ids (not persisted to the API). */
   flagged: Set<string>;
   onToggleFlag: (questionId: string) => void;
 }
@@ -18,26 +17,27 @@ const TONE_CLASS: Record<
   "success" | "warning" | "neutral" | "current",
   string
 > = {
-  success:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  warning:
-    "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  success: "border-success/40 bg-success/10 text-success",
+  warning: "border-warning/40 bg-warning/10 text-warning",
   neutral: "border-border bg-transparent text-muted-foreground",
   current:
     "border-primary bg-primary text-primary-foreground ring-1 ring-primary/30",
 };
 
-/**
- * The question navigator — a vertical strip of dots, one per question, coloured:
- *
- * - **green** when answered (has a non-blank response);
- * - **amber** when flagged for review (client-only, clears on reload);
- * - **gray** when unanswered and unflagged.
- *
- * Clicking a dot jumps to that question. Right-click (or context-menu on mobile)
- * toggles a flag — a candidate-side reminder with no server half, so it is never
- * confused with a saved answer state.
- */
+function describe(
+  index: number,
+  isActive: boolean,
+  isAnswered: boolean,
+  isFlagged: boolean,
+): string {
+  const state = isFlagged
+    ? "flagged"
+    : isAnswered
+      ? "answered"
+      : "not answered";
+  return `Question ${index + 1}, ${state}${isActive ? ", current question" : ""}`;
+}
+
 export function QuestionNavigator({
   questions,
   responses,
@@ -73,9 +73,10 @@ export function QuestionNavigator({
           return (
             <li key={entry.questionId}>
               <button
-                aria-label={`Question ${index + 1}`}
+                aria-current={isActive ? "true" : undefined}
+                aria-label={describe(index, isActive, isAnswered, isFlagged)}
                 className={cn(
-                  "relative flex size-7 items-center justify-center rounded-none border text-xs font-medium outline-none transition-all",
+                  "relative flex size-7 items-center justify-center rounded-none border text-xs font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring",
                   TONE_CLASS[tone],
                 )}
                 onClick={(e) => {
@@ -86,13 +87,20 @@ export function QuestionNavigator({
                   e.preventDefault();
                   onToggleFlag(entry.questionId);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "f" || e.key === "F") {
+                    e.preventDefault();
+                    onToggleFlag(entry.questionId);
+                  }
+                }}
+                title={`Question ${index + 1}${isFlagged ? " (flagged — press f to unflag)" : " (press f to flag)"}`}
                 type="button"
               >
                 {index + 1}
                 {isFlagged ? (
                   <DotIcon
                     aria-hidden
-                    className="absolute -bottom-0.5 right-0.5 size-2.5 text-amber-500"
+                    className="absolute -bottom-0.5 right-0.5 size-2.5 text-warning"
                   />
                 ) : null}
               </button>

@@ -13,7 +13,7 @@ import {
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { useAuthComplete } from "@/components/auth/use-auth-complete";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
@@ -130,7 +130,9 @@ export function LoginForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading text-xl">Sign in</CardTitle>
+        <h1 className="font-heading text-xl font-semibold tracking-tight">
+          Sign in
+        </h1>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
@@ -179,10 +181,10 @@ export function LoginForm({
                 />
                 <Button
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
                   className="absolute inset-y-0 right-0 px-3"
                   onClick={() => setShowPassword((value) => !value)}
                   size="icon"
-                  tabIndex={-1}
                   type="button"
                   variant="ghost"
                 >

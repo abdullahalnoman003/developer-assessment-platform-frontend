@@ -10,6 +10,9 @@ const ROLE_GATES: { prefix: string; role: Role }[] = [
 
 const AUTH_ROUTES = ["/login", "/register"] as const;
 
+// signed in, but not owned by one role
+const SHARED_AUTH_ROUTES = ["/profile"] as const;
+
 const ACCESS_COOKIE = "accessToken";
 
 interface TokenPayload {
@@ -68,6 +71,16 @@ export function proxy(request: NextRequest): NextResponse {
     return NextResponse.next();
   }
 
+  const isShared = SHARED_AUTH_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+  if (isShared) {
+    if (!role) {
+      return redirectToLogin(request);
+    }
+    return NextResponse.next();
+  }
+
   if (role) {
     return NextResponse.redirect(new URL(ROLE_HOME[role], request.url));
   }
@@ -78,6 +91,7 @@ export function proxy(request: NextRequest): NextResponse {
 function redirectToLogin(request: NextRequest): NextResponse {
   const url = new URL("/login", request.url);
   const target = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  // reject protocol-relative targets so redirectTo cannot leave the site
   if (target.startsWith("/") && !target.startsWith("//")) {
     url.searchParams.set("redirectTo", target);
   }

@@ -9,7 +9,7 @@ import { registerAction } from "@/app/(authentication)/_actions/auth";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { useAuthComplete } from "@/components/auth/use-auth-complete";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -114,7 +114,9 @@ export function RegisterForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading text-xl">Create account</CardTitle>
+        <h1 className="font-heading text-xl font-semibold tracking-tight">
+          Create account
+        </h1>
         <p className="text-sm text-muted-foreground">
           Pick a role now. You can add a company later as a recruiter.
         </p>
