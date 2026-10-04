@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { ErrorCard } from "@/components/shared/error-card";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { APP_NAME } from "@/lib/constants";
 
 export default function NotFound() {
@@ -30,16 +29,13 @@ export default function NotFound() {
           description={`${APP_NAME} has a public marketing site, plus a dashboard for each role once you sign in.`}
           action={
             <>
-              <Button render={<Link href="/">Back to home</Link>} />
-              <Button
-                variant="outline"
-                render={<Link href="/dashboard/candidate" />}
-              >
+              <LinkButton href="/">Back to home</LinkButton>
+              <LinkButton href="/dashboard/candidate" variant="outline">
                 Candidate dashboard
-              </Button>
-              <Button variant="outline" render={<Link href="/login" />}>
+              </LinkButton>
+              <LinkButton href="/login" variant="outline">
                 Sign in
-              </Button>
+              </LinkButton>
             </>
           }
         />

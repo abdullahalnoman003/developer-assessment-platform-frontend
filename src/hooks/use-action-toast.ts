@@ -7,6 +7,7 @@ import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { safeExternalUrl } from "@/lib/redirect";
 import type { ActionState } from "@/lib/types";
 import { IDLE_ACTION_STATE } from "@/lib/types";
+import { useBackendHealth } from "./use-backend-health";
 
 export function useActionToast(
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>,
@@ -16,6 +17,7 @@ export function useActionToast(
   isPending: boolean;
 } {
   const router = useRouter();
+  const { health } = useBackendHealth();
   const [state, formAction, isPending] = useActionState(
     action,
     IDLE_ACTION_STATE,
@@ -29,13 +31,17 @@ export function useActionToast(
         window.location.assign(external);
       } else if (state.redirectTo) {
         router.push(state.redirectTo);
-      } else {
+      } else if (health.healthy) {
         router.refresh();
+      } else {
+        toast.error(
+          "Backend unavailable — data may be stale. Refresh manually when ready.",
+        );
       }
     } else if (state.status === "error") {
       toast.error(state.message || VALIDATION_MESSAGES.unknown);
     }
-  }, [state, router]);
+  }, [state, router, health.healthy]);
 
   return { state, formAction, isPending };
 }

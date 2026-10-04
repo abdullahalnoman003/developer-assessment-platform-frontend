@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { ErrorCard } from "@/components/shared/error-card";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 
@@ -36,9 +36,9 @@ export default function RootError({
           action={
             <>
               <Button onClick={reset}>Try again</Button>
-              <Button variant="outline" render={<Link href="/" />}>
+              <LinkButton href="/" variant="outline">
                 Back to home
-              </Button>
+              </LinkButton>
             </>
           }
         />

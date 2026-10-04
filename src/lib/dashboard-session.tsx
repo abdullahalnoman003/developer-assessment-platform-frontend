@@ -5,11 +5,11 @@ import { ROLE_HOME } from "@/lib/constants";
 import type { Role, SessionUser } from "@/lib/types";
 import { authService } from "@/service/auth";
 
-export async function requireRole(role: Role): Promise<SessionUser> {
+export async function requireRole(role: Role): Promise<SessionUser | null> {
   const user = await authService.requireUser();
 
-  if (user.role !== role) {
-    redirect(ROLE_HOME[user.role]);
+  if (!user || user.role !== role) {
+    return null;
   }
 
   return user;
@@ -23,5 +23,10 @@ export async function DashboardRoleLayout({
   children: ReactNode;
 }) {
   const user = await requireRole(expectedRole);
+
+  if (!user) {
+    redirect(ROLE_HOME[expectedRole] ?? "/login");
+  }
+
   return <DashboardShell user={user}>{children}</DashboardShell>;
 }

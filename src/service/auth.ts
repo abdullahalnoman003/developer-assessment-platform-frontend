@@ -1,4 +1,4 @@
-import { api, UnauthenticatedError } from "@/lib/api";
+import { api } from "@/lib/api";
 import type { ApiResponse, AuthTokens, SessionUser, User } from "@/lib/types";
 import type {
   LoginInput,
@@ -38,9 +38,7 @@ export const authService = {
     }
   },
 
-  requireUser: async (): Promise<SessionUser> => {
-    const user = await authService.currentUser();
-    if (!user) throw new UnauthenticatedError();
-    return user;
+  requireUser: async (): Promise<SessionUser | null> => {
+    return authService.currentUser();
   },
 };
