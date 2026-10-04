@@ -1,7 +1,6 @@
 import { XCircleIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -32,15 +31,12 @@ export default function PaymentCancelPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button render={<Link href="/dashboard/recruiter/billing" />}>
+        <LinkButton href="/dashboard/recruiter/billing">
           Back to billing
-        </Button>
-        <Button
-          render={<Link href="/dashboard/recruiter/assessments" />}
-          variant="outline"
-        >
+        </LinkButton>
+        <LinkButton href="/dashboard/recruiter/assessments" variant="outline">
           Back to assessments
-        </Button>
+        </LinkButton>
       </div>
     </div>
   );

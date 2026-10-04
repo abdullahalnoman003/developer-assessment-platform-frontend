@@ -1,6 +1,5 @@
 import { LockIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ResultReview } from "@/app/(candidateSection)/_components/result-review";
 import {
   DashboardPageHeader,
@@ -13,7 +12,7 @@ import {
   AttemptStatusBadge,
   StatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, formatNumber } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
@@ -44,14 +43,14 @@ export default async function CandidateAttemptResultPage({
               : "Could not load this result"
           }
         />
-        <Button
+        <LinkButton
           className="self-start"
-          render={<Link href="/dashboard/candidate/results" />}
+          href="/dashboard/candidate/results"
           size="sm"
           variant="outline"
         >
           Back to results
-        </Button>
+        </LinkButton>
       </>
     );
   }
@@ -64,13 +63,13 @@ export default async function CandidateAttemptResultPage({
     <>
       <DashboardPageHeader
         actions={
-          <Button
-            render={<Link href="/dashboard/candidate/results" />}
+          <LinkButton
+            href="/dashboard/candidate/results"
             size="sm"
             variant="outline"
           >
             All results
-          </Button>
+          </LinkButton>
         }
         description={assessment.title}
         title="Result"

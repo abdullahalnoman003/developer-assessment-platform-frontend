@@ -1,12 +1,11 @@
 import { CoinsIcon, GlobeIcon, ImageIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { CompanyForm } from "@/app/(recruiterSection)/_components/company-form";
 import { DashboardPanel } from "@/components/shared/dashboard-shell";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { StatsCards } from "@/components/shared/stats-cards";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDate, formatNumber, isValidHttpUrl } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ApiResponse, Company, CompanyDashboard } from "@/lib/types";
@@ -29,13 +28,13 @@ export function CompanyPanel({ company: res, dashboard }: CompanyPanelProps) {
     return (
       <EmptyState
         action={
-          <Button
-            render={<Link href="/dashboard/recruiter/company" />}
+          <LinkButton
+            href="/dashboard/recruiter/company"
             size="sm"
             variant="outline"
           >
             Set up your company
-          </Button>
+          </LinkButton>
         }
         body={EMPTY_STATES.company.body}
         Icon={GlobeIcon}

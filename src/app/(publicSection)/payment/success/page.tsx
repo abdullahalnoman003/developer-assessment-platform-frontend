@@ -5,12 +5,11 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   PaymentProviderBadge,
   PaymentStatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { PAYMENT_STATUS_LABELS } from "@/lib/constants";
 import { formatCurrency, formatDateTime, formatNumber } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
@@ -102,15 +101,10 @@ export default async function PaymentSuccessPage({
 
   const billingAction = (
     <div className="flex flex-wrap gap-2">
-      <Button render={<Link href="/dashboard/recruiter/billing" />}>
-        Go to billing
-      </Button>
-      <Button
-        render={<Link href="/dashboard/recruiter/assessments" />}
-        variant="outline"
-      >
+      <LinkButton href="/dashboard/recruiter/billing">Go to billing</LinkButton>
+      <LinkButton href="/dashboard/recruiter/assessments" variant="outline">
         Back to assessments
-      </Button>
+      </LinkButton>
     </div>
   );
 

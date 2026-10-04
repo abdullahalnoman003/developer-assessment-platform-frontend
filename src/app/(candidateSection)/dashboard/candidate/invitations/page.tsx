@@ -1,6 +1,5 @@
 import { InboxIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { InvitationCard } from "@/app/(candidateSection)/_components/invitation-card";
 import { InvitationFilters } from "@/app/(candidateSection)/_components/invitation-filters";
 import {
@@ -10,7 +9,7 @@ import {
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { PaginationBar } from "@/components/shared/pagination-bar";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { INVITATION_STATUS_LABELS } from "@/lib/constants";
 import { formatNumber, toUrlParamRecord } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
@@ -115,25 +114,17 @@ export default async function CandidateInvitationsPage({
             <EmptyState
               action={
                 activeStatus ? (
-                  <Button
-                    render={
-                      <Link
-                        href="/dashboard/candidate/invitations"
-                        scroll={false}
-                      />
-                    }
+                  <LinkButton
+                    href="/dashboard/candidate/invitations"
                     size="sm"
                     variant="outline"
                   >
                     Clear filter
-                  </Button>
+                  </LinkButton>
                 ) : (
-                  <Button
-                    render={<Link href="/dashboard/candidate" />}
-                    size="sm"
-                  >
+                  <LinkButton href="/dashboard/candidate" size="sm">
                     Back to overview
-                  </Button>
+                  </LinkButton>
                 )
               }
               body={

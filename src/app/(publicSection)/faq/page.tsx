@@ -1,9 +1,8 @@
 import { MailIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Faq } from "@/components/home/faq";
 import { Container, PageHero, Section } from "@/components/home/page-hero";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -40,16 +39,13 @@ export default function FaqPage() {
             a server that does not exist.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button render={<Link href="/contact" />}>
+            <LinkButton href="/contact">
               <MailIcon data-icon="inline-start" />
               Contact support
-            </Button>
-            <Button
-              render={<Link href={`mailto:${SUPPORT_EMAIL}`} />}
-              variant="outline"
-            >
+            </LinkButton>
+            <LinkButton href={`mailto:${SUPPORT_EMAIL}`} variant="outline">
               {SUPPORT_EMAIL}
-            </Button>
+            </LinkButton>
           </div>
         </Container>
       </Section>

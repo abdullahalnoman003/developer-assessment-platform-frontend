@@ -30,6 +30,8 @@ async function CompanyPanelLoader() {
 export default async function ProfilePage() {
   const user = await authService.requireUser();
 
+  if (!user) return null; // layout handles redirect
+
   const showCandidateTab = user.role === "CANDIDATE";
   const showRecruiterTab = user.role === "RECRUITER";
   const identityUser = {

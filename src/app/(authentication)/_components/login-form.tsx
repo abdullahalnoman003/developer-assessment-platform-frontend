@@ -29,7 +29,7 @@ import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
 import { type LoginInput, loginSchema } from "@/lib/validations";
 
-function DemoButtons() {
+function DemoButtons({ redirectTo }: { redirectTo: string | null }) {
   const complete = useAuthComplete();
   const [busy, setBusy] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -39,6 +39,7 @@ function DemoButtons() {
     startTransition(async () => {
       const data = new FormData();
       data.set("role", role);
+      if (redirectTo) data.set("redirectTo", redirectTo);
       const result = await demoLoginAction(IDLE_ACTION_STATE, data);
       setBusy(null);
       if (result.status === "success" && result.redirectTo) {
@@ -217,7 +218,7 @@ export function LoginForm({
 
           <FieldSeparator />
 
-          <DemoButtons />
+          <DemoButtons redirectTo={redirectTo} />
 
           <p className="text-sm text-muted-foreground">
             No account yet?{" "}

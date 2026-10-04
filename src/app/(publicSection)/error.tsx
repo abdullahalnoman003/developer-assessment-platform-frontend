@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import { ErrorCard } from "@/components/shared/error-card";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 
 export default function PublicError({
@@ -25,9 +25,9 @@ export default function PublicError({
             <Button onClick={reset} size="sm">
               Try again
             </Button>
-            <Button render={<Link href="/" />} size="sm" variant="outline">
+            <LinkButton href="/" size="sm" variant="outline">
               Back to home
-            </Button>
+            </LinkButton>
           </>
         }
         description="This page could not be rendered. Nothing you entered has been lost."

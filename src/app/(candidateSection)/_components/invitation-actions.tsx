@@ -1,7 +1,6 @@
 "use client";
 
 import { RotateCcwIcon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
@@ -12,6 +11,7 @@ import {
 } from "@/app/(candidateSection)/_actions/candidate";
 import { ConfirmFormDialog } from "@/components/shared/confirm-form-dialog";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Spinner } from "@/components/ui/spinner";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import type { ActionState } from "@/lib/types";
@@ -131,26 +131,24 @@ export function InvitationActions({
   if (attemptId && attemptStatus) {
     if (attemptStatus === "IN_PROGRESS") {
       return (
-        <Button
-          render={<Link href={`/dashboard/candidate/attempts/${attemptId}`} />}
+        <LinkButton
+          href={`/dashboard/candidate/attempts/${attemptId}`}
           size="sm"
         >
           <RotateCcwIcon className="size-3.5" />
           Resume
-        </Button>
+        </LinkButton>
       );
     }
 
     return (
-      <Button
-        render={
-          <Link href={`/dashboard/candidate/attempts/${attemptId}/result`} />
-        }
+      <LinkButton
+        href={`/dashboard/candidate/attempts/${attemptId}/result`}
         size="sm"
         variant={attemptStatus === "EVALUATED" ? "default" : "outline"}
       >
         View result
-      </Button>
+      </LinkButton>
     );
   }
 

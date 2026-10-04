@@ -1,6 +1,5 @@
 import { HelpCircleIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { AssessmentWizard } from "@/app/(recruiterSection)/_components/assessment-wizard";
 import {
@@ -10,7 +9,7 @@ import {
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { TableSkeleton } from "@/components/shared/skeletons";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import { questionService } from "@/service/questions";
@@ -45,10 +44,10 @@ export default async function NewAssessmentPage() {
         <DashboardPanel>
           <EmptyState
             action={
-              <Button render={<Link href="/dashboard/recruiter/questions" />}>
+              <LinkButton href="/dashboard/recruiter/questions">
                 <HelpCircleIcon className="size-4" />
                 Go to the question bank
-              </Button>
+              </LinkButton>
             }
             body={EMPTY_STATES.questions.body}
             Icon={HelpCircleIcon}

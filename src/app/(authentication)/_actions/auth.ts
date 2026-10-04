@@ -119,10 +119,11 @@ export async function demoLoginAction(
     return failed(res.message || ACTION_MESSAGES.login.failure);
   }
 
+  const requested = formData.get("redirectTo");
   const outcome = await establishSession(
     res.data.accessToken,
     res.data.refreshToken,
-    null,
+    typeof requested === "string" ? requested : null,
   );
   return outcome.status === "success"
     ? { ...outcome, message: ACTION_MESSAGES.login.success }

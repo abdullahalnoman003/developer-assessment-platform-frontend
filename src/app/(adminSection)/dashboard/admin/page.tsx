@@ -21,7 +21,7 @@ import {
 } from "@/components/shared/dashboard-shell";
 import { ErrorState } from "@/components/shared/error-state";
 import { StatsCards } from "@/components/shared/stats-cards";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatNumber, pluralize } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
@@ -53,21 +53,18 @@ export default async function AdminDashboardPage() {
       <DashboardPageHeader
         actions={
           <>
-            <Button
-              render={<Link href="/dashboard/admin/users" />}
+            <LinkButton
+              href="/dashboard/admin/users"
               size="sm"
               variant="outline"
             >
               <UsersIcon />
               Manage users
-            </Button>
-            <Button
-              render={<Link href="/dashboard/admin/audit-logs" />}
-              size="sm"
-            >
+            </LinkButton>
+            <LinkButton href="/dashboard/admin/audit-logs" size="sm">
               <ScrollTextIcon />
               Audit logs
-            </Button>
+            </LinkButton>
           </>
         }
         description="Live platform totals served by the CodeArena API. Nothing here is estimated on the client."

@@ -1,6 +1,5 @@
 import { CreditCardIcon, ShieldCheckIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   Container,
   PageHero,
@@ -8,8 +7,8 @@ import {
   SectionHeading,
 } from "@/components/home/page-hero";
 import { PlanCard } from "@/components/home/plan-card";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LinkButton } from "@/components/ui/link-button";
 import { CREDIT_PLANS } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -99,12 +98,12 @@ export default function PricingPage() {
             company, then start a checkout from the company dashboard.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button render={<Link href="/register?role=RECRUITER" />}>
+            <LinkButton href="/register?role=RECRUITER">
               Create a recruiter account
-            </Button>
-            <Button render={<Link href="/login" />} variant="outline">
+            </LinkButton>
+            <LinkButton href="/login" variant="outline">
               Sign in to an existing account
-            </Button>
+            </LinkButton>
           </div>
         </Container>
       </Section>

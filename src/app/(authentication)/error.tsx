@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import { ErrorCard } from "@/components/shared/error-card";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 
 export default function AuthError({
@@ -24,9 +24,9 @@ export default function AuthError({
           <Button onClick={reset} size="sm">
             Try again
           </Button>
-          <Button render={<Link href="/login" />} size="sm" variant="outline">
+          <LinkButton href="/login" size="sm" variant="outline">
             Back to sign in
-          </Button>
+          </LinkButton>
         </>
       }
       description="We could not load this page. The API may be unreachable or the session expired."

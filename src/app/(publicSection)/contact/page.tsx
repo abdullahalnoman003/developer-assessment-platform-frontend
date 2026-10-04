@@ -1,6 +1,5 @@
 import { ClockIcon, LifeBuoyIcon, MailIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ContactForm } from "@/app/(publicSection)/_components/contact-form";
 import {
   Container,
@@ -8,8 +7,8 @@ import {
   Section,
   SectionHeading,
 } from "@/components/home/page-hero";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LinkButton } from "@/components/ui/link-button";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -67,13 +66,10 @@ export default function ContactPage() {
                   </a>
                   .
                 </p>
-                <Button
-                  render={<Link href={`mailto:${SUPPORT_EMAIL}`} />}
-                  variant="outline"
-                >
+                <LinkButton href={`mailto:${SUPPORT_EMAIL}`} variant="outline">
                   <MailIcon data-icon="inline-start" />
                   Open mail client
-                </Button>
+                </LinkButton>
               </CardContent>
             </Card>
 
@@ -109,12 +105,12 @@ export default function ContactPage() {
             title="Already answered somewhere?"
           />
           <div className="flex flex-wrap gap-2">
-            <Button render={<Link href="/faq" />} variant="outline">
+            <LinkButton href="/faq" variant="outline">
               Read the FAQ
-            </Button>
-            <Button render={<Link href="/how-it-works" />} variant="outline">
+            </LinkButton>
+            <LinkButton href="/how-it-works" variant="outline">
               See the assessment lifecycle
-            </Button>
+            </LinkButton>
           </div>
         </Container>
       </Section>

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AttemptRunner } from "@/app/(candidateSection)/_components/attempt-runner";
 import {
@@ -7,7 +6,7 @@ import {
   DashboardPanel,
 } from "@/components/shared/dashboard-shell";
 import { ErrorState } from "@/components/shared/error-state";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
 import { attemptService } from "@/service/attempts";
@@ -38,14 +37,14 @@ export default async function CandidateAttemptPage({
                 : "Could not load this attempt"
             }
           />
-          <Button
+          <LinkButton
             className="mt-4"
-            render={<Link href="/dashboard/candidate/invitations" />}
+            href="/dashboard/candidate/invitations"
             size="sm"
             variant="outline"
           >
             Back to invitations
-          </Button>
+          </LinkButton>
         </DashboardPanel>
       </>
     );

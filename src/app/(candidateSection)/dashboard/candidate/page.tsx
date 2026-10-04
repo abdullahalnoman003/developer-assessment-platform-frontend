@@ -18,7 +18,7 @@ import {
   AttemptStatusBadge,
   InvitationStatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, formatNumber } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
@@ -63,13 +63,13 @@ export default async function CandidateDashboardPage() {
     <>
       <DashboardPageHeader
         actions={
-          <Button
-            render={<Link href="/dashboard/candidate/invitations" />}
+          <LinkButton
+            href="/dashboard/candidate/invitations"
             size="sm"
             variant="outline"
           >
             All invitations
-          </Button>
+          </LinkButton>
         }
         description="Everything here comes from your own invitations. Nothing is estimated."
         title="Overview"
@@ -129,13 +129,13 @@ export default async function CandidateDashboardPage() {
         {pending.length === 0 ? (
           <EmptyState
             action={
-              <Button
-                render={<Link href="/dashboard/candidate/invitations" />}
+              <LinkButton
+                href="/dashboard/candidate/invitations"
                 size="sm"
                 variant="outline"
               >
                 Review invitations
-              </Button>
+              </LinkButton>
             }
             body={EMPTY_STATES.myInvitations.body}
             Icon={InboxIcon}
@@ -221,17 +221,12 @@ function PendingInvitationList({
             </div>
             <InvitationStatusBadge value={invitation.status} />
           </div>
-          <Button
-            render={
-              <Link
-                href={`/dashboard/candidate/invitations?status=PENDING`}
-                scroll={false}
-              />
-            }
+          <LinkButton
+            href="/dashboard/candidate/invitations?status=PENDING"
             size="sm"
           >
             Accept or decline
-          </Button>
+          </LinkButton>
         </li>
       ))}
     </ul>
@@ -276,9 +271,9 @@ function AttemptList({
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <AttemptStatusBadge value={attempt.status} />
-              <Button render={<Link href={href} />} size="sm" variant="outline">
+              <LinkButton href={href} size="sm" variant="outline">
                 {finished ? "View" : "Open"}
-              </Button>
+              </LinkButton>
             </div>
           </li>
         );

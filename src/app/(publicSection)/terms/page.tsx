@@ -1,8 +1,7 @@
 import { MailIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Container, PageHero, Section } from "@/components/home/page-hero";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -99,10 +98,10 @@ export default function TermsPage() {
               .
             </p>
             <div>
-              <Button render={<Link href="/contact" />} variant="outline">
+              <LinkButton href="/contact" variant="outline">
                 <MailIcon data-icon="inline-start" />
                 Contact support
-              </Button>
+              </LinkButton>
             </div>
           </div>
         </Container>

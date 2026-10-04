@@ -1,6 +1,5 @@
 import { GaugeIcon, InboxIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   DashboardPageHeader,
   DashboardPanel,
@@ -17,7 +16,7 @@ import {
   AttemptStatusBadge,
   StatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, formatNumber, toUrlParamRecord } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
@@ -167,17 +166,13 @@ function buildColumns(): readonly DataTableColumn<ResultRow>[] {
       header: "Detail",
       cell: (row) => (
         <div className="flex justify-end">
-          <Button
-            render={
-              <Link
-                href={`/dashboard/candidate/attempts/${row.attemptId}/result`}
-              />
-            }
+          <LinkButton
+            href={`/dashboard/candidate/attempts/${row.attemptId}/result`}
             size="sm"
             variant={row.resultReleased ? "default" : "outline"}
           >
             {row.resultReleased ? "View result" : "Open"}
-          </Button>
+          </LinkButton>
         </div>
       ),
     },
@@ -327,12 +322,9 @@ export default async function CandidateResultsPage({
           <div className="p-4">
             <EmptyState
               action={
-                <Button
-                  render={<Link href="/dashboard/candidate/invitations" />}
-                  size="sm"
-                >
+                <LinkButton href="/dashboard/candidate/invitations" size="sm">
                   Go to invitations
-                </Button>
+                </LinkButton>
               }
               body={
                 page > 1

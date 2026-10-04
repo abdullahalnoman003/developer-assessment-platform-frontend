@@ -1,9 +1,9 @@
 "use client";
 
 import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
-import Link from "next/link";
 import { DashboardPageHeader } from "@/components/shared/dashboard-shell";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 
 export default function ProfileError({
@@ -41,9 +41,9 @@ export default function ProfileError({
             <RefreshCwIcon className="size-3.5" />
             Try again
           </Button>
-          <Button render={<Link href="/" />} size="sm" variant="outline">
+          <LinkButton href="/" size="sm" variant="outline">
             Back to home
-          </Button>
+          </LinkButton>
         </div>
       </div>
     </>

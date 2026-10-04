@@ -24,7 +24,7 @@ export async function updateUserStatusAction(
   formData: FormData,
 ): Promise<ActionState> {
   const admin = await authService.requireUser();
-  if (admin.role !== "ADMIN") {
+  if (!admin || admin.role !== "ADMIN") {
     return invalid(VALIDATION_MESSAGES.forbidden, {});
   }
 
