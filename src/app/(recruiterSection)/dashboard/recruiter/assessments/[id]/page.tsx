@@ -7,7 +7,6 @@ import {
   UsersIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { AdvanceAssessmentDialog } from "@/app/(recruiterSection)/_components/advance-assessment-dialog";
 import { AssessmentDeleteButton } from "@/app/(recruiterSection)/_components/assessment-delete-button";
 import { AssessmentEditDialog } from "@/app/(recruiterSection)/_components/assessment-edit-dialog";
@@ -26,7 +25,7 @@ import {
   DifficultyBadge,
   QuestionTypeBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   ASSESSMENT_NEXT_STATUS,
   ASSESSMENT_STATUS_LABELS,
@@ -83,14 +82,14 @@ export default async function RecruiterAssessmentDetailPage({
       <>
         <DashboardPageHeader title="Assessment not found" />
         <NotFoundState message={res.message || VALIDATION_MESSAGES.notFound} />
-        <Button
+        <LinkButton
           className="self-start"
-          render={<Link href="/dashboard/recruiter/assessments" />}
+          href="/dashboard/recruiter/assessments"
           size="sm"
           variant="outline"
         >
           Back to assessments
-        </Button>
+        </LinkButton>
       </>
     );
   }
@@ -139,16 +138,14 @@ export default async function RecruiterAssessmentDetailPage({
       <DashboardPageHeader
         actions={
           <>
-            <Button
-              render={
-                <Link href={`/dashboard/recruiter/assessments/${id}/results`} />
-              }
+            <LinkButton
+              href={`/dashboard/recruiter/assessments/${id}/results`}
               size="sm"
               variant="outline"
             >
               <ClipboardListIcon className="size-3.5" />
               Results
-            </Button>
+            </LinkButton>
 
             {isDraft ? (
               <>

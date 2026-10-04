@@ -1,6 +1,5 @@
 import { ArrowLeftIcon, GaugeIcon, LockIcon, UnlockIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   type GradingQuestion,
   GradingWorkspace,
@@ -14,7 +13,7 @@ import {
   AttemptStatusBadge,
   StatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, pluralize } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
@@ -45,16 +44,14 @@ export default async function GradeAttemptPage({ params }: { params: Params }) {
       <>
         <DashboardPageHeader title="Attempt not found" />
         <NotFoundState message={res.message || VALIDATION_MESSAGES.notFound} />
-        <Button
+        <LinkButton
           className="self-start"
-          render={
-            <Link href={`/dashboard/recruiter/assessments/${id}/results`} />
-          }
+          href={`/dashboard/recruiter/assessments/${id}/results`}
           size="sm"
           variant="outline"
         >
           Back to results
-        </Button>
+        </LinkButton>
       </>
     );
   }
@@ -90,14 +87,10 @@ export default async function GradeAttemptPage({ params }: { params: Params }) {
     <>
       <DashboardPageHeader
         actions={
-          <Button
-            render={<Link href={resultsHref} />}
-            size="sm"
-            variant="outline"
-          >
+          <LinkButton href={resultsHref} size="sm" variant="outline">
             <ArrowLeftIcon className="size-3.5" />
             Back to results
-          </Button>
+          </LinkButton>
         }
         description={attempt.invitation.assessment.title}
         title="Grade attempt"

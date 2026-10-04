@@ -21,7 +21,7 @@ import {
   PaginationBar,
 } from "@/components/shared/pagination-bar";
 import { AssessmentStatusBadge } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   formatDate,
   pluralize,
@@ -189,10 +189,10 @@ export default async function RecruiterAssessmentsPage({
     <>
       <DashboardPageHeader
         actions={
-          <Button render={<Link href={`${PATHNAME}/new`} />} size="sm">
+          <LinkButton href={`${PATHNAME}/new`} size="sm">
             <PlusIcon className="size-3.5" />
             New assessment
-          </Button>
+          </LinkButton>
         }
         description="Build an assessment from your question bank, publish it, then invite candidates by email."
         title="Assessments"
@@ -211,10 +211,10 @@ export default async function RecruiterAssessmentsPage({
           <div className="p-4">
             <EmptyState
               action={
-                <Button render={<Link href={`${PATHNAME}/new`} />} size="sm">
+                <LinkButton href={`${PATHNAME}/new`} size="sm">
                   <PlusIcon className="size-3.5" />
                   New assessment
-                </Button>
+                </LinkButton>
               }
               body={
                 isFiltered

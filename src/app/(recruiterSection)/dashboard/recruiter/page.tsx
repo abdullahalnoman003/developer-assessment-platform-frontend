@@ -23,7 +23,7 @@ import {
   AttemptsDonutChart,
 } from "@/components/shared/recruiter-charts";
 import { StatsCards } from "@/components/shared/stats-cards";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
@@ -142,10 +142,10 @@ export default async function RecruiterOverviewPage() {
         <DashboardPanel>
           <EmptyState
             action={
-              <Button render={<Link href="/dashboard/recruiter/company" />}>
+              <LinkButton href="/dashboard/recruiter/company">
                 <Building2Icon className="size-4" />
                 Set up your company
-              </Button>
+              </LinkButton>
             }
             body={EMPTY_STATES.company.body}
             Icon={Building2Icon}
@@ -208,21 +208,18 @@ export default async function RecruiterOverviewPage() {
       <DashboardPageHeader
         actions={
           <>
-            <Button
-              render={<Link href="/dashboard/recruiter/questions" />}
+            <LinkButton
+              href="/dashboard/recruiter/questions"
               size="sm"
               variant="outline"
             >
               <PlusIcon className="size-3.5" />
               Add question
-            </Button>
-            <Button
-              render={<Link href="/dashboard/recruiter/assessments/new" />}
-              size="sm"
-            >
+            </LinkButton>
+            <LinkButton href="/dashboard/recruiter/assessments/new" size="sm">
               <PlusIcon className="size-3.5" />
               New assessment
-            </Button>
+            </LinkButton>
           </>
         }
         description={`${stats.company.name ?? "Your company"} — your hiring activity at a glance.`}

@@ -8,7 +8,6 @@ import {
   ListChecksIcon,
   Settings2Icon,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
@@ -34,6 +33,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { LinkButton } from "@/components/ui/link-button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { truncate } from "@/lib/format";
@@ -408,13 +408,13 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
               <ArrowRightIcon className="size-3.5" />
               Next: pick questions
             </Button>
-            <Button
-              render={<Link href="/dashboard/recruiter/assessments" />}
+            <LinkButton
+              href="/dashboard/recruiter/assessments"
               type="button"
               variant="ghost"
             >
               Cancel
-            </Button>
+            </LinkButton>
           </div>
         </form>
       ) : null}

@@ -1,6 +1,5 @@
 import { GaugeIcon, InboxIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   DashboardPageHeader,
   DashboardPanel,
@@ -17,7 +16,7 @@ import {
   InvitationStatusBadge,
   StatusBadge,
 } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, toUrlParamRecord } from "@/lib/format";
 import { EMPTY_STATES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { dashboardMetadata } from "@/lib/seo";
@@ -102,17 +101,13 @@ function buildColumns(
       header: "Grade",
       cell: (row) => (
         <div className="flex justify-end">
-          <Button
-            render={
-              <Link
-                href={`/dashboard/recruiter/assessments/${assessmentId}/attempts/${row.id}`}
-              />
-            }
+          <LinkButton
+            href={`/dashboard/recruiter/assessments/${assessmentId}/attempts/${row.id}`}
             size="sm"
             variant={row.status === "SUBMITTED" ? "default" : "outline"}
           >
             {row.status === "SUBMITTED" ? "Grade now" : "Open"}
-          </Button>
+          </LinkButton>
         </div>
       ),
     },
@@ -142,14 +137,14 @@ export default async function AssessmentResultsPage({
       <>
         <DashboardPageHeader title="Results" />
         <ErrorState message={res.message || VALIDATION_MESSAGES.unknown} />
-        <Button
+        <LinkButton
           className="self-start"
-          render={<Link href={base} />}
+          href={base}
           size="sm"
           variant="outline"
         >
           Back to assessment
-        </Button>
+        </LinkButton>
       </>
     );
   }
@@ -162,9 +157,9 @@ export default async function AssessmentResultsPage({
     <>
       <DashboardPageHeader
         actions={
-          <Button render={<Link href={base} />} size="sm" variant="outline">
+          <LinkButton href={base} size="sm" variant="outline">
             Back to assessment
-          </Button>
+          </LinkButton>
         }
         description="One row per candidate who has actually started this assessment. Invitations that were never accepted do not appear."
         title="Results"
@@ -183,9 +178,9 @@ export default async function AssessmentResultsPage({
           <div className="p-4">
             <EmptyState
               action={
-                <Button render={<Link href={base} />} size="sm">
+                <LinkButton href={base} size="sm">
                   Open the assessment
-                </Button>
+                </LinkButton>
               }
               body={
                 page

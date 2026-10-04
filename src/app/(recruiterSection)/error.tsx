@@ -1,8 +1,8 @@
 "use client";
 
 import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
 
 export default function RecruiterError({
@@ -38,13 +38,9 @@ export default function RecruiterError({
           <RefreshCwIcon className="size-3.5" />
           Try again
         </Button>
-        <Button
-          render={<Link href="/dashboard/recruiter" />}
-          size="sm"
-          variant="outline"
-        >
+        <LinkButton href="/dashboard/recruiter" size="sm" variant="outline">
           Back to overview
-        </Button>
+        </LinkButton>
       </div>
     </div>
   );

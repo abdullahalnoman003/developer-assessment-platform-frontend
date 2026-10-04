@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   Pagination,
   PaginationContent,
@@ -149,16 +148,16 @@ export function PageSizeNote({
         params.set("limit", String(option));
         params.delete("page");
         return (
-          <Button
+          <LinkButton
             aria-current={option === limit ? "true" : undefined}
             aria-label={`${option} results per page`}
+            href={`${pathname}?${params.toString()}`}
             key={option}
-            render={<Link href={`${pathname}?${params.toString()}`} />}
             size="sm"
             variant={option === limit ? "outline" : "ghost"}
           >
             {option}
-          </Button>
+          </LinkButton>
         );
       })}
     </div>
