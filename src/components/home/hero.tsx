@@ -1,7 +1,6 @@
 import { ArrowRightIcon, TerminalIcon } from "lucide-react";
-import Link from "next/link";
 import { Container } from "@/components/home/page-hero";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 
 const SIGNALS = [
   "MCQ auto-grading",
@@ -33,17 +32,13 @@ export function Hero() {
         </p>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Button render={<Link href="/register?role=RECRUITER" />} size="lg">
+          <LinkButton href="/register?role=RECRUITER" size="lg">
             Start hiring
             <ArrowRightIcon data-icon="inline-end" />
-          </Button>
-          <Button
-            render={<Link href="/how-it-works" />}
-            size="lg"
-            variant="outline"
-          >
+          </LinkButton>
+          <LinkButton href="/how-it-works" size="lg" variant="outline">
             See how it works
-          </Button>
+          </LinkButton>
         </div>
 
         <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">

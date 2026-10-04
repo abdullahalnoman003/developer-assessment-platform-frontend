@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LinkButton } from "@/components/ui/link-button";
 import { APP_NAME, ROLE_HOME, ROLE_LABELS } from "@/lib/constants";
 import { initials } from "@/lib/format";
 import type { SessionUser } from "@/lib/types";
@@ -49,15 +51,15 @@ export function Navbar({ user = null }: NavbarProps) {
 
           {user ? (
             <>
-              <Button
+              <LinkButton
                 className="hidden sm:inline-flex"
-                render={<Link href={ROLE_HOME[user.role]} />}
+                href={ROLE_HOME[user.role]}
                 size="sm"
                 variant="outline"
               >
                 Dashboard
                 <ArrowRightIcon data-icon="inline-end" />
-              </Button>
+              </LinkButton>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
@@ -72,52 +74,54 @@ export function Navbar({ user = null }: NavbarProps) {
                   }
                 />
                 <DropdownMenuContent align="end" className="min-w-56">
-                  <DropdownMenuLabel className="flex flex-col gap-0.5">
-                    <span className="truncate text-foreground">
-                      {user.name}
-                    </span>
-                    <span className="truncate font-mono text-xs font-normal text-muted-foreground">
-                      {user.email}
-                    </span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="font-mono text-xs font-normal text-muted-foreground">
-                    {ROLE_LABELS[user.role]}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem render={<Link href="/profile" />}>
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    render={<Link href={ROLE_HOME[user.role]} />}
-                  >
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className={cn("text-destructive focus:text-destructive")}
-                    render={<form action={logout} />}
-                    variant="destructive"
-                  >
-                    Sign out
-                  </DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="flex flex-col gap-0.5">
+                      <span className="truncate text-foreground">
+                        {user.name}
+                      </span>
+                      <span className="truncate font-mono text-xs font-normal text-muted-foreground">
+                        {user.email}
+                      </span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="font-mono text-xs font-normal text-muted-foreground">
+                      {ROLE_LABELS[user.role]}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem render={<Link href="/profile" />}>
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      render={<Link href={ROLE_HOME[user.role]} />}
+                    >
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className={cn("text-destructive focus:text-destructive")}
+                      render={<form action={logout} />}
+                      variant="destructive"
+                    >
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
             <>
-              <Button
+              <LinkButton
                 className="hidden sm:inline-flex"
-                render={<Link href="/register" />}
+                href="/register"
                 size="sm"
                 variant="ghost"
               >
                 Create account
-              </Button>
-              <Button render={<Link href="/login" />} size="sm">
+              </LinkButton>
+              <LinkButton href="/login" size="sm">
                 Sign in
                 <ArrowRightIcon data-icon="inline-end" />
-              </Button>
+              </LinkButton>
             </>
           )}
         </div>

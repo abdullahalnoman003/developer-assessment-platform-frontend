@@ -1,8 +1,7 @@
 import { CheckIcon } from "lucide-react";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LinkButton } from "@/components/ui/link-button";
 import { CREDIT_PLANS } from "@/lib/constants";
 import { formatUsdCents } from "@/lib/format";
 
@@ -65,13 +64,13 @@ export function PlanCard({
 
         {cta ? (
           <div className="mt-auto">
-            <Button
+            <LinkButton
               className="w-full"
-              render={<Link href="/register?role=RECRUITER" />}
+              href="/register?role=RECRUITER"
               variant={plan.featured ? "default" : "outline"}
             >
               Create account
-            </Button>
+            </LinkButton>
             <p className="mt-2 text-center text-xs text-muted-foreground">
               Sign in first to buy credits.
             </p>

@@ -1,10 +1,10 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import Link from "next/link";
 import { InlineNotice } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LinkButton } from "@/components/ui/link-button";
 
 export function PaymentLookupForm({
   defaultValue,
@@ -42,13 +42,13 @@ export function PaymentLookupForm({
         </div>
 
         {locked ? (
-          <Button
-            render={<Link href="/dashboard/admin/payments/lookup" />}
+          <LinkButton
+            href="/dashboard/admin/payments/lookup"
             size="sm"
             variant="outline"
           >
             Edit ID
-          </Button>
+          </LinkButton>
         ) : (
           <Button size="sm" type="submit">
             <SearchIcon className="size-3.5" />

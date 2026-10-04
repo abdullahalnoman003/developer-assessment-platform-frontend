@@ -11,7 +11,7 @@ export function useAuthComplete() {
     (target: string, message: string) => {
       toast.success(message);
       router.replace(target);
-      router.refresh();
+      // router.refresh() removed: navigation to new page triggers fresh data fetch
     },
     [router],
   );

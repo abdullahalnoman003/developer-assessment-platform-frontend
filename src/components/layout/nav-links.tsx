@@ -4,6 +4,7 @@ import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   Sheet,
   SheetClose,
@@ -26,17 +27,17 @@ export function DesktopNav() {
   return (
     <nav aria-label="Main" className="ml-4 hidden items-center gap-1 md:flex">
       {NAV_LINKS.map((link) => (
-        <Button
+        <LinkButton
           aria-current={
             isActiveHref(pathname, link.href) ? ("page" as const) : undefined
           }
           key={link.href}
-          render={<Link href={link.href} />}
+          href={link.href}
           size="sm"
           variant={isActiveHref(pathname, link.href) ? "secondary" : "ghost"}
         >
           {link.label}
-        </Button>
+        </LinkButton>
       ))}
     </nav>
   );

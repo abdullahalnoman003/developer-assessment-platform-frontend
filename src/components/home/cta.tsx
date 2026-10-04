@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
-import Link from "next/link";
 import { Container, Section } from "@/components/home/page-hero";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { APP_NAME } from "@/lib/constants";
 
 export function Cta() {
@@ -18,17 +17,13 @@ export function Cta() {
             build a question bank from scratch.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Button render={<Link href="/login" />} size="lg">
+            <LinkButton href="/login" size="lg">
               Try a demo account
               <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-            <Button
-              render={<Link href="/register" />}
-              size="lg"
-              variant="outline"
-            >
+            </LinkButton>
+            <LinkButton href="/register" size="lg" variant="outline">
               Create an account
-            </Button>
+            </LinkButton>
           </div>
           <p className="font-mono text-xs text-muted-foreground">
             {APP_NAME} · no credit card needed to explore
