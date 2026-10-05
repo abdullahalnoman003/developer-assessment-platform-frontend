@@ -12,6 +12,12 @@ export const metadata = pageMetadata({
   noIndex: true,
 });
 
+function resetNotice(value: string | string[] | undefined): string | null {
+  return value === "1"
+    ? "Password updated. Sign in with your new password."
+    : null;
+}
+
 export default async function LoginPage({
   searchParams,
 }: {
@@ -26,7 +32,8 @@ export default async function LoginPage({
 
   const redirectTo = safeRedirect(single(params.redirectTo), "") || null;
   const notice =
-    params.registered === "1" ? "Account created. Sign in below." : null;
+    resetNotice(params.reset) ??
+    (params.registered === "1" ? "Account created. Sign in below." : null);
 
   return (
     <LoginForm

@@ -29,10 +29,11 @@ export function Providers({ children }: { children: ReactNode }) {
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster
           position="top-center"
-          gutter={8}
+          gutter={10}
           toastOptions={{
+            duration: 4500,
             className:
-              "rounded-none border border-border bg-popover text-popover-foreground shadow-lg",
+              "!rounded-xl !border !border-border !bg-popover !text-popover-foreground !text-sm !shadow-lg !ring-1 !ring-foreground/10",
           }}
         />
       </GoogleAuth>

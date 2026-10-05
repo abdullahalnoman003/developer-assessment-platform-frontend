@@ -1,7 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeOffIcon, TriangleAlertIcon } from "lucide-react";
+import {
+  BriefcaseIcon,
+  EyeIcon,
+  EyeOffIcon,
+  ShieldCheckIcon,
+  TriangleAlertIcon,
+  UserRoundIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -13,10 +20,14 @@ import {
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { useAuthComplete } from "@/components/auth/use-auth-complete";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -26,15 +37,21 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { DEMO_ACCOUNTS, ROLE_LABELS } from "@/lib/constants";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
-import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
+import { type ActionState, IDLE_ACTION_STATE, type Role } from "@/lib/types";
 import { type LoginInput, loginSchema } from "@/lib/validations";
 
-function DemoButtons({ redirectTo }: { redirectTo: string | null }) {
+const ROLE_ICON: Record<Role, typeof UserRoundIcon> = {
+  ADMIN: ShieldCheckIcon,
+  CANDIDATE: UserRoundIcon,
+  RECRUITER: BriefcaseIcon,
+};
+
+function QuickAccess({ redirectTo }: { redirectTo: string | null }) {
   const complete = useAuthComplete();
   const [busy, setBusy] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const handleDemo = (role: string) => {
+  const handleSample = (role: string) => {
     setBusy(role);
     startTransition(async () => {
       const data = new FormData();
@@ -51,37 +68,42 @@ function DemoButtons({ redirectTo }: { redirectTo: string | null }) {
   };
 
   return (
-    <div className="flex flex-col gap-2.5">
-      <p className="font-heading text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-        Demo accounts
-      </p>
-      <div className="grid gap-2 sm:grid-cols-3">
+    <div className="flex flex-col gap-2.5 rounded-xl border border-border/70 bg-muted/30 p-3">
+      <div className="flex items-center justify-between gap-2">
+        <p className="font-mono text-[0.6875rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+          Quick access
+        </p>
+        <span className="text-xs text-muted-foreground">Prefilled</span>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
         {DEMO_ACCOUNTS.map((account) => {
+          const Icon = ROLE_ICON[account.role];
           const isBusy = busy === account.role;
           return (
             <Button
-              key={account.role}
-              className="h-auto flex-col items-start gap-1 px-3 py-2.5 text-left"
+              aria-label={`Sign in as ${ROLE_LABELS[account.role]}. ${account.blurb}`}
+              className="group h-auto flex-col gap-1.5 rounded-lg border-border/70 bg-background px-1.5 py-2.5 text-center transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-sm"
               disabled={pending}
-              onClick={() => handleDemo(account.role)}
+              key={account.role}
+              onClick={() => handleSample(account.role)}
+              title={account.blurb}
               type="button"
               variant="outline"
             >
-              <span className="flex w-full items-center gap-1.5 font-heading text-xs">
-                {isBusy ? <Spinner /> : null}
-                {ROLE_LABELS[account.role]}
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-soft text-brand ring-1 ring-brand/15">
+                {isBusy ? (
+                  <Spinner className="size-3.5" />
+                ) : (
+                  <Icon className="size-3.5" />
+                )}
               </span>
-              <span className="text-[11px] leading-snug font-normal text-muted-foreground">
-                {account.blurb}
+              <span className="font-heading text-xs font-bold tracking-tight">
+                {ROLE_LABELS[account.role]}
               </span>
             </Button>
           );
         })}
       </div>
-      <FieldDescription>
-        One click signs you in with a seeded account. Credentials stay on the
-        server.
-      </FieldDescription>
     </div>
   );
 }
@@ -129,23 +151,30 @@ export function LoginForm({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <h1 className="font-heading text-xl font-semibold tracking-tight">
-          Sign in
+    <Card className="animate-auth-in overflow-hidden border-border/80 shadow-xl">
+      <div aria-hidden className="h-1 w-full bg-gradient-brand" />
+      <CardHeader className="gap-2.5">
+        <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
+          <ShieldCheckIcon className="size-5" />
+        </span>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">
+          Welcome back
         </h1>
+        <CardDescription className="text-sm/relaxed">
+          Sign in to manage assessments, invitations and results.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
           {notice ? (
-            <output className="block border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-2 text-sm">
+            <output className="block rounded-lg border border-info/35 bg-info/10 px-3.5 py-2.5 text-sm text-info">
               {notice}
             </output>
           ) : null}
 
           {state.status === "error" ? (
             <p
-              className="flex items-start gap-2 border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="flex items-start gap-2.5 rounded-lg border border-destructive/35 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
               role="alert"
             >
               <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" />
@@ -199,6 +228,12 @@ export function LoginForm({
               <FieldError
                 errors={[{ message: form.formState.errors.password?.message }]}
               />
+              <Link
+                className="w-fit rounded text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+                href="/forgot-password"
+              >
+                Forgot your password?
+              </Link>
             </Field>
 
             <Button disabled={pending} size="lg" type="submit">
@@ -216,14 +251,12 @@ export function LoginForm({
             </>
           ) : null}
 
-          <FieldSeparator />
+          <QuickAccess redirectTo={redirectTo} />
 
-          <DemoButtons redirectTo={redirectTo} />
-
-          <p className="text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             No account yet?{" "}
             <Link
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="rounded font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
               href={
                 redirectTo
                   ? `/register?redirectTo=${encodeURIComponent(redirectTo)}`

@@ -7,11 +7,13 @@ import { ACTION_MESSAGES, VALIDATION_MESSAGES } from "@/lib/messages";
 import { safeRedirect } from "@/lib/redirect";
 import type { ActionState } from "@/lib/types";
 import {
+  forgotPasswordSchema,
   googleLoginSchema,
   type LoginInput,
   loginSchema,
   type RegisterInput,
   registerSchema,
+  resetPasswordSchema,
 } from "@/lib/validations";
 import { authService } from "@/service/auth";
 
@@ -191,4 +193,67 @@ export async function googleLoginAction(
   }
 
   return establishSession(res.data.accessToken, res.data.refreshToken, null);
+}
+
+export async function forgotPasswordAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = forgotPasswordSchema.safeParse({
+    email: formData.get("email") ?? undefined,
+  });
+  if (!parsed.success) {
+    return invalid(
+      VALIDATION_MESSAGES.generic,
+      fieldErrors(parsed.error.issues),
+    );
+  }
+
+  const res = await authService.forgotPassword(parsed.data);
+  if (!res.success) {
+    return failed(res.message || ACTION_MESSAGES.forgotPassword.failure);
+  }
+
+  return {
+    status: "success",
+    message: res.message || ACTION_MESSAGES.forgotPassword.success,
+    fieldErrors: {},
+    redirectTo: null,
+  };
+}
+
+export async function resetPasswordAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const token = formData.get("token");
+  if (typeof token !== "string" || token.length === 0) {
+    return failed("This reset link is missing its token. Request a new one.");
+  }
+
+  const parsed = resetPasswordSchema.safeParse({
+    password: formData.get("password") ?? undefined,
+    confirmPassword: formData.get("confirmPassword") ?? undefined,
+  });
+  if (!parsed.success) {
+    return invalid(
+      VALIDATION_MESSAGES.generic,
+      fieldErrors(parsed.error.issues),
+    );
+  }
+
+  const res = await authService.resetPassword({
+    token,
+    password: parsed.data.password,
+  });
+  if (!res.success) {
+    return failed(res.message || ACTION_MESSAGES.resetPassword.failure);
+  }
+
+  return {
+    status: "success",
+    message: res.message || ACTION_MESSAGES.resetPassword.success,
+    fieldErrors: {},
+    redirectTo: "/login?reset=1",
+  };
 }

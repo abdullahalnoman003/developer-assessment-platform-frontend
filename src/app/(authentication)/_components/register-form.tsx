@@ -1,7 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BriefcaseIcon, TriangleAlertIcon, UserIcon } from "lucide-react";
+import {
+  BriefcaseIcon,
+  TriangleAlertIcon,
+  UserIcon,
+  UserRoundPlusIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -112,12 +117,16 @@ export function RegisterForm({
   const selectedRole = watch("role");
 
   return (
-    <Card>
-      <CardHeader>
-        <h1 className="font-heading text-xl font-semibold tracking-tight">
-          Create account
+    <Card className="animate-auth-in overflow-hidden border-border/80 shadow-xl">
+      <div aria-hidden className="h-1 w-full bg-gradient-brand" />
+      <CardHeader className="gap-2.5">
+        <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
+          <UserRoundPlusIcon className="size-5" />
+        </span>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">
+          Create your account
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm/relaxed text-muted-foreground">
           Pick a role now. You can add a company later as a recruiter.
         </p>
       </CardHeader>
@@ -125,7 +134,7 @@ export function RegisterForm({
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
           {state.status === "error" ? (
             <p
-              className="flex items-start gap-2 border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="flex items-start gap-2.5 rounded-lg border border-destructive/35 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
               role="alert"
             >
               <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" />
@@ -136,12 +145,12 @@ export function RegisterForm({
           <FieldGroup>
             <FieldSet>
               <FieldLegend variant="label">I am joining as</FieldLegend>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-2.5 sm:grid-cols-2">
                 {ROLE_OPTIONS.map(({ value, label, description, Icon }) => {
                   const active = selectedRole === value;
                   return (
                     <label
-                      className="flex cursor-pointer items-start gap-2.5 border border-border bg-background p-3 transition-colors hover:bg-muted/50 has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5"
+                      className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-3.5 transition-[border-color,background-color,box-shadow] hover:bg-muted/50 has-[:checked]:border-brand/50 has-[:checked]:bg-brand-soft has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring/40"
                       key={value}
                     >
                       <input
@@ -154,12 +163,14 @@ export function RegisterForm({
                         type="radio"
                         value={value}
                       />
-                      <Icon className="mt-0.5 size-4 shrink-0 text-primary" />
+                      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
+                        <Icon className="size-4" />
+                      </span>
                       <span className="flex flex-col gap-0.5">
-                        <span className="font-heading text-xs font-semibold">
+                        <span className="font-heading text-sm font-bold tracking-tight">
                           {label}
                         </span>
-                        <span className="text-[11px] leading-snug text-muted-foreground">
+                        <span className="text-xs leading-snug text-muted-foreground">
                           {description}
                         </span>
                       </span>
@@ -220,10 +231,10 @@ export function RegisterForm({
 
           {googleEnabled ? <GoogleSignInButton role={initialRole} /> : null}
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             Already registered?{" "}
             <Link
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="rounded font-semibold text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
               href={
                 redirectTo
                   ? `/login?redirectTo=${encodeURIComponent(redirectTo)}`
