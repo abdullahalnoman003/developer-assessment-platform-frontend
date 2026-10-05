@@ -61,7 +61,7 @@ export function TagInput({
           {value.map((tag) => (
             <li
               key={tag}
-              className="inline-flex h-6 items-center gap-1 border border-border bg-muted px-1.5 font-mono text-xs"
+              className="inline-flex h-6 items-center gap-1 rounded-md border border-border/70 bg-muted px-1.5 font-mono text-xs"
             >
               <span className="max-w-40 truncate">{tag}</span>
               <button

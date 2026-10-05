@@ -26,18 +26,20 @@ export function EmptyState({
   return (
     <Empty
       className={cn(
-        "w-full rounded-none border border-dashed border-border bg-card py-10",
+        "w-full rounded-2xl border border-dashed border-border bg-card/60 py-12",
         className,
       )}
     >
       {Icon ? (
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <Icon className="size-4" />
+            <Icon className="size-5" />
           </EmptyMedia>
         </EmptyHeader>
       ) : null}
-      <EmptyTitle className="font-heading text-sm">{title}</EmptyTitle>
+      <EmptyTitle className="font-heading text-base font-bold">
+        {title}
+      </EmptyTitle>
       {body ? <EmptyDescription>{body}</EmptyDescription> : null}
       {action ? <EmptyContent>{action}</EmptyContent> : null}
     </Empty>

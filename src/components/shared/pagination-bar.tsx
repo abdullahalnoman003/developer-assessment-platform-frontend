@@ -72,8 +72,8 @@ export function PaginationBar({
   const window = pageWindow(page, totalPages);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs/relaxed text-muted-foreground">
+    <div className="flex flex-col gap-3 border-t border-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm/relaxed text-muted-foreground">
         Showing <span className="tabular-nums">{firstRow}</span>–
         <span className="tabular-nums">{lastRow}</span> of{" "}
         <span className="tabular-nums">{total}</span> {label}
@@ -141,8 +141,8 @@ export function PageSizeNote({
   options?: readonly number[];
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">Per page</span>
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="font-mono text-xs text-muted-foreground">Per page</span>
       {options.map((option) => {
         const params = new URLSearchParams(searchParams);
         params.set("limit", String(option));
@@ -151,10 +151,15 @@ export function PageSizeNote({
           <LinkButton
             aria-current={option === limit ? "true" : undefined}
             aria-label={`${option} results per page`}
+            className={
+              option === limit
+                ? "border-brand/40 bg-brand-soft text-brand"
+                : undefined
+            }
             href={`${pathname}?${params.toString()}`}
             key={option}
             size="sm"
-            variant={option === limit ? "outline" : "ghost"}
+            variant="ghost"
           >
             {option}
           </LinkButton>

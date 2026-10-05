@@ -132,7 +132,7 @@ function EmptyChart({
   message: string;
 }) {
   return (
-    <div className="flex min-h-40 flex-col items-center justify-center gap-2 border border-dashed border-border p-6 text-center">
+    <div className="flex min-h-40 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border p-6 text-center">
       <Icon aria-hidden className="size-5 text-muted-foreground" />
       <p className="text-sm/relaxed text-muted-foreground">{message}</p>
     </div>

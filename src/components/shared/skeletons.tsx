@@ -13,7 +13,7 @@ export function StatCardsSkeleton({ count = 4 }: { count?: number }) {
       {slots(count).map((slot) => (
         <div
           key={slot}
-          className="flex flex-col gap-2 border border-border bg-card p-4"
+          className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-card p-4"
         >
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-7 w-24" />
@@ -64,7 +64,7 @@ export function CardListSkeleton({ count = 3 }: { count?: number }) {
       {slots(count).map((slot) => (
         <div
           key={slot}
-          className="flex flex-col gap-3 border border-border bg-card p-4"
+          className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4"
         >
           <div className="flex items-center justify-between gap-3">
             <Skeleton className="h-4 w-1/2" />

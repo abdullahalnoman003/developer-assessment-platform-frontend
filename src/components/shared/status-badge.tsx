@@ -30,10 +30,10 @@ import { cn } from "@/lib/utils";
 
 const TONE_CLASS: Record<BadgeTone, string> = {
   neutral: "border-border bg-muted text-muted-foreground",
-  success: "border-success/40 bg-success/10 text-success",
-  warning: "border-warning/40 bg-warning/10 text-warning",
-  danger: "border-destructive/40 bg-destructive/10 text-destructive",
-  info: "border-info/40 bg-info/10 text-info",
+  success: "border-success/35 bg-success/10 text-success",
+  warning: "border-warning/35 bg-warning/10 text-warning",
+  danger: "border-destructive/35 bg-destructive/10 text-destructive",
+  info: "border-info/35 bg-info/10 text-info",
 };
 
 const DOT_CLASS: Record<BadgeTone, string> = {
@@ -58,7 +58,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center gap-1.5 border px-2 font-mono text-xs whitespace-nowrap",
+        "inline-flex h-6 items-center gap-1.5 rounded-full border px-2.5 font-mono text-xs font-medium whitespace-nowrap",
         TONE_CLASS[tone],
         className,
       )}

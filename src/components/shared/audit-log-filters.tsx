@@ -17,7 +17,7 @@ export function AuditLogFilters() {
 
   return (
     <div
-      className="flex flex-col gap-3 border border-border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-end"
+      className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end"
       data-busy={pending || undefined}
     >
       <FilterSelect

@@ -91,29 +91,32 @@ export function DataTable<T>({
         </Table>
       </div>
 
-      <ul aria-label={caption} className="flex flex-col gap-2 md:hidden">
+      <ul aria-label={caption} className="flex flex-col gap-3 md:hidden">
         {rows.map((row) => (
-          <li className="border border-border bg-card p-3" key={getRowKey(row)}>
-            <dl className="flex flex-col gap-2">
+          <li
+            className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm transition-colors hover:border-brand/30"
+            key={getRowKey(row)}
+          >
+            <dl className="flex flex-col gap-2.5">
               {columns.map((column) => {
                 const label = mobileLabelOf(column.header, column.mobileLabel);
                 return (
                   <div
                     className={
                       label
-                        ? "grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-2"
+                        ? "grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-3"
                         : undefined
                     }
                     key={column.key}
                   >
                     {label ? (
-                      <dt className="text-xs font-medium text-muted-foreground">
+                      <dt className="font-mono text-[0.6875rem] font-semibold tracking-wider text-muted-foreground uppercase">
                         {label}
                       </dt>
                     ) : null}
                     <dd
                       className={cn(
-                        "min-w-0 text-xs break-words",
+                        "min-w-0 text-sm break-words",
                         label ? "min-w-0" : "col-span-2",
                         mobileCellClass(column.className),
                       )}

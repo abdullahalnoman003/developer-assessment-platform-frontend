@@ -17,19 +17,18 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        "border border-destructive/40 bg-destructive/5 p-4",
+        "rounded-2xl border border-destructive/35 bg-destructive/5 p-5",
         className,
       )}
       role="alert"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          <AlertTriangleIcon
-            aria-hidden
-            className="mt-0.5 size-4 shrink-0 text-destructive"
-          />
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+            <AlertTriangleIcon aria-hidden className="size-4.5" />
+          </span>
           <div className="min-w-0">
-            <p className="font-heading text-sm font-semibold">{title}</p>
+            <p className="font-heading text-sm font-bold">{title}</p>
             <p className="mt-1 text-sm/relaxed text-muted-foreground">
               {message}
             </p>
@@ -42,7 +41,7 @@ export function ErrorState({
             size="sm"
             variant="outline"
           >
-            <RefreshCwIcon className="size-3.5" />
+            <RefreshCwIcon data-icon="inline-start" />
             Retry
           </Button>
         ) : null}
@@ -63,17 +62,17 @@ export function InlineNotice({
   className?: string;
 }) {
   const frame = {
-    info: "border-info/40 bg-info/5",
-    success: "border-success/40 bg-success/5",
-    warning: "border-warning/40 bg-warning/5",
-    danger: "border-destructive/40 bg-destructive/5",
+    info: "border-info/35 bg-info/5",
+    success: "border-success/35 bg-success/5",
+    warning: "border-warning/35 bg-warning/5",
+    danger: "border-destructive/35 bg-destructive/5",
   }[tone];
 
   return (
-    <div className={cn("border p-3", frame, className)}>
-      <p className="font-heading text-xs font-semibold">{title}</p>
+    <div className={cn("rounded-xl border p-4", frame, className)}>
+      <p className="font-heading text-base font-bold tracking-tight">{title}</p>
       {body ? (
-        <p className="mt-1 text-xs/relaxed text-muted-foreground">{body}</p>
+        <p className="mt-1 text-sm/relaxed text-muted-foreground">{body}</p>
       ) : null}
     </div>
   );
