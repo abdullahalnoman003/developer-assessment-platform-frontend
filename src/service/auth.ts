@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import type { ApiResponse, AuthTokens, SessionUser, User } from "@/lib/types";
 import type {
+  ForgotPasswordInput,
   LoginInput,
   RegisterInput,
   UpdateProfileInput,
@@ -25,6 +26,15 @@ export const authService = {
       method: "POST",
       body: role ? { idToken, role } : { idToken },
     }),
+
+  forgotPassword: (payload: ForgotPasswordInput): Promise<ApiResponse<null>> =>
+    api("/auth/forgot-password", { method: "POST", body: payload }),
+
+  resetPassword: (payload: {
+    token: string;
+    password: string;
+  }): Promise<ApiResponse<null>> =>
+    api("/auth/reset-password", { method: "POST", body: payload }),
 
   updateProfile: (payload: UpdateProfileInput): Promise<ApiResponse<User>> =>
     api("/users/me", { method: "PATCH", body: payload }),

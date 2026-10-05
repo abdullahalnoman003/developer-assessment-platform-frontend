@@ -11,6 +11,15 @@ export const ACTION_MESSAGES = {
     success: "Signed in with Google.",
     failure: "Google sign-in was not completed.",
   },
+  forgotPassword: {
+    success:
+      "If an account exists for that email, a reset link is on its way. Check your inbox and spam folder.",
+    failure: "Could not send the reset link. Please try again.",
+  },
+  resetPassword: {
+    success: "Password updated. Sign in with your new password.",
+    failure: "Could not reset your password.",
+  },
   logout: {
     success: "You are signed out.",
     failure: "Sign out failed. Please try again.",

@@ -147,13 +147,13 @@ export function FilterSelect({
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
       <label
-        className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
+        className="font-mono text-[0.6875rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase"
         htmlFor={id}
       >
         {label}
       </label>
       <select
-        className="h-9 w-full rounded-none border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+        className="h-9 w-full rounded-md border border-input bg-background px-2.5 text-sm shadow-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
         id={id}
         onChange={(event) => onChange(event.target.value)}
         value={value}

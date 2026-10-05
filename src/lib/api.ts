@@ -10,6 +10,12 @@ const RAW_BASE = (
 ).replace(/\/+$/, "");
 const API_BASE = `${RAW_BASE}/api/v1`;
 
+function missingBaseMessage(): string | null {
+  if (process.env.NEXT_PUBLIC_API_URL) return null;
+  if (process.env.NODE_ENV !== "production") return null;
+  return `NEXT_PUBLIC_API_URL is not set in this deployment, so every request fell back to ${RAW_BASE}. Set it on the host to the backend origin (no trailing slash, no /api/v1) and redeploy.`;
+}
+
 const ACCESS_COOKIE = "accessToken";
 const REFRESH_COOKIE = "refreshToken";
 
@@ -146,6 +152,16 @@ async function send<T>(
       statusCode: 503,
       message:
         "Backend is temporarily unavailable. Please try again in a moment.",
+      data: null,
+    };
+  }
+
+  const misconfigured = missingBaseMessage();
+  if (misconfigured) {
+    return {
+      success: false,
+      statusCode: 503,
+      message: misconfigured,
       data: null,
     };
   }

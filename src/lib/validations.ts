@@ -50,6 +50,25 @@ export const registerSchema = z.object({
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
+export const forgotPasswordSchema = z.object({
+  email: z.email("Enter a valid email address").trim().toLowerCase(),
+});
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(128, "Password is too long"),
+    confirmPassword: z.string().min(1, "Confirm your new password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
 export const updateProfileSchema = z.object({
   name: z
     .string()
@@ -264,7 +283,6 @@ export const evaluateAttemptSchema = z.object({
           .max(10000),
       }),
     )
-    .min(1, "Score at least one written or coding answer")
     .max(500),
   releaseResult: z.boolean().optional(),
 });
