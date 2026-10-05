@@ -93,8 +93,8 @@ export default function HowItWorksPage() {
 
       <Workflow />
 
-      <Section className="border-b border-border">
-        <Container className="flex flex-col gap-10">
+      <Section className="border-b border-border/70">
+        <Container className="flex flex-col gap-12">
           <SectionHeading
             align="left"
             description="Every state below is stored on the record, which is why the dashboards can filter on them at all."
@@ -102,25 +102,25 @@ export default function HowItWorksPage() {
             title="What the API is actually holding"
           />
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-3">
             {LIFECYCLE.map((column) => (
               <Card className="h-full" key={column.title}>
-                <CardContent className="flex h-full flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="flex size-8 items-center justify-center border border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan">
-                      <column.Icon className="size-4" />
+                <CardContent className="flex h-full flex-col gap-5">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
+                      <column.Icon className="size-5" />
                     </span>
-                    <h3 className="font-heading text-sm font-semibold">
+                    <h3 className="font-heading text-base font-bold tracking-tight">
                       {column.title}
                     </h3>
                   </div>
-                  <ul className="flex flex-col gap-2">
+                  <ul className="flex flex-col gap-2.5">
                     {column.items.map((item) => (
                       <li
-                        className="flex items-start gap-2 text-sm/relaxed text-muted-foreground"
+                        className="flex items-start gap-2.5 text-sm/relaxed text-muted-foreground"
                         key={item}
                       >
-                        <span className="mt-2 size-1 shrink-0 bg-muted-foreground/60" />
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand/60" />
                         {item}
                       </li>
                     ))}
@@ -133,7 +133,7 @@ export default function HowItWorksPage() {
       </Section>
 
       <Section>
-        <Container className="flex flex-col gap-10">
+        <Container className="flex flex-col gap-12">
           <SectionHeading
             align="left"
             description="The rules that surprise people, written down once."
@@ -141,14 +141,17 @@ export default function HowItWorksPage() {
             title="Worth knowing before your first round"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {RULES.map(({ Icon, title, body }) => (
-              <Card className="h-full" key={title}>
-                <CardContent className="flex h-full flex-col gap-3">
-                  <span className="flex size-8 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
-                    <Icon className="size-4" />
+              <Card
+                className="group h-full transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+                key={title}
+              >
+                <CardContent className="flex h-full flex-col gap-4">
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15 transition-transform duration-300 group-hover:scale-105">
+                    <Icon className="size-5" />
                   </span>
-                  <h3 className="font-heading text-sm font-semibold">
+                  <h3 className="font-heading text-base font-bold tracking-tight">
                     {title}
                   </h3>
                   <p className="text-sm/relaxed text-muted-foreground">

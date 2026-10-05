@@ -44,7 +44,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 function Receipt({ payment }: { payment: PaymentDetail }) {
   return (
     <div className="flex flex-col gap-4">
-      <dl className="flex flex-col border border-border bg-card p-4">
+      <dl className="flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
         <DetailRow label="Payment id" value={payment.id} />
         <DetailRow
           label="Status"
@@ -81,10 +81,14 @@ function Outcome({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 border border-border bg-card p-6">
-        <Icon className="size-6 text-accent-cyan" />
-        <h1 className="font-heading text-lg font-semibold">{title}</h1>
-        <p className="text-sm/relaxed text-muted-foreground">{body}</p>
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
+        <span className="flex size-11 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
+          <Icon className="size-5" />
+        </span>
+        <h1 className="font-heading text-xl font-bold tracking-tight">
+          {title}
+        </h1>
+        <p className="text-base/relaxed text-muted-foreground">{body}</p>
       </div>
       {children}
     </div>

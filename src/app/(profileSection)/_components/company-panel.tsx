@@ -91,7 +91,7 @@ export function CompanyPanel({ company: res, dashboard }: CompanyPanelProps) {
               {company.logoUrl ? (
                 <Image
                   alt={`${company.name} logo`}
-                  className="size-12 shrink-0 border border-border bg-background object-contain"
+                  className="size-12 shrink-0 rounded-lg border border-border/70 bg-background object-contain"
                   height={48}
                   src={company.logoUrl}
                   unoptimized
@@ -100,13 +100,13 @@ export function CompanyPanel({ company: res, dashboard }: CompanyPanelProps) {
               ) : (
                 <span
                   aria-hidden
-                  className="flex size-12 shrink-0 items-center justify-center border border-dashed border-border text-muted-foreground"
+                  className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground"
                 >
                   <ImageIcon className="size-5" />
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate font-heading text-sm font-semibold">
+                <p className="truncate font-heading text-base font-bold tracking-tight">
                   {company.name}
                 </p>
                 {isValidHttpUrl(company.website) ? (
@@ -119,7 +119,7 @@ export function CompanyPanel({ company: res, dashboard }: CompanyPanelProps) {
                     {company.website}
                   </a>
                 ) : (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="break-words text-xs text-muted-foreground">
                     {company.website || "No website set"}
                   </p>
                 )}

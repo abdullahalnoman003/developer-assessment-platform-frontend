@@ -4,8 +4,11 @@ import {
   DashboardPageHeader,
   DashboardPanel,
 } from "@/components/shared/dashboard-shell";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ROLE_LABELS } from "@/lib/constants";
+import { initials } from "@/lib/format";
 import { dashboardMetadata } from "@/lib/seo";
 import { authService } from "@/service/auth";
 import { companyService } from "@/service/company";
@@ -16,6 +19,37 @@ import { IdentityForm } from "../_components/identity-form";
 export const metadata: Metadata = dashboardMetadata("Profile");
 
 export const dynamic = "force-dynamic";
+
+function AccountSummary({
+  user,
+}: {
+  user: {
+    name: string;
+    email: string;
+    avatarUrl: string | null;
+    role: keyof typeof ROLE_LABELS;
+  };
+}) {
+  return (
+    <section className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-brand-soft-gradient p-5 shadow-sm sm:flex-row sm:items-center">
+      <Avatar className="size-14 border border-brand/20 shadow-sm" size="lg">
+        {user.avatarUrl ? <AvatarImage alt="" src={user.avatarUrl} /> : null}
+        <AvatarFallback className="bg-gradient-brand font-heading text-lg font-bold text-primary-foreground">
+          {initials(user.name)}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <h2 className="truncate font-heading text-xl font-bold tracking-tight">
+          {user.name}
+        </h2>
+        <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+        <span className="inline-flex w-fit items-center rounded-full border border-brand/25 bg-background/70 px-2.5 py-0.5 font-mono text-[0.6875rem] font-semibold tracking-[0.12em] text-brand uppercase">
+          {ROLE_LABELS[user.role]}
+        </span>
+      </div>
+    </section>
+  );
+}
 
 async function CompanyPanelLoader() {
   // independent reads, issued together to halve the render wait
@@ -43,8 +77,17 @@ export default async function ProfilePage() {
   return (
     <>
       <DashboardPageHeader
-        description={`Signed in as ${user.email}`}
+        description="Manage how you appear across CodeArena."
         title="Profile"
+      />
+
+      <AccountSummary
+        user={{
+          name: user.name,
+          email: user.email,
+          avatarUrl: user.avatarUrl,
+          role: user.role,
+        }}
       />
 
       {showCandidateTab || showRecruiterTab ? (

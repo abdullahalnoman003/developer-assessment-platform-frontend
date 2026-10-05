@@ -55,7 +55,7 @@ export function IdentityForm({
     <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
       {state.status === "error" ? (
         <p
-          className="border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="rounded-lg border border-destructive/40 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
           role="alert"
         >
           {state.message}

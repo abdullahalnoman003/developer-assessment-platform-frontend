@@ -28,22 +28,26 @@ export default function FaqPage() {
         </Container>
       </Section>
 
-      <Section className="border-t border-border bg-muted/30">
-        <Container className="flex flex-col items-center gap-4 text-center">
-          <h2 className="font-heading text-lg font-semibold">
+      <Section className="border-t border-border/70 bg-muted/40">
+        <Container className="flex flex-col items-center gap-5 text-center">
+          <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
             Still not answered?
           </h2>
-          <p className="max-w-xl text-sm/relaxed text-muted-foreground text-pretty">
+          <p className="max-w-xl text-base/relaxed text-muted-foreground text-pretty">
             Ask a real question. The contact form validates what you type and
             opens an email addressed to our support inbox — nothing is stored on
             a server that does not exist.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <LinkButton href="/contact">
+            <LinkButton href="/contact" size="lg">
               <MailIcon data-icon="inline-start" />
               Contact support
             </LinkButton>
-            <LinkButton href={`mailto:${SUPPORT_EMAIL}`} variant="outline">
+            <LinkButton
+              href={`mailto:${SUPPORT_EMAIL}`}
+              size="lg"
+              variant="outline"
+            >
               {SUPPORT_EMAIL}
             </LinkButton>
           </div>

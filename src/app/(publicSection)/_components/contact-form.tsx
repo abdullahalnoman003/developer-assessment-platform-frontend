@@ -83,7 +83,9 @@ export function ContactForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading text-xl">Send a message</CardTitle>
+        <CardTitle className="font-heading text-xl font-bold tracking-tight">
+          Send a message
+        </CardTitle>
         <p className="text-sm/relaxed text-muted-foreground">
           This form validates what you type and then hands the message to your
           own email client. Nothing is stored on a server, so nothing is sent
@@ -94,13 +96,13 @@ export function ContactForm() {
       <CardContent>
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
           {opened ? (
-            <output className="flex items-start gap-2 border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-2 text-sm">
-              <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-accent-cyan" />
+            <output className="flex items-start gap-2 rounded-xl border border-border/70 bg-brand-soft px-3.5 py-3 text-sm">
+              <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-brand" />
               <span>
                 Your email client should now be open with the message
                 pre-filled. If nothing happened, email{" "}
                 <a
-                  className="underline underline-offset-4"
+                  className="rounded font-semibold text-brand underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
                   href={`mailto:${SUPPORT_EMAIL}`}
                 >
                   {SUPPORT_EMAIL}
@@ -148,7 +150,7 @@ export function ContactForm() {
                   const active = selectedTopic === option.value;
                   return (
                     <label
-                      className="flex cursor-pointer items-start gap-2.5 border border-border bg-background p-3 transition-colors hover:bg-muted/50 has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5"
+                      className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-border/70 bg-background p-3.5 transition-colors hover:bg-muted/50 has-[:checked]:border-brand/50 has-[:checked]:bg-brand-soft"
                       key={option.value}
                     >
                       <input
@@ -160,10 +162,10 @@ export function ContactForm() {
                         value={option.value}
                       />
                       <span className="flex flex-col gap-0.5">
-                        <span className="font-heading text-xs">
+                        <span className="font-heading text-sm font-bold tracking-tight">
                           {option.label}
                         </span>
-                        <span className="text-[11px] leading-snug text-muted-foreground">
+                        <span className="text-xs/relaxed text-muted-foreground">
                           {option.description}
                         </span>
                       </span>
@@ -198,7 +200,7 @@ export function ContactForm() {
 
             {Object.keys(formState.errors).length > 0 ? (
               <p
-                className="flex items-start gap-2 border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3.5 py-3 text-sm text-destructive"
                 role="alert"
               >
                 <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" />

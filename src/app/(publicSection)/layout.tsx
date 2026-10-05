@@ -11,7 +11,7 @@ export default async function PublicSectionLayout({
   const user = await authService.currentUser();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-grid-faint">
+    <div className="flex min-h-dvh flex-col bg-background">
       <Navbar user={user} />
       <main className="flex-1">{children}</main>
       <Footer />

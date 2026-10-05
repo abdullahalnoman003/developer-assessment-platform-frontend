@@ -52,14 +52,14 @@ export default function ContactPage() {
 
           <div className="flex flex-col gap-4">
             <Card>
-              <CardContent className="flex flex-col gap-2">
-                <h2 className="font-heading text-sm font-semibold">
+              <CardContent className="flex flex-col gap-3">
+                <h2 className="font-heading text-base font-bold tracking-tight">
                   Prefer to write directly?
                 </h2>
                 <p className="text-sm/relaxed text-muted-foreground">
                   Our support inbox is{" "}
                   <a
-                    className="underline underline-offset-4 hover:text-foreground"
+                    className="rounded font-semibold text-brand underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
                     href={`mailto:${SUPPORT_EMAIL}`}
                   >
                     {SUPPORT_EMAIL}
@@ -77,11 +77,11 @@ export default function ContactPage() {
               {REASONS.map(({ Icon, title, body }) => (
                 <Card key={title}>
                   <CardContent className="flex items-start gap-3">
-                    <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
+                    <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
                       <Icon className="size-4" />
                     </span>
                     <div className="flex flex-col gap-1">
-                      <h3 className="font-heading text-xs font-semibold">
+                      <h3 className="font-heading text-sm font-bold tracking-tight">
                         {title}
                       </h3>
                       <p className="text-sm/relaxed text-muted-foreground">
@@ -96,8 +96,8 @@ export default function ContactPage() {
         </Container>
       </Section>
 
-      <Section className="border-t border-border bg-muted/30">
-        <Container className="flex flex-col gap-4">
+      <Section className="border-t border-border/70 bg-muted/40">
+        <Container className="flex flex-col gap-6">
           <SectionHeading
             align="left"
             description="Before you write, these two pages answer most of what arrives in that inbox."

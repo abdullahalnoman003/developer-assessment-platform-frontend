@@ -13,13 +13,13 @@ export default function PublicLoading() {
         <Skeleton className="mt-2 h-9 w-64" />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {["a", "b", "c", "d", "e", "f"].map((slot) => (
           <div
-            className="flex flex-col gap-3 border border-border bg-card p-5"
+            className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-5 shadow-sm"
             key={slot}
           >
-            <Skeleton className="size-8" />
+            <Skeleton className="size-10 rounded-xl" />
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-3 w-full" />
             <Skeleton className="h-3 w-2/3" />

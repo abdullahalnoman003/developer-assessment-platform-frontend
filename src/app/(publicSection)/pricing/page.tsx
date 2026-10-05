@@ -44,13 +44,13 @@ export default function PricingPage() {
       <Section>
         <Container className="flex flex-col gap-10">
           <h2 className="sr-only">Credit packs</h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             {CREDIT_PLANS.map((plan) => (
               <PlanCard key={plan.id} planId={plan.id} />
             ))}
           </div>
 
-          <p className="text-center text-xs/relaxed text-muted-foreground">
+          <p className="text-center text-sm/relaxed text-muted-foreground">
             The per-credit figure is the pack price divided by the number of
             credits, so the Enterprise pack is the cheapest credit and the
             Starter pack is the most expensive one.
@@ -58,8 +58,8 @@ export default function PricingPage() {
         </Container>
       </Section>
 
-      <Section className="border-y border-border bg-muted/30">
-        <Container className="flex flex-col gap-10">
+      <Section className="border-y border-border/70 bg-muted/40">
+        <Container className="flex flex-col gap-12">
           <SectionHeading
             align="left"
             description="Two things worth knowing before you start a checkout."
@@ -67,14 +67,14 @@ export default function PricingPage() {
             title="How the money path works"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {BILLING_NOTES.map(({ Icon, title, body }) => (
               <Card className="h-full" key={title}>
-                <CardContent className="flex h-full flex-col gap-3">
-                  <span className="flex size-8 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
-                    <Icon className="size-4" />
+                <CardContent className="flex h-full flex-col gap-4">
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
+                    <Icon className="size-5" />
                   </span>
-                  <h3 className="font-heading text-sm font-semibold">
+                  <h3 className="font-heading text-base font-bold tracking-tight">
                     {title}
                   </h3>
                   <p className="text-sm/relaxed text-muted-foreground">
@@ -88,20 +88,20 @@ export default function PricingPage() {
       </Section>
 
       <Section>
-        <Container className="flex flex-col items-center gap-4 text-center">
-          <h2 className="font-heading text-lg font-semibold">
+        <Container className="flex flex-col items-center gap-5 text-center">
+          <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
             Where do I actually buy them?
           </h2>
-          <p className="max-w-xl text-sm/relaxed text-muted-foreground text-pretty">
+          <p className="max-w-xl text-base/relaxed text-muted-foreground text-pretty">
             Billing lives behind sign-in, because a payment needs a company
             record to attach the credits to. Create an account, set up your
             company, then start a checkout from the company dashboard.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <LinkButton href="/register?role=RECRUITER">
+            <LinkButton href="/register?role=RECRUITER" size="lg">
               Create a recruiter account
             </LinkButton>
-            <LinkButton href="/login" variant="outline">
+            <LinkButton href="/login" size="lg" variant="outline">
               Sign in to an existing account
             </LinkButton>
           </div>

@@ -64,7 +64,7 @@ export default function AboutPage() {
       </PageHero>
 
       <Section>
-        <Container className="flex flex-col gap-10">
+        <Container className="flex flex-col gap-12">
           <SectionHeading
             align="left"
             description="Three roles share one set of records. Each one sees the slice that belongs to it, and the API enforces the boundary."
@@ -72,11 +72,17 @@ export default function AboutPage() {
             title="One platform, three vantage points"
           />
 
-          <div className="grid gap-4 md:grid-cols-3">
-            {AUDIENCES.map((audience) => (
-              <Card className="h-full" key={audience.role}>
-                <CardContent className="flex h-full flex-col gap-2">
-                  <h3 className="font-heading text-sm font-semibold">
+          <div className="grid gap-5 md:grid-cols-3">
+            {AUDIENCES.map((audience, index) => (
+              <Card
+                className="group h-full transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+                key={audience.role}
+              >
+                <CardContent className="flex h-full flex-col gap-4">
+                  <span className="font-mono text-xs font-semibold tracking-[0.2em] text-brand">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-heading text-lg font-bold tracking-tight">
                     {audience.role}
                   </h3>
                   <p className="text-sm/relaxed text-muted-foreground">
@@ -89,8 +95,8 @@ export default function AboutPage() {
         </Container>
       </Section>
 
-      <Section className="border-y border-border bg-muted/30">
-        <Container className="flex flex-col gap-10">
+      <Section className="border-y border-border/70 bg-muted/40">
+        <Container className="flex flex-col gap-12">
           <SectionHeading
             align="left"
             description="Four commitments that shaped how the screens are built."
@@ -98,11 +104,11 @@ export default function AboutPage() {
             title="What we will not compromise on"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {PRINCIPLES.map((principle) => (
               <Card className="h-full" key={principle.title}>
-                <CardContent className="flex h-full flex-col gap-2">
-                  <h3 className="font-heading text-sm font-semibold">
+                <CardContent className="flex h-full flex-col gap-3">
+                  <h3 className="font-heading text-lg font-bold tracking-tight">
                     {principle.title}
                   </h3>
                   <p className="text-sm/relaxed text-muted-foreground">
@@ -122,10 +128,10 @@ export default function AboutPage() {
             eyebrow="Questions"
             title="Something not covered here?"
           />
-          <p className="max-w-2xl text-sm/relaxed text-muted-foreground">
+          <p className="max-w-2xl text-base/relaxed text-muted-foreground">
             The contact page builds an email to{" "}
             <a
-              className="underline underline-offset-4 hover:text-foreground"
+              className="rounded font-semibold text-brand underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
               href={`mailto:${SUPPORT_EMAIL}`}
             >
               {SUPPORT_EMAIL}

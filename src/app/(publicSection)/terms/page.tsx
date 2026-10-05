@@ -25,7 +25,7 @@ const SECTIONS = [
     body: [
       "Sign-in sessions are held in an httpOnly cookie and are not readable by client-side scripts. Signing out clears the session on this device.",
       "An administrator may suspend an account. A suspended account cannot sign in, and its sessions stop working. If you think that is a mistake, contact us.",
-      "Demo accounts are shared. Do not put anything you would mind another visitor seeing into them.",
+      "Sample accounts are shared. Do not put anything you would mind another visitor seeing into them.",
     ],
   },
   {
@@ -68,15 +68,20 @@ export default function TermsPage() {
       />
 
       <Section>
-        <Container className="flex max-w-3xl flex-col gap-10">
-          {SECTIONS.map((section) => (
+        <Container className="flex max-w-3xl flex-col gap-12">
+          {SECTIONS.map((section, index) => (
             <div className="flex flex-col gap-3" key={section.heading}>
-              <h2 className="font-heading text-lg font-semibold">
-                {section.heading}
-              </h2>
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs font-semibold tracking-[0.2em] text-brand">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h2 className="font-heading text-xl font-bold tracking-tight">
+                  {section.heading}
+                </h2>
+              </div>
               {section.body.map((paragraph) => (
                 <p
-                  className="text-sm/relaxed text-muted-foreground"
+                  className="text-base/relaxed text-muted-foreground"
                   key={paragraph}
                 >
                   {paragraph}
@@ -85,12 +90,14 @@ export default function TermsPage() {
             </div>
           ))}
 
-          <div className="flex flex-col gap-3 border-t border-border pt-6">
-            <h2 className="font-heading text-lg font-semibold">Contact</h2>
-            <p className="text-sm/relaxed text-muted-foreground">
+          <div className="flex flex-col gap-3 border-t border-border/70 pt-6">
+            <h2 className="font-heading text-xl font-bold tracking-tight">
+              Contact
+            </h2>
+            <p className="text-base/relaxed text-muted-foreground">
               Questions about these terms go to{" "}
               <a
-                className="underline underline-offset-4 hover:text-foreground"
+                className="rounded font-semibold text-brand underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
                 href={`mailto:${SUPPORT_EMAIL}`}
               >
                 {SUPPORT_EMAIL}
