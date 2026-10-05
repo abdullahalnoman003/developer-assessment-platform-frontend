@@ -59,20 +59,22 @@ function PlanCheckoutCard({ plan }: { plan: (typeof CREDIT_PLANS)[number] }) {
   return (
     <Card
       className={[
-        "flex h-full flex-col",
-        plan.featured ? "border-primary/60 shadow-xs" : "",
+        "flex h-full flex-col transition-[border-color,box-shadow] duration-300",
+        plan.featured ? "border-brand/60 shadow-md" : "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       <CardContent className="flex h-full flex-col gap-5">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-heading text-base font-semibold">{plan.name}</h3>
+          <h3 className="font-heading text-base font-bold tracking-tight">
+            {plan.name}
+          </h3>
           {plan.featured ? <Badge>Most picked</Badge> : null}
         </div>
 
         <div className="flex flex-col gap-1">
-          <p className="font-heading text-3xl font-semibold text-gradient-brand">
+          <p className="font-heading text-3xl font-bold text-gradient-brand">
             {formatUsdCents(plan.priceUsdCents)}
           </p>
           <p className="text-xs/relaxed text-muted-foreground">
@@ -80,7 +82,7 @@ function PlanCheckoutCard({ plan }: { plan: (typeof CREDIT_PLANS)[number] }) {
           </p>
         </div>
 
-        <ul className="flex flex-col gap-2 border-t border-border pt-5">
+        <ul className="flex flex-col gap-2 border-t border-border/70 pt-5">
           {plan.highlight.map((item) => (
             <li
               className="flex items-start gap-2 text-sm/relaxed text-muted-foreground"

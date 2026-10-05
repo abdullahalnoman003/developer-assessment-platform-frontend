@@ -45,7 +45,7 @@ export function QuestionPicker({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 border border-border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-end">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
         <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:max-w-xs">
           <label
             className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
@@ -77,7 +77,7 @@ export function QuestionPicker({
             Type
           </label>
           <select
-            className="h-9 w-full border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
             id={`${idPrefix}-type`}
             onChange={(event) =>
               setType(event.target.value as QuestionType | "")
@@ -103,7 +103,7 @@ export function QuestionPicker({
             Difficulty
           </label>
           <select
-            className="h-9 w-full border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
             id={`${idPrefix}-difficulty`}
             onChange={(event) =>
               setDifficulty(event.target.value as Difficulty | "")
@@ -121,7 +121,7 @@ export function QuestionPicker({
       </div>
 
       {visible.length === 0 ? (
-        <p className="border border-border bg-card p-6 text-center text-sm/relaxed text-muted-foreground">
+        <p className="rounded-2xl border border-border/70 bg-card p-6 text-center text-sm/relaxed text-muted-foreground shadow-sm">
           {questions.length === 0 ? emptyBody : emptyTitle}
         </p>
       ) : (
@@ -132,7 +132,7 @@ export function QuestionPicker({
             served in. The search box and both filters run against this loaded
             set.
           </p>
-          <ul className="flex max-h-80 flex-col divide-y divide-border overflow-y-auto border border-border bg-card">
+          <ul className="flex max-h-80 flex-col divide-y divide-border/70 overflow-y-auto rounded-2xl border border-border/70 bg-card shadow-sm">
             {visible.map((question) => {
               const isSelected = selectedIds.includes(question.id);
               const order = selectedIds.indexOf(question.id);
@@ -146,7 +146,7 @@ export function QuestionPicker({
                   >
                     <span className="flex flex-wrap items-center gap-2">
                       {isSelected ? (
-                        <span className="flex size-5 shrink-0 items-center justify-center border border-primary bg-primary text-[11px] text-primary-foreground">
+                        <span className="flex size-5 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] text-primary-foreground">
                           {order + 1}
                         </span>
                       ) : null}

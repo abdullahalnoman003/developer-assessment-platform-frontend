@@ -294,11 +294,11 @@ export default async function RecruiterAssessmentDetailPage({
             }
           />
         ) : (
-          <ol className="flex flex-col divide-y divide-border">
+          <ol className="flex flex-col divide-y divide-border/70">
             {assessment.questions.map((entry, index) => (
               <li className="flex flex-col gap-2 py-3" key={entry.questionId}>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="flex size-6 shrink-0 items-center justify-center border border-primary bg-primary text-[11px] text-primary-foreground">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] text-primary-foreground">
                     {index + 1}
                   </span>
                   <span className="min-w-0 flex-1 truncate font-medium">

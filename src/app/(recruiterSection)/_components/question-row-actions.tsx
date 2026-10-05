@@ -41,13 +41,17 @@ function QuestionPreview({ question }: { question: Question }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h3 className="font-heading text-sm font-semibold">{question.title}</h3>
+        <h3 className="font-heading text-base font-bold tracking-tight">
+          {question.title}
+        </h3>
         <p className="font-mono text-[11px] break-all text-muted-foreground">
           {question.id}
         </p>
       </div>
 
-      <p className="text-sm/relaxed whitespace-pre-wrap">{question.body}</p>
+      <p className="text-sm/relaxed break-words whitespace-pre-wrap">
+        {question.body}
+      </p>
 
       {options.length > 0 ? (
         <ol className="flex flex-col gap-1.5">
@@ -57,8 +61,8 @@ function QuestionPreview({ question }: { question: Question }) {
               <li
                 className={
                   isCorrect
-                    ? "flex items-start gap-2 border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
-                    : "flex items-start gap-2 border border-border px-2.5 py-1.5 text-sm"
+                    ? "flex items-start gap-2 rounded-lg border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
+                    : "flex items-start gap-2 rounded-lg border border-border/70 px-2.5 py-1.5 text-sm"
                 }
                 key={`${question.id}-option-${index}`}
               >
@@ -76,11 +80,13 @@ function QuestionPreview({ question }: { question: Question }) {
           })}
         </ol>
       ) : correct ? (
-        <div className="border border-border bg-muted/40 px-2.5 py-2">
+        <div className="rounded-xl border border-border/70 bg-muted/40 px-3 py-2.5">
           <p className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
             Reference answer
           </p>
-          <p className="mt-1 text-sm/relaxed whitespace-pre-wrap">{correct}</p>
+          <p className="mt-1 text-sm/relaxed break-words whitespace-pre-wrap">
+            {correct}
+          </p>
         </div>
       ) : null}
 
@@ -88,7 +94,7 @@ function QuestionPreview({ question }: { question: Question }) {
         <ul className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <li
-              className="border border-border bg-muted px-1.5 font-mono text-[11px]"
+              className="rounded-md border border-border/70 bg-muted px-2 py-0.5 font-mono text-[11px]"
               key={`${question.id}-tag-${tag}`}
             >
               {tag}

@@ -38,7 +38,7 @@ function ChartFallback() {
   return (
     <div
       aria-hidden
-      className="flex h-56 flex-col items-center justify-center gap-3 border border-dashed border-border"
+      className="flex h-56 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border"
     >
       <Skeleton className="size-24 rounded-full" />
       <span className="sr-only">Loading chart…</span>
@@ -81,15 +81,15 @@ function OnboardingRail({
   ];
 
   return (
-    <ol className="flex flex-col divide-y divide-border">
+    <ol className="flex flex-col divide-y divide-border/70">
       {steps.map((step) => (
         <li key={step.label} className="flex items-start gap-3 py-3 first:pt-0">
           <span
             aria-hidden
             className={
               step.done
-                ? "mt-0.5 flex size-5 shrink-0 items-center justify-center border border-success/40 bg-success/10 font-mono text-[11px] text-success"
-                : "mt-0.5 size-5 shrink-0 border border-border"
+                ? "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-success/40 bg-success/10 font-mono text-[11px] text-success"
+                : "mt-0.5 size-5 shrink-0 rounded-full border border-border/70"
             }
           >
             {step.done ? "✓" : ""}
@@ -293,7 +293,7 @@ export default async function RecruiterOverviewPage() {
               title="You are all caught up"
             />
           ) : (
-            <ul className="flex flex-col divide-y divide-border">
+            <ul className="flex flex-col divide-y divide-border/70">
               {needsAttention.map((item) => (
                 <li
                   className="flex flex-wrap items-start gap-3 py-3 first:pt-0"
@@ -335,7 +335,7 @@ export default async function RecruiterOverviewPage() {
           {NEXT_LINKS.map((link) => (
             <li key={link.href}>
               <Link
-                className="flex h-full flex-col gap-1 border border-border bg-background p-3 transition-colors hover:border-primary/50"
+                className="flex h-full flex-col gap-1 rounded-xl border border-border/70 bg-background p-3 transition-[border-color,background-color] hover:border-brand/50 hover:bg-brand-soft"
                 href={link.href}
               >
                 <span className="flex items-center gap-1.5 text-sm font-medium">

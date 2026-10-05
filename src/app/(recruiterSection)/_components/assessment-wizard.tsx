@@ -265,8 +265,8 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
                   aria-current={isCurrent ? "step" : undefined}
                   className={
                     isCurrent
-                      ? "flex items-center gap-2 border border-primary bg-primary/10 px-2.5 py-1.5 font-mono text-xs text-primary"
-                      : "flex items-center gap-2 border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground hover:border-primary/40"
+                      ? "flex items-center gap-2 rounded-full border border-brand bg-brand-soft px-3 py-1.5 font-mono text-xs text-brand"
+                      : "flex items-center gap-2 rounded-full border border-border/70 px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-brand/40"
                   }
                   disabled={number > step}
                   onClick={() => goToStep(number)}
@@ -290,7 +290,7 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
 
       {state.status === "error" ? (
         <p
-          className="border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="rounded-xl border border-destructive/40 bg-destructive/10 px-3.5 py-3 text-sm text-destructive"
           role="alert"
         >
           {state.message}
@@ -445,8 +445,8 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
 
       {step === 3 ? (
         <form className="flex flex-col gap-5" noValidate onSubmit={onSubmit}>
-          <div className="border border-border bg-card">
-            <h2 className="border-b border-border px-4 py-3 font-heading text-sm font-semibold">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+            <h2 className="border-b border-border/70 px-4 py-3 font-heading text-sm font-bold tracking-tight">
               Summary
             </h2>
             <dl className="flex flex-col gap-2 p-4 text-sm">
@@ -475,8 +475,8 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
             </dl>
           </div>
 
-          <div className="border border-border bg-card">
-            <h2 className="border-b border-border px-4 py-3 font-heading text-sm font-semibold">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+            <h2 className="border-b border-border/70 px-4 py-3 font-heading text-sm font-bold tracking-tight">
               Questions in order
             </h2>
             {selected.length === 0 ? (
@@ -484,7 +484,7 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
                 No questions selected.
               </p>
             ) : (
-              <ol className="flex flex-col divide-y divide-border">
+              <ol className="flex flex-col divide-y divide-border/70">
                 {selected.map((question, index) => (
                   <li
                     className="flex flex-wrap items-center gap-2 px-4 py-2.5"

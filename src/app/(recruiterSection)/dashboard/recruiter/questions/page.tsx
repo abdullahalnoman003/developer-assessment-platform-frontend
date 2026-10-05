@@ -70,7 +70,7 @@ const COLUMNS: readonly DataTableColumn<Question>[] = [
         <ul className="flex flex-wrap gap-1">
           {question.tags.slice(0, 3).map((tag) => (
             <li
-              className="border border-border bg-muted px-1.5 font-mono text-[11px]"
+              className="min-w-0 max-w-full truncate rounded-md border border-border/70 bg-muted px-2 py-0.5 font-mono text-[11px]"
               key={`${question.id}-${tag}`}
             >
               {tag}

@@ -104,7 +104,7 @@ export default async function RecruiterCompanyPage() {
               {company.logoUrl ? (
                 <Image
                   alt={`${company.name} logo`}
-                  className="size-12 shrink-0 border border-border bg-background object-contain"
+                  className="size-12 shrink-0 rounded-lg border border-border/70 bg-background object-contain"
                   height={48}
                   src={company.logoUrl}
                   unoptimized
@@ -113,13 +113,13 @@ export default async function RecruiterCompanyPage() {
               ) : (
                 <span
                   aria-hidden
-                  className="flex size-12 shrink-0 items-center justify-center border border-dashed border-border text-muted-foreground"
+                  className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground"
                 >
                   <ImageIcon className="size-5" />
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate font-heading text-sm font-semibold">
+                <p className="truncate font-heading text-base font-bold tracking-tight">
                   {company.name}
                 </p>
                 {isValidHttpUrl(company.website) ? (

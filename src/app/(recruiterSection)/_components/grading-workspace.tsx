@@ -42,12 +42,22 @@ function isManual(type: AssessmentQuestion["question"]["type"]): boolean {
   return MANUAL_QUESTION_TYPES.includes(type);
 }
 
-function SubmitEvaluationButton({ disabled }: { disabled: boolean }) {
+function SubmitEvaluationButton({
+  disabled,
+  releaseOnly,
+}: {
+  disabled: boolean;
+  releaseOnly: boolean;
+}) {
   const { pending } = useFormStatus();
   return (
     <Button disabled={disabled || pending} type="submit">
       {pending ? <Spinner className="size-3.5" /> : null}
-      {pending ? "Saving evaluation" : "Save evaluation"}
+      {pending
+        ? "Saving evaluation"
+        : releaseOnly
+          ? "Release result"
+          : "Save evaluation"}
     </Button>
   );
 }
@@ -90,16 +100,18 @@ function GradingRow({
         </span>
       </div>
 
-      <p className="text-sm/relaxed whitespace-pre-wrap text-muted-foreground">
+      <p className="text-sm/relaxed break-words whitespace-pre-wrap text-muted-foreground">
         {truncate(question.body, 400)}
       </p>
 
-      <div className="flex flex-col gap-2 border border-border bg-muted/30 p-3">
+      <div className="flex flex-col gap-2 rounded-xl border border-border/70 bg-muted/30 p-3">
         <p className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
           Candidate answer
         </p>
         {manual ? (
-          <p className="text-sm/relaxed whitespace-pre-wrap">{responseText}</p>
+          <p className="text-sm/relaxed break-words whitespace-pre-wrap">
+            {responseText}
+          </p>
         ) : options.length > 0 ? (
           <ul className="flex flex-col gap-1">
             {options.map((option, optionIndex) => {
@@ -136,7 +148,9 @@ function GradingRow({
             })}
           </ul>
         ) : (
-          <p className="text-sm/relaxed whitespace-pre-wrap">{responseText}</p>
+          <p className="text-sm/relaxed break-words whitespace-pre-wrap">
+            {responseText}
+          </p>
         )}
 
         {!manual ? (
@@ -157,7 +171,7 @@ function GradingRow({
             <p className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
               Reference answer
             </p>
-            <p className="text-sm/relaxed whitespace-pre-wrap text-muted-foreground">
+            <p className="text-sm/relaxed break-words whitespace-pre-wrap text-muted-foreground">
               {isJsonEmpty(question.correctAnswer)
                 ? "No reference answer was stored for this question — score it against the brief in the question body."
                 : renderResponse(question.correctAnswer)}
@@ -242,8 +256,9 @@ export function GradingWorkspace({
 
   const editable = status === "SUBMITTED";
 
-  // the API rejects an empty scores array, so nothing to grade means no submit
-  const canSubmit = editable && gradeable.length > 0;
+  // with nothing to grade the only meaningful action is releasing the
+  // auto-scored result, so require the switch in that case
+  const canSubmit = editable && (gradeable.length > 0 || release);
 
   const awardedTotal = gradeable.reduce(
     (sum, item) => sum + (scores[item.entry.questionId] ?? 0),
@@ -282,13 +297,13 @@ export function GradingWorkspace({
         />
       ) : manualItems.length === 0 ? (
         <InlineNotice
-          body="Every question on this attempt is multiple choice, and those are scored automatically when the answers are saved. The evaluate endpoint requires at least one score, so there is nothing to send — the automatic score below is already the candidate's result."
+          body="Every question on this attempt is multiple choice and was scored automatically on submit. There is nothing to grade here — turn on the release switch and save to make the automatic score visible to the candidate."
           title="No manual grading needed"
           tone="info"
         />
       ) : gradeable.length === 0 ? (
         <InlineNotice
-          body={`All ${manualItems.length} written or coding ${manualItems.length === 1 ? "question was" : "questions were"} left unanswered, so there is no answer to score and nothing the evaluate endpoint will accept. The candidate receives zero for ${manualItems.length === 1 ? "it" : "them"}.`}
+          body={`All ${manualItems.length} written or coding ${manualItems.length === 1 ? "question was" : "questions were"} left unanswered, so there is no answer to score. The candidate receives zero for ${manualItems.length === 1 ? "it" : "them"}; turn on the release switch and save to make the automatically scored result visible.`}
           title="Nothing was answered"
           tone="warning"
         />
@@ -321,12 +336,12 @@ export function GradingWorkspace({
           ))}
         </ol>
 
-        <div className="flex flex-col gap-3 border border-border bg-card p-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
               Score summary
             </span>
-            <span className="font-heading text-lg font-semibold tabular-nums">
+            <span className="font-heading text-xl font-bold tracking-tight tabular-nums">
               {projected}
               <span className="text-muted-foreground">
                 {" "}
@@ -340,12 +355,11 @@ export function GradingWorkspace({
           </p>
 
           {editable ? (
-            <div className="flex items-start gap-3 border-t border-border pt-3">
+            <div className="flex items-start gap-3 border-t border-border/70 pt-3">
               <Switch
                 aria-describedby="release-help"
                 aria-labelledby="release-label"
                 checked={release}
-                disabled={gradeable.length === 0}
                 onCheckedChange={setRelease}
               />
               <span className="flex flex-col gap-0.5">
@@ -394,7 +408,10 @@ export function GradingWorkspace({
                 Evaluation is one-shot: once saved, the attempt is final and
                 cannot be regraded.
               </p>
-              <SubmitEvaluationButton disabled={!canSubmit} />
+              <SubmitEvaluationButton
+                disabled={!canSubmit}
+                releaseOnly={gradeable.length === 0}
+              />
             </div>
           ) : null}
         </div>

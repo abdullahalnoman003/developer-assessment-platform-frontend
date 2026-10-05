@@ -24,11 +24,11 @@ export function AssessmentLifecycleRail({
           return (
             <li
               className={[
-                "flex flex-1 flex-col gap-1.5 border p-3",
+                "flex flex-1 flex-col gap-1.5 rounded-xl border p-3",
                 isCurrent
-                  ? "border-primary bg-primary/5"
+                  ? "border-brand/50 bg-brand-soft"
                   : isDone
-                    ? "border-border bg-muted/40"
+                    ? "border-border/70 bg-muted/40"
                     : "border-dashed border-border",
               ].join(" ")}
               key={step}
@@ -56,7 +56,7 @@ export function AssessmentLifecycleRail({
         {ASSESSMENT_STATUS_HELP[status]}
       </p>
 
-      <p className="border-t border-border pt-3 text-xs/relaxed text-muted-foreground">
+      <p className="border-t border-border/70 pt-3 text-xs/relaxed text-muted-foreground">
         {next
           ? `Next allowed step: ${ASSESSMENT_STATUS_HELP[next].split(".")[0]}.`
           : "ARCHIVED is terminal — there is no step after it."}
