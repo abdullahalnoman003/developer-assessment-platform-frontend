@@ -76,7 +76,7 @@ export function QuestionNavigator({
                 aria-current={isActive ? "true" : undefined}
                 aria-label={describe(index, isActive, isAnswered, isFlagged)}
                 className={cn(
-                  "relative flex size-7 items-center justify-center rounded-none border text-xs font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring",
+                  "relative flex size-8 items-center justify-center rounded-lg border text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring",
                   TONE_CLASS[tone],
                 )}
                 onClick={(e) => {
@@ -109,7 +109,7 @@ export function QuestionNavigator({
         })}
       </ul>
 
-      <div className="mt-3 flex flex-col gap-2 text-xs">
+      <div className="mt-4 flex flex-col gap-2 text-sm">
         <LegendDot label="Answered" tone="success" />
         <LegendDot label="Flagged" tone="warning" />
         <LegendDot label="Unanswered" tone="neutral" />
@@ -130,7 +130,7 @@ function LegendDot({
       <span
         aria-hidden
         className={cn(
-          "flex size-4 items-center justify-center rounded-none border font-mono text-[10px]",
+          "flex size-4 items-center justify-center rounded-sm border font-mono text-[10px]",
           TONE_CLASS[tone],
         )}
       >

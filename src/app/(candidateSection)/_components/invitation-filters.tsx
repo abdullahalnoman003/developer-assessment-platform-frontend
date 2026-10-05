@@ -20,7 +20,7 @@ export function InvitationFilters() {
   const isFiltered = Boolean(status) || params.get("page") !== null;
 
   return (
-    <div className="flex flex-col gap-3 border border-border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-end">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
       <FilterSelect
         label="Status"
         onChange={(value) => setParam("status", value || null)}

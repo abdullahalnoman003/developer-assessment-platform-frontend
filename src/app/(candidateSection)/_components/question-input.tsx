@@ -84,8 +84,8 @@ function McuInput({
             key={inputId}
             htmlFor={inputId}
             className={cn(
-              "flex cursor-pointer items-start gap-3 border border-border p-3 text-sm",
-              current === option && "border-primary bg-primary/5",
+              "flex cursor-pointer items-start gap-3 rounded-xl border border-border p-3 text-sm transition-colors",
+              current === option && "border-brand/60 bg-brand-soft",
             )}
           >
             <RadioGroupItem id={inputId} value={option} />
@@ -139,7 +139,7 @@ function WrittenInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm/relaxed whitespace-pre-wrap text-muted-foreground">
+      <p className="text-sm/relaxed break-words whitespace-pre-wrap text-muted-foreground">
         {body}
       </p>
       <Textarea
@@ -210,7 +210,7 @@ function CodingInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm/relaxed whitespace-pre-wrap text-muted-foreground">
+      <p className="text-sm/relaxed break-words whitespace-pre-wrap text-muted-foreground">
         {body}
       </p>
       <div className="relative">

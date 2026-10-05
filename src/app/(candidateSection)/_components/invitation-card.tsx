@@ -18,10 +18,10 @@ export function InvitationCard({
   const closed = assessment.status !== "PUBLISHED";
 
   return (
-    <article className="flex flex-col gap-3 border border-border bg-card p-4">
+    <article className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-heading text-sm font-semibold">
+          <h3 className="truncate font-heading text-base font-bold tracking-tight">
             {assessment.title}
           </h3>
           {assessment.description ? (
@@ -57,7 +57,7 @@ export function InvitationCard({
       </dl>
 
       {closed ? (
-        <p className="border border-warning/40 bg-warning/5 px-2.5 py-2 text-xs/relaxed text-muted-foreground">
+        <p className="rounded-xl border border-warning/40 bg-warning/5 px-3 py-2.5 text-xs/relaxed text-muted-foreground">
           The recruiter has moved this assessment to{" "}
           <span className="font-medium text-foreground">
             {assessment.status.toLowerCase()}
@@ -67,7 +67,7 @@ export function InvitationCard({
         </p>
       ) : null}
 
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-3">
         <p className="text-xs/relaxed text-muted-foreground">
           {status === "PENDING"
             ? "Accept to unlock the assessment. Declining is permanent — there is no un-decline."

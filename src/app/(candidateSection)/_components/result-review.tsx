@@ -76,7 +76,7 @@ export function ResultReview({
   );
 
   return (
-    <ol className="flex flex-col divide-y divide-border">
+    <ol className="flex flex-col divide-y divide-border/70">
       {questions.map((entry, index) => {
         const answer = byQuestion.get(entry.question.id);
         const options = toOptionList(entry.question.options);
@@ -106,7 +106,7 @@ export function ResultReview({
                   <OutcomeBadge answer={answer} />
                 </div>
                 <p className="text-sm font-medium">{entry.question.title}</p>
-                <p className="text-xs/relaxed whitespace-pre-wrap text-muted-foreground">
+                <p className="text-xs/relaxed break-words whitespace-pre-wrap text-muted-foreground">
                   {entry.question.body}
                 </p>
               </div>
@@ -120,10 +120,10 @@ export function ResultReview({
                       <li
                         className={
                           isKey
-                            ? "flex items-start gap-2 border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
+                            ? "flex items-start gap-2 rounded-lg border border-success/40 bg-success/10 px-2.5 py-1.5 text-sm"
                             : chosen
-                              ? "border border-primary/50 bg-primary/5 px-2.5 py-1.5 text-sm"
-                              : "border border-border px-2.5 py-1.5 text-sm"
+                              ? "flex items-start gap-2 rounded-lg border border-brand/50 bg-brand-soft px-2.5 py-1.5 text-sm"
+                              : "flex items-start gap-2 rounded-lg border border-border px-2.5 py-1.5 text-sm"
                         }
                         key={`${entry.questionId}-option-${optionIndex}`}
                       >
@@ -149,11 +149,11 @@ export function ResultReview({
               ) : null}
 
               <div className="flex flex-col gap-2">
-                <div className="border border-border bg-muted/40 px-2.5 py-2">
+                <div className="rounded-xl border border-border/70 bg-muted/40 px-3 py-2.5">
                   <p className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
                     Your answer
                   </p>
-                  <p className="mt-1 text-sm/relaxed whitespace-pre-wrap">
+                  <p className="mt-1 text-sm/relaxed break-words whitespace-pre-wrap">
                     {answered && yourAnswer
                       ? yourAnswer
                       : "You left this blank."}
@@ -161,13 +161,13 @@ export function ResultReview({
                 </div>
 
                 {correct ? (
-                  <div className="border border-border bg-muted/40 px-2.5 py-2">
+                  <div className="rounded-xl border border-border/70 bg-muted/40 px-3 py-2.5">
                     <p className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
                       {options.length > 0
                         ? "Correct answer"
                         : "Reference answer"}
                     </p>
-                    <p className="mt-1 text-sm/relaxed whitespace-pre-wrap">
+                    <p className="mt-1 text-sm/relaxed break-words whitespace-pre-wrap">
                       {correct}
                     </p>
                   </div>

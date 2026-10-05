@@ -139,7 +139,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
   ).length;
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+    <div className="flex h-[calc(100dvh-3.5rem)] flex-col">
       <RunnerHeader
         countdown={countdown}
         dirty={dirty}
@@ -178,7 +178,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
             />
           )}
 
-          <Collapsible className="mb-4 border border-border sm:hidden">
+          <Collapsible className="mb-4 overflow-hidden rounded-2xl border border-border/70 sm:hidden">
             <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-xs font-medium transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
               <span>
                 Question {Math.min(index + 1, questions.length)} of{" "}
@@ -191,7 +191,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
               </span>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="flex flex-wrap gap-1.5 border-t border-border p-3">
+              <div className="flex flex-wrap gap-1.5 border-t border-border/70 p-3">
                 {questions.map((entry, i) => (
                   <button
                     aria-current={
@@ -205,9 +205,9 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
                           : "not answered"
                     }`}
                     className={cn(
-                      "size-8 rounded-none border text-xs font-medium focus-visible:ring-2 focus-visible:ring-ring",
+                      "size-8 rounded-lg border text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                       entry.questionId === currentQuestionId
-                        ? "border-primary bg-primary text-primary-foreground"
+                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
                         : flagged.has(entry.questionId)
                           ? "border-warning/50 bg-warning/10"
                           : responses[entry.questionId]
@@ -239,7 +239,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
             </CollapsibleContent>
           </Collapsible>
 
-          <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
             <Button
               onClick={handlePrevious}
               size="sm"
@@ -343,10 +343,10 @@ function QuestionPane({
         </span>
       </header>
 
-      <h2 className="font-heading text-lg font-semibold">
+      <h2 className="font-heading text-xl font-bold tracking-tight">
         {question.question.title}
       </h2>
-      <p className="text-sm/relaxed whitespace-pre-wrap text-muted-foreground">
+      <p className="text-sm/relaxed break-words whitespace-pre-wrap text-muted-foreground">
         {question.question.body}
       </p>
 

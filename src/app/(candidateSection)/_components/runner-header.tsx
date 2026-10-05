@@ -75,7 +75,7 @@ export function RunnerHeader({
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
       <div className="flex items-center gap-4 overflow-hidden">
-        <p className="font-heading text-sm font-semibold tracking-tight truncate">
+        <p className="truncate font-heading text-sm font-bold tracking-tight">
           {title}
         </p>
         <span className="font-mono text-xs text-muted-foreground">
@@ -98,10 +98,10 @@ export function RunnerHeader({
             {countdown.label}
           </span>
           {countdown.expired ? null : (
-            <div className="h-1.5 w-16 overflow-hidden rounded-none bg-muted">
+            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
               <div
                 aria-hidden
-                className="h-full bg-primary transition-all"
+                className="h-full rounded-full bg-gradient-brand transition-all"
                 style={{ width: `${countdown.percentRemaining * 100}%` }}
               />
             </div>

@@ -206,7 +206,7 @@ function PendingInvitationList({
   invitations: readonly InvitationWithAssessment[];
 }) {
   return (
-    <ul className="flex flex-col divide-y divide-border">
+    <ul className="flex flex-col divide-y divide-border/70">
       {invitations.slice(0, PENDING_PREVIEW).map((invitation) => (
         <li className="flex flex-col gap-3 py-3 first:pt-0" key={invitation.id}>
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -239,7 +239,7 @@ function AttemptList({
   invitations: readonly InvitationWithAssessment[];
 }) {
   return (
-    <ul className="flex flex-col divide-y divide-border">
+    <ul className="flex flex-col divide-y divide-border/70">
       {invitations.map((invitation) => {
         const attempt = invitation.attempt;
         if (!attempt) return null;

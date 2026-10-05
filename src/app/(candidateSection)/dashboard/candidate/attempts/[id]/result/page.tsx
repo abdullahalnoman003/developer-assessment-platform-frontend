@@ -107,7 +107,7 @@ export default async function CandidateAttemptResultPage({
               <div className="flex flex-col items-center gap-3 py-2">
                 <span
                   aria-hidden
-                  className="flex size-12 items-center justify-center border border-border text-muted-foreground"
+                  className="flex size-12 items-center justify-center rounded-2xl border border-border/70 text-muted-foreground"
                 >
                   <LockIcon className="size-5" />
                 </span>
@@ -162,7 +162,7 @@ export default async function CandidateAttemptResultPage({
               description="Written by the evaluator. Read-only — the API has no route to change it after the fact."
               title="Evaluator note"
             >
-              <p className="text-sm/relaxed whitespace-pre-wrap">
+              <p className="text-sm/relaxed break-words whitespace-pre-wrap">
                 {attempt.evaluatorNote}
               </p>
             </DashboardPanel>
