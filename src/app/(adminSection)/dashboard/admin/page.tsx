@@ -179,11 +179,11 @@ export default async function AdminDashboardPage() {
           ].map((item) => (
             <li key={item.href}>
               <Link
-                className="flex h-full flex-col gap-1.5 border border-border p-3 transition-colors hover:border-primary/50 hover:bg-primary/5 focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex h-full flex-col gap-1.5 rounded-xl border border-border/70 p-3 transition-[border-color,background-color] hover:border-brand/50 hover:bg-brand-soft focus-visible:ring-1 focus-visible:ring-ring"
                 href={item.href}
               >
-                <span className="flex items-center gap-2 font-heading text-sm font-semibold">
-                  <item.Icon className="size-3.5 text-primary" />
+                <span className="flex items-center gap-2 font-heading text-sm font-bold tracking-tight">
+                  <item.Icon className="size-3.5 text-brand" />
                   {item.title}
                 </span>
                 <span className="text-xs/relaxed text-muted-foreground">
@@ -208,7 +208,7 @@ function ChartFallback() {
   return (
     <output
       aria-busy="true"
-      className="flex h-56 items-center justify-center border border-dashed border-border"
+      className="flex h-56 items-center justify-center rounded-xl border border-dashed border-border"
     >
       <Skeleton className="h-40 w-40 rounded-full" />
       <span className="sr-only">Loading chart…</span>

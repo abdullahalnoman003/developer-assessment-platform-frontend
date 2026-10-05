@@ -46,7 +46,7 @@ const COLUMNS: readonly DataTableColumn<AdminUser>[] = [
       <div className="flex min-w-0 items-center gap-3">
         <span
           aria-hidden
-          className="flex size-8 shrink-0 items-center justify-center border border-border bg-muted font-mono text-xs text-muted-foreground"
+          className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-muted font-mono text-xs text-muted-foreground"
         >
           {initials(user.name)}
         </span>

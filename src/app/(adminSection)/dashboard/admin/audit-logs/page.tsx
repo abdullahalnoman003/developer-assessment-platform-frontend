@@ -69,7 +69,7 @@ const COLUMNS: readonly DataTableColumn<AuditLog>[] = [
         <div className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden
-            className="flex size-7 shrink-0 items-center justify-center border border-border bg-muted font-mono text-[10px] text-muted-foreground"
+            className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-muted font-mono text-[10px] text-muted-foreground"
           >
             {initials(log.user.name)}
           </span>

@@ -16,15 +16,15 @@ export default function AdminError({
     <div className="mx-auto flex min-h-[60vh] w-full max-w-2xl flex-col items-center justify-center gap-4 px-4 py-16 text-center">
       <span
         aria-hidden
-        className="flex size-10 items-center justify-center border border-destructive/40 bg-destructive/10 text-destructive"
+        className="flex size-11 items-center justify-center rounded-xl border border-destructive/40 bg-destructive/10 text-destructive"
       >
         <AlertTriangleIcon className="size-5" />
       </span>
       <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-lg font-semibold">
+        <h1 className="font-heading text-xl font-bold tracking-tight">
           The admin page could not load
         </h1>
-        <p className="text-sm/relaxed text-muted-foreground">
+        <p className="text-base/relaxed text-muted-foreground">
           {VALIDATION_MESSAGES.network}
         </p>
         {error.digest ? (
