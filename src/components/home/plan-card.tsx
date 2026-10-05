@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { CREDIT_PLANS } from "@/lib/constants";
 import { formatUsdCents } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export function PlanCard({
   planId,
@@ -26,37 +27,46 @@ export function PlanCard({
 
   return (
     <Card
-      className={[
-        "flex h-full flex-col",
-        plan.featured ? "border-primary/60 shadow-xs" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={cn(
+        "group relative flex h-full flex-col overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:shadow-lg",
+        plan.featured
+          ? "border-brand/50 shadow-lg ring-1 ring-brand/20"
+          : "hover:border-brand/30",
+      )}
     >
-      <CardContent className="flex h-full flex-col gap-5">
+      {plan.featured ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-24 h-48 bg-gradient-brand opacity-20 blur-3xl"
+        />
+      ) : null}
+
+      <CardContent className="relative flex h-full flex-col gap-6">
         <div className="flex items-center justify-between gap-2">
-          <Heading className="font-heading text-base font-semibold">
+          <Heading className="font-heading text-lg font-bold tracking-tight">
             {plan.name}
           </Heading>
           {plan.featured ? <Badge>Most picked</Badge> : null}
         </div>
 
-        <div className="flex flex-col gap-1">
-          <p className="font-heading text-3xl font-semibold text-gradient-brand">
+        <div className="flex flex-col gap-1.5">
+          <p className="font-heading text-4xl font-bold tracking-tight text-gradient-brand">
             {price}
           </p>
-          <p className="text-xs/relaxed text-muted-foreground">
+          <p className="text-sm/relaxed text-muted-foreground">
             {plan.credits} credits · {perCredit} per credit
           </p>
         </div>
 
-        <ul className="flex flex-col gap-2 border-t border-border pt-5">
+        <ul className="flex flex-col gap-3 border-t border-border pt-6">
           {plan.highlight.map((item) => (
             <li
-              className="flex items-start gap-2 text-sm/relaxed text-muted-foreground"
+              className="flex items-start gap-2.5 text-sm/relaxed text-muted-foreground"
               key={item}
             >
-              <CheckIcon className="mt-0.5 size-4 shrink-0 text-accent-cyan" />
+              <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                <CheckIcon className="size-2.5" />
+              </span>
               {item}
             </li>
           ))}

@@ -20,16 +20,20 @@ function FaqGroup({
   showLabel: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {showLabel ? (
-        <h2 className="font-heading text-sm font-semibold tracking-wider text-muted-foreground uppercase">
+        <h2 className="font-heading text-xs font-bold tracking-[0.14em] text-brand uppercase">
           {group}
         </h2>
       ) : null}
-      <Accordion className="border border-border bg-card px-4">
+      <Accordion className="gap-3">
         {entries.map((entry, index) => (
-          <AccordionItem key={entry.question} value={`${idPrefix}-${index}`}>
-            <AccordionTrigger className="font-heading text-sm">
+          <AccordionItem
+            className="rounded-xl border border-border/80 bg-card px-5 shadow-sm transition-colors data-open:border-brand/40 data-open:bg-brand-soft-gradient"
+            key={entry.question}
+            value={`${idPrefix}-${index}`}
+          >
+            <AccordionTrigger className="font-heading text-base font-semibold">
               {entry.question}
             </AccordionTrigger>
             <AccordionContent

@@ -39,30 +39,43 @@ const STEPS = [
 
 export function Workflow() {
   return (
-    <Section className="border-y border-border bg-muted/30" id="workflow">
-      <Container className="flex flex-col gap-10">
+    <Section
+      className="relative overflow-hidden border-y border-border/70 bg-muted/40"
+      id="workflow"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-mesh-brand opacity-50"
+      />
+      <Container className="relative flex flex-col gap-12">
         <SectionHeading
           description="Four moves, and every one of them is a real state the backend stores — not a UI-only illusion."
           eyebrow="Lifecycle"
           title="From question bank to released result"
         />
 
-        <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <ol className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ Icon, step, title, body }) => (
             <li
-              className="flex h-full flex-col gap-3 border border-border bg-card p-5"
+              className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-border/80 bg-card/80 p-6 shadow-sm backdrop-blur-sm transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
               key={step}
             >
-              <div className="flex items-center justify-between">
-                <span className="flex size-9 items-center justify-center border border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan">
-                  <Icon className="size-4" />
-                </span>
-                <span className="font-mono text-lg text-muted-foreground/50">
-                  {step}
-                </span>
-              </div>
-              <h3 className="font-heading text-sm font-semibold">{title}</h3>
-              <p className="text-sm/relaxed text-muted-foreground">{body}</p>
+              <span
+                aria-hidden
+                className="absolute -right-3 -top-5 font-heading text-7xl font-bold text-foreground/[0.04] transition-colors duration-300 group-hover:text-brand/10"
+              >
+                {step}
+              </span>
+
+              <span className="relative flex size-11 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-glow transition-transform duration-300 group-hover:scale-105">
+                <Icon className="size-5" />
+              </span>
+              <h3 className="relative font-heading text-base font-bold tracking-tight">
+                {title}
+              </h3>
+              <p className="relative text-sm/relaxed text-muted-foreground">
+                {body}
+              </p>
             </li>
           ))}
         </ol>

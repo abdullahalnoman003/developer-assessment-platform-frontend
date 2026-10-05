@@ -1,8 +1,13 @@
-import { ArrowRightIcon, TerminalIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  LayoutDashboardIcon,
+  SparklesIcon,
+  TerminalIcon,
+  UserRoundIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { DesktopNav, MobileNav } from "@/components/layout/nav-links";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,13 +27,19 @@ import { logout } from "@/service/logout";
 function Brand() {
   return (
     <Link
-      className="group flex items-center gap-2 font-heading text-sm font-semibold tracking-tight"
+      className="group flex shrink-0 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       href="/"
     >
-      <span className="flex size-7 items-center justify-center border border-primary/40 bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-        <TerminalIcon className="size-4" />
+      <span className="relative flex size-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-brand text-primary-foreground shadow-glow transition-transform duration-300 group-hover:scale-105">
+        <TerminalIcon className="size-4.5" />
+        <span
+          aria-hidden
+          className="absolute inset-0 animate-sheen bg-gradient-to-r from-transparent via-white/25 to-transparent"
+        />
       </span>
-      <span className="text-gradient-brand">{APP_NAME}</span>
+      <span className="font-heading text-base font-bold tracking-tight text-gradient-brand">
+        {APP_NAME}
+      </span>
     </Link>
   );
 }
@@ -39,14 +50,14 @@ export interface NavbarProps {
 
 export function Navbar({ user = null }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
+    <header className="sticky top-0 z-40 border-b border-border/70 glass">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-2 px-4 sm:h-18 sm:gap-3 sm:px-6 lg:px-8">
         <MobileNav user={user} />
         <Brand />
 
         <DesktopNav />
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
 
           {user ? (
@@ -57,26 +68,25 @@ export function Navbar({ user = null }: NavbarProps) {
                 size="sm"
                 variant="outline"
               >
+                <LayoutDashboardIcon data-icon="inline-start" />
                 Dashboard
-                <ArrowRightIcon data-icon="inline-end" />
               </LinkButton>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
-                    <Button
+                    <button
                       aria-label="Account menu"
-                      className="font-heading"
-                      size="icon"
-                      variant="outline"
-                    >
-                      {initials(user.name)}
-                    </Button>
+                      className="flex size-9 items-center justify-center rounded-md bg-gradient-brand font-heading text-xs font-bold text-primary-foreground shadow-sm transition-[transform,box-shadow] duration-200 hover:shadow-glow focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-95"
+                      type="button"
+                    />
                   }
-                />
-                <DropdownMenuContent align="end" className="min-w-56">
+                >
+                  {initials(user.name)}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-60">
                   <DropdownMenuGroup>
-                    <DropdownMenuLabel className="flex flex-col gap-0.5">
-                      <span className="truncate text-foreground">
+                    <DropdownMenuLabel className="flex flex-col gap-1 px-2.5 py-2.5 normal-case">
+                      <span className="truncate text-sm font-semibold text-foreground">
                         {user.name}
                       </span>
                       <span className="truncate font-mono text-xs font-normal text-muted-foreground">
@@ -84,16 +94,21 @@ export function Navbar({ user = null }: NavbarProps) {
                       </span>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="font-mono text-xs font-normal text-muted-foreground">
-                      {ROLE_LABELS[user.role]}
+                    <DropdownMenuLabel className="px-2.5 py-2 font-normal normal-case">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 font-mono text-[0.6875rem] font-semibold tracking-wide text-brand uppercase">
+                        <SparklesIcon className="size-3" />
+                        {ROLE_LABELS[user.role]}
+                      </span>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem render={<Link href="/profile" />}>
+                      <UserRoundIcon data-icon="inline-start" />
                       Profile
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       render={<Link href={ROLE_HOME[user.role]} />}
                     >
+                      <LayoutDashboardIcon data-icon="inline-start" />
                       Dashboard
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -120,7 +135,10 @@ export function Navbar({ user = null }: NavbarProps) {
               </LinkButton>
               <LinkButton href="/login" size="sm">
                 Sign in
-                <ArrowRightIcon data-icon="inline-end" />
+                <ArrowRightIcon
+                  className="hidden min-[380px]:block"
+                  data-icon="inline-end"
+                />
               </LinkButton>
             </>
           )}

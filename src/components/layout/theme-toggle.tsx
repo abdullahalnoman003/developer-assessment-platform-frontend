@@ -25,15 +25,7 @@ export function ThemeToggle() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return (
-      <Button
-        aria-label="Theme"
-        disabled
-        size="icon"
-        variant="ghost"
-        render={<span />}
-      />
-    );
+    return <Button aria-label="Theme" disabled size="icon" variant="ghost" />;
   }
 
   return (
@@ -46,11 +38,11 @@ export function ThemeToggle() {
           </Button>
         }
       />
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="min-w-40">
         <DropdownMenuRadioGroup onValueChange={setTheme} value={theme}>
           {OPTIONS.map(({ value, label, Icon }) => (
             <DropdownMenuRadioItem key={value} value={value}>
-              <Icon />
+              <Icon data-icon="inline-start" />
               {label}
             </DropdownMenuRadioItem>
           ))}

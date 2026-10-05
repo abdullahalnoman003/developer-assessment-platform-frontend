@@ -56,15 +56,26 @@ export function Features() {
           title="Built around the real assessment flow"
         />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ Icon, title, body }) => (
-            <Card className="h-full" key={title}>
-              <CardContent className="flex h-full flex-col gap-3">
-                <span className="flex size-9 items-center justify-center border border-primary/40 bg-primary/10 text-primary">
-                  <Icon className="size-4" />
+            <Card
+              className="group h-full overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+              key={title}
+            >
+              <CardContent className="relative flex h-full flex-col gap-4">
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 -top-16 h-32 bg-gradient-brand opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-15"
+                />
+                <span className="relative flex size-11 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15 transition-transform duration-300 group-hover:scale-105">
+                  <Icon className="size-5" />
                 </span>
-                <h3 className="font-heading text-sm font-semibold">{title}</h3>
-                <p className="text-sm/relaxed text-muted-foreground">{body}</p>
+                <h3 className="relative font-heading text-base font-bold tracking-tight">
+                  {title}
+                </h3>
+                <p className="relative text-sm/relaxed text-muted-foreground">
+                  {body}
+                </p>
               </CardContent>
             </Card>
           ))}

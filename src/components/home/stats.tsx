@@ -30,22 +30,22 @@ const FACTS = [
 
 export function Stats() {
   return (
-    <div className="border-y border-border bg-muted/30">
+    <div className="border-b border-border/70 bg-card/50">
       <Container>
         <dl className="grid sm:grid-cols-2 lg:grid-cols-4">
           {FACTS.map((fact) => (
             <div
-              className="flex flex-col gap-1 border-border px-1 py-8 sm:border-r sm:last:border-r-0 lg:px-6"
+              className="group flex flex-col gap-2 border-border px-1 py-10 sm:border-r sm:last:border-r-0 lg:px-8"
               key={fact.unit}
             >
-              <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
+              <dt className="font-mono text-[0.6875rem] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                 {fact.unit}
               </dt>
-              <dd className="flex flex-col gap-1">
-                <span className="font-heading text-3xl font-semibold text-gradient-brand">
+              <dd className="flex flex-col gap-1.5">
+                <span className="font-heading text-4xl font-bold tracking-tight text-gradient-brand lg:text-5xl">
                   {fact.value}
                 </span>
-                <span className="text-xs/relaxed text-muted-foreground">
+                <span className="text-sm/relaxed text-muted-foreground">
                   {fact.note}
                 </span>
               </dd>

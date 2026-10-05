@@ -64,7 +64,7 @@ export const FAQ: readonly FaqEntry[] = [
     group: "Account",
     question: "Can I try CodeArena before creating a company?",
     answer:
-      "Yes. The sign-in page offers one-click demo accounts for the candidate, recruiter and admin roles, so you can walk every screen with real seeded data before creating anything.",
+      "Yes. The sign-in page offers one-click sample accounts for the candidate, recruiter and admin roles, so you can walk every screen with realistic data before creating anything.",
   },
   {
     group: "Account",
