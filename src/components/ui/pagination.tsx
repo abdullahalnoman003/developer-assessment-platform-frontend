@@ -26,7 +26,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
+      className={cn("flex flex-wrap items-center gap-1", className)}
       {...props}
     />
   );
@@ -49,7 +49,7 @@ function PaginationLink({
 }: PaginationLinkProps) {
   return (
     <Button
-      variant={isActive ? "outline" : "ghost"}
+      variant={isActive ? "default" : "ghost"}
       size={size}
       className={cn(className)}
       nativeButton={false}
@@ -110,7 +110,7 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        "flex size-9 items-center justify-center text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
