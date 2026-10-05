@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/seo";
@@ -8,7 +8,7 @@ import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-jetbrains-mono",
 });
 
 const geistSans = Geist({
@@ -16,8 +16,8 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -72,8 +72,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         "antialiased",
         "font-sans",
         geistSans.variable,
-        geistMono.variable,
         jetbrainsMono.variable,
+        spaceGrotesk.variable,
       )}
     >
       <body className="flex min-h-full flex-col">

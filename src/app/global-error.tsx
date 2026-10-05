@@ -50,7 +50,7 @@ export default function GlobalError({
                 <Button onClick={reset}>Reload the app</Button>
                 <a
                   href="/"
-                  className="inline-flex h-7 items-center border border-border px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="inline-flex h-7 items-center rounded-md border border-border px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
                   Go to the home page
                 </a>

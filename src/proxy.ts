@@ -8,7 +8,12 @@ const ROLE_GATES: { prefix: string; role: Role }[] = [
   { prefix: "/dashboard/candidate", role: "CANDIDATE" },
 ];
 
-const AUTH_ROUTES = ["/login", "/register"] as const;
+const AUTH_ROUTES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+] as const;
 
 // signed in, but not owned by one role
 const SHARED_AUTH_ROUTES = ["/profile"] as const;
