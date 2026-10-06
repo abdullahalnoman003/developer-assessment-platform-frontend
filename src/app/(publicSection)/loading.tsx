@@ -4,7 +4,7 @@ export default function PublicLoading() {
   return (
     <output
       aria-busy="true"
-      className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 lg:px-8"
+      className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 animate-fade-in sm:px-6 lg:px-8"
     >
       <div className="flex flex-col items-center gap-4 text-center">
         <Skeleton className="h-4 w-40" />

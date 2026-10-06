@@ -28,15 +28,19 @@ const FACTS = [
   },
 ] as const;
 
+const CELL_CLASS =
+  "group flex flex-col gap-2 animate-fade-up border-b border-border/70 py-10 pr-6 last:border-b-0 sm:border-r sm:[&:nth-child(2n)]:border-r-0 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:border-b-0 lg:pr-8 lg:[&:nth-child(2n):not(:last-child)]:border-r lg:last:border-r-0";
+
 export function Stats() {
   return (
     <div className="border-b border-border/70 bg-card/50">
       <Container>
-        <dl className="grid sm:grid-cols-2 lg:grid-cols-4">
-          {FACTS.map((fact) => (
+        <dl className="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+          {FACTS.map((fact, index) => (
             <div
-              className="group flex flex-col gap-2 border-border px-1 py-10 sm:border-r sm:last:border-r-0 lg:px-8"
+              className={CELL_CLASS}
               key={fact.unit}
+              style={{ animationDelay: `${index * 80}ms` }}
             >
               <dt className="font-mono text-[0.6875rem] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                 {fact.unit}

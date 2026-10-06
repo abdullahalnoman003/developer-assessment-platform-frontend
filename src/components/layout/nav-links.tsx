@@ -28,7 +28,10 @@ export function DesktopNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Main" className="ml-6 hidden items-center gap-1 md:flex">
+    <nav
+      aria-label="Main"
+      className="ml-4 hidden items-center gap-1 lg:flex xl:ml-6"
+    >
       {NAV_LINKS.map((link) => {
         const active = isActiveHref(pathname, link.href);
 
@@ -71,7 +74,7 @@ export function MobileNav({ user }: { user: SessionUser | null }) {
         render={
           <Button
             aria-label="Open navigation menu"
-            className="md:hidden"
+            className="lg:hidden"
             size="icon"
             variant="outline"
           >

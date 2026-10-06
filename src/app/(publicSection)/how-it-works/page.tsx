@@ -91,7 +91,7 @@ export default function HowItWorksPage() {
         title="The lifecycle, state by state"
       />
 
-      <Workflow />
+      <Workflow className="border-t-0" />
 
       <Section className="border-b border-border/70">
         <Container className="flex flex-col gap-12">
@@ -102,9 +102,13 @@ export default function HowItWorksPage() {
             title="What the API is actually holding"
           />
 
-          <div className="grid gap-5 lg:grid-cols-3">
-            {LIFECYCLE.map((column) => (
-              <Card className="h-full" key={column.title}>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {LIFECYCLE.map((column, index) => (
+              <Card
+                className="h-full animate-fade-up"
+                key={column.title}
+                style={{ animationDelay: `${index * 90}ms` }}
+              >
                 <CardContent className="flex h-full flex-col gap-5">
                   <div className="flex items-center gap-3">
                     <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
@@ -142,10 +146,11 @@ export default function HowItWorksPage() {
           />
 
           <div className="grid gap-5 md:grid-cols-2">
-            {RULES.map(({ Icon, title, body }) => (
+            {RULES.map(({ Icon, title, body }, index) => (
               <Card
-                className="group h-full transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+                className="group h-full animate-fade-up transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
                 key={title}
+                style={{ animationDelay: `${index * 80}ms` }}
               >
                 <CardContent className="flex h-full flex-col gap-4">
                   <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15 transition-transform duration-300 group-hover:scale-105">

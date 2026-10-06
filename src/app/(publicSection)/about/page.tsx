@@ -72,11 +72,12 @@ export default function AboutPage() {
             title="One platform, three vantage points"
           />
 
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {AUDIENCES.map((audience, index) => (
               <Card
-                className="group h-full transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+                className="group h-full animate-fade-up transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
                 key={audience.role}
+                style={{ animationDelay: `${index * 90}ms` }}
               >
                 <CardContent className="flex h-full flex-col gap-4">
                   <span className="font-mono text-xs font-semibold tracking-[0.2em] text-brand">
@@ -105,8 +106,12 @@ export default function AboutPage() {
           />
 
           <div className="grid gap-5 md:grid-cols-2">
-            {PRINCIPLES.map((principle) => (
-              <Card className="h-full" key={principle.title}>
+            {PRINCIPLES.map((principle, index) => (
+              <Card
+                className="h-full animate-fade-up transition-transform duration-300 hover:-translate-y-1"
+                key={principle.title}
+                style={{ animationDelay: `${index * 70}ms` }}
+              >
                 <CardContent className="flex h-full flex-col gap-3">
                   <h3 className="font-heading text-lg font-bold tracking-tight">
                     {principle.title}

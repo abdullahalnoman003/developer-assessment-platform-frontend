@@ -98,7 +98,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <Card className="animate-auth-in overflow-hidden border-border/80 shadow-xl">
-      <div aria-hidden className="h-1 w-full bg-gradient-brand" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-1 bg-gradient-brand"
+      />
       <CardHeader className="gap-2.5">
         <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
           <LockKeyholeIcon className="size-5" />

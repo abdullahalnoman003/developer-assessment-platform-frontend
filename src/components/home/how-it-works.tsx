@@ -9,6 +9,7 @@ import {
   Section,
   SectionHeading,
 } from "@/components/home/page-hero";
+import { cn } from "@/lib/utils";
 
 const STEPS = [
   {
@@ -37,10 +38,13 @@ const STEPS = [
   },
 ] as const;
 
-export function Workflow() {
+export function Workflow({ className }: { className?: string }) {
   return (
     <Section
-      className="relative overflow-hidden border-y border-border/70 bg-muted/40"
+      className={cn(
+        "relative overflow-hidden border-y border-border/70 bg-muted/40",
+        className,
+      )}
       id="workflow"
     >
       <div
@@ -55,10 +59,11 @@ export function Workflow() {
         />
 
         <ol className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map(({ Icon, step, title, body }) => (
+          {STEPS.map(({ Icon, step, title, body }, index) => (
             <li
-              className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-border/80 bg-card/80 p-6 shadow-sm backdrop-blur-sm transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+              className="group relative flex h-full animate-fade-up flex-col gap-4 overflow-hidden rounded-2xl border border-border/80 bg-card/80 p-6 shadow-sm backdrop-blur-sm transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
               key={step}
+              style={{ animationDelay: `${index * 80}ms` }}
             >
               <span
                 aria-hidden

@@ -1,5 +1,6 @@
 import { MailIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { Cta } from "@/components/home/cta";
 import { Container, PageHero, Section } from "@/components/home/page-hero";
 import { LinkButton } from "@/components/ui/link-button";
 import { SUPPORT_EMAIL } from "@/lib/constants";
@@ -70,7 +71,11 @@ export default function TermsPage() {
       <Section>
         <Container className="flex max-w-3xl flex-col gap-12">
           {SECTIONS.map((section, index) => (
-            <div className="flex flex-col gap-3" key={section.heading}>
+            <div
+              className="flex animate-fade-up flex-col gap-3"
+              key={section.heading}
+              style={{ animationDelay: `${index * 60}ms` }}
+            >
               <div className="flex items-center gap-3">
                 <span className="font-mono text-xs font-semibold tracking-[0.2em] text-brand">
                   {String(index + 1).padStart(2, "0")}
@@ -113,6 +118,8 @@ export default function TermsPage() {
           </div>
         </Container>
       </Section>
+
+      <Cta />
     </>
   );
 }

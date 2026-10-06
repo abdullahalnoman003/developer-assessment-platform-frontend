@@ -30,6 +30,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <Toaster
           position="top-center"
           gutter={10}
+          containerStyle={{ top: "4.5rem", left: 0, right: 0 }}
           toastOptions={{
             duration: 4500,
             className:

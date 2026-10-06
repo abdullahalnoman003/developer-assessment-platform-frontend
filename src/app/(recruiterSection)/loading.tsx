@@ -13,7 +13,6 @@ export default function RecruiterLoading() {
       <CardListSkeleton count={1} />
       <TableSkeleton columns={5} rows={6} />
       <FormSkeleton fields={3} />
-      <span className="sr-only">Loading the recruiter section…</span>
     </PageSkeleton>
   );
 }

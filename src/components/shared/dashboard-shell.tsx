@@ -101,7 +101,7 @@ export function DashboardShell({
 
         <div
           className={cn(
-            "flex min-w-0 flex-1 flex-col gap-7 px-4 py-6 sm:px-6 sm:py-8",
+            "mx-auto flex w-full min-w-0 max-w-[110rem] flex-1 flex-col gap-7 animate-fade-in px-4 py-6 sm:px-6 sm:py-8",
             className,
           )}
         >

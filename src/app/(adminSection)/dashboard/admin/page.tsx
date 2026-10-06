@@ -98,11 +98,6 @@ export default async function AdminDashboardPage() {
             hint: "Candidate submissions recorded",
             Icon: ClipboardListIcon,
           },
-        ]}
-      />
-
-      <StatsCards
-        items={[
           {
             label: "Paid payments",
             value: formatNumber(payments.paidCount),

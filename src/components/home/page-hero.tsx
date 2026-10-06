@@ -27,7 +27,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section className={cn("py-20 sm:py-24 lg:py-28", className)} id={id}>
+    <section className={cn("py-14 sm:py-20 lg:py-24", className)} id={id}>
       {children}
     </section>
   );
@@ -66,7 +66,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex max-w-2xl flex-col gap-4",
+        "flex max-w-2xl animate-fade-up flex-col gap-4",
         align === "center" && "mx-auto items-center text-center",
       )}
     >
@@ -105,9 +105,9 @@ export function PageHero({
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent"
       />
 
-      <Container className="relative flex flex-col items-start gap-5 py-16 sm:py-20 lg:py-24">
+      <Container className="relative flex animate-fade-up flex-col items-start gap-5 py-14 sm:py-20 lg:py-24">
         {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-        <h1 className="max-w-3xl font-heading text-4xl font-bold tracking-[-0.03em] text-balance sm:text-5xl lg:text-6xl">
+        <h1 className="max-w-3xl font-heading text-3xl font-bold tracking-[-0.03em] text-balance sm:text-4xl lg:text-5xl xl:text-6xl">
           {title}
         </h1>
         {description ? (

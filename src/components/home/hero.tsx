@@ -67,9 +67,9 @@ function HeroPreview() {
         <div className="flex flex-col gap-2.5 p-4">
           {PREVIEW_ROWS.map(({ Icon, label, meta, status, tone }, index) => (
             <div
-              className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/60 p-3.5 transition-colors hover:border-brand/40 hover:bg-background"
+              className="flex animate-rise items-center gap-3 rounded-xl border border-border/70 bg-background/60 p-3.5 transition-colors hover:border-brand/40 hover:bg-background"
               key={label}
-              style={{ animationDelay: `${index * 90}ms` }}
+              style={{ animationDelay: `${240 + index * 110}ms` }}
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
                 <Icon className="size-4" />
@@ -124,7 +124,7 @@ export function Hero() {
       />
 
       <Container className="relative grid items-center gap-14 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
-        <div className="flex min-w-0 flex-col items-start gap-7">
+        <div className="flex min-w-0 animate-fade-up flex-col items-start gap-7">
           <p className="inline-flex items-center gap-2 rounded-full border border-brand/25 bg-brand-soft px-3.5 py-1.5 font-mono text-xs font-semibold tracking-wide text-brand">
             <SparklesIcon className="size-3.5" />
             Developer assessment platform
@@ -173,7 +173,9 @@ export function Hero() {
           </ul>
         </div>
 
-        <HeroPreview />
+        <div className="animate-fade-up" style={{ animationDelay: "140ms" }}>
+          <HeroPreview />
+        </div>
       </Container>
     </div>
   );

@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function PaymentCancelPage() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-2xl animate-fade-up flex-col gap-5 px-4 py-14 sm:px-6 sm:py-20">
       <div className="flex flex-col gap-4 rounded-2xl border border-destructive/30 bg-destructive/5 p-6 shadow-sm sm:p-8">
         <span className="flex size-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive ring-1 ring-destructive/20">
           <XCircleIcon className="size-6" />

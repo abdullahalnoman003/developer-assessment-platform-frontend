@@ -57,10 +57,11 @@ export function Features() {
         />
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ Icon, title, body }) => (
+          {FEATURES.map(({ Icon, title, body }, index) => (
             <Card
-              className="group h-full overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+              className="group h-full animate-fade-up overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
               key={title}
+              style={{ animationDelay: `${index * 70}ms` }}
             >
               <CardContent className="relative flex h-full flex-col gap-4">
                 <span

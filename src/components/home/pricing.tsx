@@ -10,7 +10,7 @@ import { CREDIT_PLANS } from "@/lib/constants";
 
 export function PricingTeaser() {
   return (
-    <Section id="pricing">
+    <Section className="border-y border-border/70 bg-muted/40" id="pricing">
       <Container className="flex flex-col gap-10">
         <SectionHeading
           description="Three credit packs, priced in US dollars, charged through Stripe test mode. Credits land on your company record and stay there until the backend says otherwise."
@@ -18,9 +18,15 @@ export function PricingTeaser() {
           title="Pay for credits, not seats"
         />
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {CREDIT_PLANS.map((plan) => (
-            <PlanCard cta={false} key={plan.id} planId={plan.id} />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {CREDIT_PLANS.map((plan, index) => (
+            <div
+              className="h-full animate-fade-up"
+              key={plan.id}
+              style={{ animationDelay: `${index * 90}ms` }}
+            >
+              <PlanCard cta={false} planId={plan.id} />
+            </div>
           ))}
         </div>
 

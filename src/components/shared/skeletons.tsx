@@ -9,7 +9,7 @@ function slots(count: number): readonly string[] {
 
 export function StatCardsSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {slots(count).map((slot) => (
         <div
           key={slot}
@@ -107,8 +107,9 @@ export function PageSkeleton({
 }) {
   return (
     <output
-      aria-label={title ? `${title} — loading` : "Loading"}
-      className={cn("flex w-full flex-col gap-6", className)}
+      aria-busy="true"
+      aria-label={title ? "Loading page" : "Loading"}
+      className={cn("flex w-full flex-col gap-6 animate-fade-in", className)}
     >
       <div aria-hidden className="contents">
         {title ? (

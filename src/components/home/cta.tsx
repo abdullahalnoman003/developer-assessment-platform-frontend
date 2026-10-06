@@ -17,7 +17,7 @@ export function Cta() {
             className="pointer-events-none absolute -top-24 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-gradient-brand opacity-20 blur-3xl"
           />
 
-          <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
+          <div className="relative mx-auto flex max-w-2xl animate-fade-up flex-col items-center gap-5">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-brand/25 bg-background/70 px-3 py-1 font-mono text-[0.6875rem] font-semibold tracking-[0.16em] text-brand uppercase">
               Get started
             </p>

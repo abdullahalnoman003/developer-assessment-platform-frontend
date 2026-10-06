@@ -35,18 +35,18 @@ const FLOW = [
 
 export function AuthAside() {
   return (
-    <aside className="hidden lg:flex lg:flex-col lg:justify-center">
+    <aside className="hidden animate-rise md:flex md:flex-col md:justify-center">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
           <p className="inline-flex w-fit items-center gap-1.5 rounded-full border border-brand/25 bg-brand-soft px-3 py-1 font-mono text-[0.6875rem] font-semibold tracking-[0.16em] text-brand uppercase">
             <SparklesIcon className="size-3.5" />
             The hiring loop, in one place
           </p>
-          <h2 className="font-heading text-4xl font-bold tracking-[-0.03em] text-balance xl:text-5xl">
+          <p className="font-heading text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl xl:text-5xl">
             Screen, invite, grade and{" "}
             <span className="text-gradient-brand">decide</span> without leaving
             the tab.
-          </h2>
+          </p>
           <p className="max-w-lg text-base/relaxed text-muted-foreground text-pretty">
             {APP_NAME} keeps your question bank, candidates and evaluation
             history connected, so every hiring round starts from the last one

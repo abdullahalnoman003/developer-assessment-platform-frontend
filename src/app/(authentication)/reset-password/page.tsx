@@ -23,7 +23,10 @@ export const metadata = pageMetadata({
 function InvalidLink() {
   return (
     <Card className="animate-auth-in overflow-hidden border-border/80 shadow-xl">
-      <div aria-hidden className="h-1 w-full bg-gradient-brand" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-1 bg-gradient-brand"
+      />
       <CardHeader className="gap-2.5">
         <h1 className="font-heading text-2xl font-bold tracking-tight">
           This link cannot be used

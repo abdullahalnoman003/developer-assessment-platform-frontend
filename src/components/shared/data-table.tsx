@@ -61,7 +61,7 @@ export function DataTable<T>({
   return (
     <>
       {/* display:none keeps the hidden branch out of the accessibility tree */}
-      <div className={cn("hidden w-full overflow-x-auto md:block", className)}>
+      <div className={cn("hidden w-full overflow-x-auto lg:block", className)}>
         <Table>
           <caption className="sr-only">{caption}</caption>
           <TableHeader>
@@ -91,7 +91,7 @@ export function DataTable<T>({
         </Table>
       </div>
 
-      <ul aria-label={caption} className="flex flex-col gap-3 md:hidden">
+      <ul aria-label={caption} className="flex flex-col gap-3 lg:hidden">
         {rows.map((row) => (
           <li
             className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm transition-colors hover:border-brand/30"

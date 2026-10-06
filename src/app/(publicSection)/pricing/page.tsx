@@ -44,9 +44,15 @@ export default function PricingPage() {
       <Section>
         <Container className="flex flex-col gap-10">
           <h2 className="sr-only">Credit packs</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {CREDIT_PLANS.map((plan) => (
-              <PlanCard key={plan.id} planId={plan.id} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {CREDIT_PLANS.map((plan, index) => (
+              <div
+                className="h-full animate-fade-up"
+                key={plan.id}
+                style={{ animationDelay: `${index * 90}ms` }}
+              >
+                <PlanCard planId={plan.id} />
+              </div>
             ))}
           </div>
 
@@ -67,9 +73,12 @@ export default function PricingPage() {
             title="How the money path works"
           />
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             {BILLING_NOTES.map(({ Icon, title, body }) => (
-              <Card className="h-full" key={title}>
+              <Card
+                className="h-full animate-fade-up transition-transform duration-300 hover:-translate-y-1"
+                key={title}
+              >
                 <CardContent className="flex h-full flex-col gap-4">
                   <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
                     <Icon className="size-5" />

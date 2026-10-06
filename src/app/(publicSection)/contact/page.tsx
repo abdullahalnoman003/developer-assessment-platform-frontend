@@ -48,10 +48,12 @@ export default function ContactPage() {
 
       <Section>
         <Container className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-          <ContactForm />
+          <div className="animate-fade-up">
+            <ContactForm />
+          </div>
 
           <div className="flex flex-col gap-4">
-            <Card>
+            <Card className="animate-fade-up transition-transform duration-300 hover:-translate-y-1">
               <CardContent className="flex flex-col gap-3">
                 <h2 className="font-heading text-base font-bold tracking-tight">
                   Prefer to write directly?
@@ -74,8 +76,12 @@ export default function ContactPage() {
             </Card>
 
             <div className="flex flex-col gap-3">
-              {REASONS.map(({ Icon, title, body }) => (
-                <Card key={title}>
+              {REASONS.map(({ Icon, title, body }, index) => (
+                <Card
+                  className="animate-fade-up transition-transform duration-300 hover:-translate-y-1"
+                  key={title}
+                  style={{ animationDelay: `${index * 80}ms` }}
+                >
                   <CardContent className="flex items-start gap-3">
                     <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand ring-1 ring-brand/15">
                       <Icon className="size-4" />

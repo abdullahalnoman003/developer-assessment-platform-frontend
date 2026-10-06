@@ -29,7 +29,7 @@ function FaqGroup({
       <Accordion className="gap-3">
         {entries.map((entry, index) => (
           <AccordionItem
-            className="rounded-xl border border-border/80 bg-card px-5 shadow-sm transition-colors data-open:border-brand/40 data-open:bg-brand-soft-gradient"
+            className="rounded-xl border border-border/80 bg-card px-5 shadow-sm transition-colors hover:border-brand/30 data-open:border-brand/40 data-open:bg-brand-soft-gradient"
             key={entry.question}
             value={`${idPrefix}-${index}`}
           >
@@ -63,7 +63,7 @@ export function Faq({ limit }: { limit?: number }) {
           group={group}
           idPrefix={limit ? "preview" : "faq"}
           key={group}
-          showLabel={!limit}
+          showLabel
         />
       ))}
     </div>

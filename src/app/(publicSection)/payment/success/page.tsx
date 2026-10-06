@@ -141,7 +141,7 @@ function Outcome({
   const config = toneConfig[tone];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-2xl animate-fade-up flex-col gap-5 px-4 py-14 sm:px-6 sm:py-20">
       <div
         className={`flex flex-col gap-4 rounded-2xl border bg-card p-6 shadow-sm sm:p-8 ${config.border}`}
       >

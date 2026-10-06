@@ -30,17 +30,17 @@ import { logout } from "@/service/logout";
 function Brand() {
   return (
     <Link
-      className="group flex shrink-0 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+      className="group flex min-w-0 shrink items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       href="/"
     >
-      <span className="relative flex size-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-brand text-primary-foreground shadow-glow transition-transform duration-300 group-hover:scale-105">
+      <span className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-brand text-primary-foreground shadow-glow transition-transform duration-300 group-hover:scale-105">
         <TerminalIcon className="size-4.5" />
         <span
           aria-hidden
           className="absolute inset-0 animate-sheen bg-gradient-to-r from-transparent via-white/25 to-transparent"
         />
       </span>
-      <span className="font-heading text-base font-bold tracking-tight text-gradient-brand">
+      <span className="truncate font-heading text-base font-bold tracking-tight text-gradient-brand">
         {APP_NAME}
       </span>
     </Link>
@@ -71,13 +71,13 @@ export function Navbar({ user = null }: NavbarProps) {
 
         <DesktopNav />
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <ThemeToggle />
 
           {user ? (
             <>
               <LinkButton
-                className="hidden sm:inline-flex"
+                className="hidden md:inline-flex"
                 href={ROLE_HOME[user.role]}
                 size="sm"
                 variant="outline"
@@ -140,7 +140,7 @@ export function Navbar({ user = null }: NavbarProps) {
           ) : (
             <>
               <LinkButton
-                className="hidden sm:inline-flex"
+                className="hidden md:inline-flex"
                 href="/register"
                 size="sm"
                 variant="ghost"

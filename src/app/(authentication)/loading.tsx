@@ -35,7 +35,7 @@ export default function AuthLoading() {
         </div>
       </div>
 
-      <span className="sr-only">Loading sign in…</span>
+      <span className="sr-only">Loading form…</span>
     </div>
   );
 }

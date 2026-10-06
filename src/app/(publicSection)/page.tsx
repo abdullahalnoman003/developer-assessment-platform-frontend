@@ -10,7 +10,9 @@ import {
   SectionHeading,
 } from "@/components/home/page-hero";
 import { PricingTeaser } from "@/components/home/pricing";
+import { Roles } from "@/components/home/roles";
 import { Stats } from "@/components/home/stats";
+import { LinkButton } from "@/components/ui/link-button";
 import { APP_TAGLINE } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 
@@ -27,6 +29,7 @@ export default function HomePage() {
       <Stats />
       <Features />
       <Workflow />
+      <Roles />
 
       <Section id="faq">
         <Container className="flex flex-col gap-10">
@@ -36,6 +39,11 @@ export default function HomePage() {
             title="Before you sign in"
           />
           <Faq limit={4} />
+          <div className="flex justify-center">
+            <LinkButton href="/faq" size="lg" variant="outline">
+              Browse all questions
+            </LinkButton>
+          </div>
         </Container>
       </Section>
 
