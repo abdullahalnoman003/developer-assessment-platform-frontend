@@ -254,7 +254,7 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
     }
   };
 
-  const _leaveStepTwo = () => {
+  const leaveStepTwo = () => {
     setStepLoading(true);
     if (draft.questionIds.length === 0) {
       toast.error("Pick at least one question to continue.");
@@ -474,7 +474,7 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
           />
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button disabled={stepLoading} type="button">
+            <Button disabled={stepLoading} onClick={leaveStepTwo} type="button">
               {stepLoading ? (
                 <Spinner className="size-3.5" />
               ) : (
