@@ -116,26 +116,20 @@ if (result.statusCode !== 401 || !isUnauthenticatedMessage(result.message)) retu
 doubles traffic against a rate-limited API and turns a transient `429` into a doubled one.
 The option is pinned explicitly for this reason.
 
-### 🩺 Circuit breaker and the health route
+### 🩺 Health route
 
-`api()` keeps a small circuit breaker in module scope. Three consecutive failures opens it
-for 30 seconds, during which every call resolves immediately with a synthetic `503` instead
-of hammering a backend that is down.
-
-`GET /api/health` (a Next.js route handler at `src/app/api/health/route.ts`) exposes it:
+`GET /api/health` (a Next.js route handler at `src/app/api/health/route.ts`) probes the
+backend's root endpoint and reports the result:
 
 | Field | Meaning |
 |---|---|
-| `healthy` | breaker currently closed |
-| `failures` | consecutive failure count |
-| `resetAt` | epoch ms when the breaker closes again |
+| `healthy` | backend root returned without throwing |
 | `apiBase` | the resolved `${NEXT_PUBLIC_API_URL}/api/v1` |
 | `siteUrl` | `NEXT_PUBLIC_SITE_URL`, or `(unset)` |
 | `probe` | result of a live `GET <base>/` against the backend |
 
-`POST /api/health` resets the breaker. The live probe deliberately hits the backend **root**,
-not `/api/v1`, because the root route is registered before the rate limiter and does not
-consume the 100-request budget.
+The live probe deliberately hits the backend **root**, not `/api/v1`, because the root
+route is registered before the rate limiter and does not consume the 100-request budget.
 
 ### 🍪 Cookies
 
@@ -563,7 +557,8 @@ silently dropped rather than rejected. Do not rely on the API to complain about 
 ### 5.1 🚪 `POST /auth/logout`
 
 The endpoint exists, revokes every live refresh token, and clears its own cookies. The
-frontend does not call it. `src/service/logout.ts` clears the local cookies and redirects.
+frontend does **not** call it. `src/service/logout.ts` clears the local cookies and the
+navbar's `handleLogout` navigates to `/login`.
 
 > 🧠 The reason is that it requires an authenticated request, and the whole point of logout
 > is that the session may already be unusable. A local clear always succeeds; a network call
@@ -610,7 +605,7 @@ Non-2xx responses resolve to the envelope so the UI can be specific:
 | `403` | Suspended-account notice, or an in-page empty state for resource denials |
 | `404` | "That attempt does not exist" style empty states |
 | `429` | `ErrorState` carrying the rate-limit text. Read `RateLimit-Reset` |
-| `500` / `503` | `ErrorState`, `error.tsx` boundary, or the circuit breaker's synthetic `503` |
+| `500` / `503` | `ErrorState`, `error.tsx` boundary |
 
 Forms surface `result.errors` per field. `window.alert` and blocking dialogs are never used
 for feedback.

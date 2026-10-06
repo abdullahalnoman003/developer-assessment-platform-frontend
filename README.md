@@ -202,7 +202,8 @@ empty and the button hides itself.
 
 ### 🩺 Route handler (1)
 
-`/api/health` : backend reachability and circuit-breaker state. `POST` resets the breaker.
+`/api/health` : backend reachability probe. Reports the resolved `apiBase`, `siteUrl`,
+and the result of a live `GET <base>/` against the backend root (outside the rate limit).
 
 ---
 
