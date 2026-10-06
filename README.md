@@ -18,9 +18,9 @@ see released results. Admins oversee accounts and audit everything.
 
 <div align="center">
 
-| 📄 Pages | 🎨 Roles | 🔌 Routes used | ⚡ Rate limit | 🧪 `any` types |
-|:---:|:---:|:---:|:---:|:---:|
-| **32** | **3** | **33 / 36** | **100 / 15 min** | **0** |
+| 📄 Pages | 🎨 Roles | 🔌 Routes used | ⚡ Rate limit |
+|:---:|:---:|:---:|:---:|
+| **32** | **3** | **33 / 36** | **100 / 15 min** |
 
 </div>
 

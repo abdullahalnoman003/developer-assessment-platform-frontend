@@ -180,7 +180,7 @@ return here.
 > `RateLimit-Reset` for how long to wait.
 
 > 🧠 **Design consequence:** every list view is deliberately shallow. The candidate results
-> page hydrates only the rows on the current page (§4.7), so a render costs
+> page hydrates only the rows on the current page (4.7), so a render costs
 > `1 + PAGE_SIZE` requests no matter how long the history grows. Debounce searches
 > (400 ms), batch reads, and never poll.
 
@@ -201,7 +201,7 @@ return here.
 | `POST` | `/auth/refresh-token` | public | ⚙️ | Called internally by `api()` on a `401`, never directly |
 | `POST` | `/auth/forgot-password` | public | ✅ | `{ email }`. Always `200`, never enumerates whether the account exists |
 | `POST` | `/auth/reset-password` | public | ✅ | `{ token, password }`. Revokes **every** live refresh token for the user |
-| `POST` | `/auth/logout` | any role | ❌ | **Exists but is not called.** See §5.1 |
+| `POST` | `/auth/logout` | any role | ❌ | **Exists but is not called.** See 5.1 |
 | `GET` | `/auth/me` | any role | ✅ | The app's only identity source |
 
 > ⚠️ `POST /auth/register` rejects `role: "ADMIN"` at the Zod enum, before any handler code.
@@ -212,7 +212,7 @@ return here.
 
 | Method | Path | Backend roles | Used | Notes |
 |---|---|---|:-:|---|
-| `GET` | `/users/me` | any role | ❌ | Byte-identical to `GET /auth/me`. One read, one owner. See §5.2 |
+| `GET` | `/users/me` | any role | ❌ | Byte-identical to `GET /auth/me`. One read, one owner. See 5.2 |
 | `PATCH` | `/users/me` | any role | ✅ | `phone`, `bio`, `skills`, `resumeUrl`, `githubUrl` are **`CANDIDATE`-only** and are silently dropped for other roles |
 
 ### 🏢 Company : `service/company.ts`
@@ -253,7 +253,7 @@ return here.
 | `GET` | `/assessments` | `RECRUITER` | ✅ | `?status=&sortBy=&sortOrder=&page=&limit=`. **No free-text `q`** |
 | `POST` | `/assessments` | `RECRUITER` | ✅ | Always creates `DRAFT`. Response has **no** `_count` |
 | `GET` | `/assessments/:id` | `RECRUITER` | ✅ | Detail + `questions[]` + `_count` + `stats` |
-| `PATCH` | `/assessments/:id` | `RECRUITER` | ✅ | **Four overloaded variants.** See §4.4 |
+| `PATCH` | `/assessments/:id` | `RECRUITER` | ✅ | **Four overloaded variants.** See 4.4 |
 | `GET` | `/assessments/:id/results` | `RECRUITER` | ✅ | The only per-candidate roster. Lives in `attempt.route.ts`, not `assessment.route.ts` |
 | `POST` | `/assessments/:id/invitations` | `RECRUITER` | ✅ | Returns a **bare array**. Emails are de-duplicated and lower-cased |
 | `GET` | `/assessments/:id/invitations` | :dash: | ❌ | **Route does not exist** (`404`). The roster comes from `/results` instead |
@@ -272,17 +272,17 @@ return here.
 | Method | Path | Backend roles | Used | Notes |
 |---|---|---|:-:|---|
 | `GET` | `/invitations/me` | `CANDIDATE` | ✅ | **The only candidate-scoped read in the API** |
-| `PATCH` | `/invitations/:id` | `CANDIDATE`, `RECRUITER` | ✅ | Accept / Decline only, and a recruiter's body is **overridden** (§4.11) |
+| `PATCH` | `/invitations/:id` | `CANDIDATE`, `RECRUITER` | ✅ | Accept / Decline only, and a recruiter's body is **overridden** (4.11) |
 
 > 🧠 `GET /invitations/me` is mounted at `/api/v1`, not under an `/invitations` router, and
-> carries `{ id, status, deadline, resultReleased }` per attempt. **No score, no timestamps** (§4.7).
+> carries `{ id, status, deadline, resultReleased }` per attempt. **No score, no timestamps** (4.7).
 
 ### ⏱️ Attempts : `service/attempts.ts`
 
 | Method | Path | Backend roles | Used | Notes |
 |---|---|---|:-:|---|
-| `POST` | `/invitations/:id/start` | `CANDIDATE` | ✅ | Not idempotent, and it writes. See §4.2 |
-| `GET` | `/attempts/:id` | `CANDIDATE`, `RECRUITER` | ✅ | Full assessment incl. `correctAnswer`. **Expired attempts are mutated by this GET** (§4.5) |
+| `POST` | `/invitations/:id/start` | `CANDIDATE` | ✅ | Not idempotent, and it writes. See 4.2 |
+| `GET` | `/attempts/:id` | `CANDIDATE`, `RECRUITER` | ✅ | Full assessment incl. `correctAnswer`. **Expired attempts are mutated by this GET** (4.5) |
 | `PATCH` | `/attempts/:id` | `CANDIDATE` | ✅ | Save answers, or `{ status: "SUBMITTED" }` |
 | `POST` | `/attempts/:id/evaluate` | `RECRUITER` | ✅ | Manual scoring + `releaseResult` |
 
@@ -314,7 +314,7 @@ return here.
 | Method | Path | Used | Notes |
 |---|---|:-:|---|
 | `GET` | `/admin/users` | ✅ | `?q=&role=&status=&page=&limit=`. `search` is an accepted alias of `q`, and `q` wins |
-| `PATCH` | `/admin/users/:id` | ✅ | Suspend / restore via `{ status }`. **Also accepts `{ deletedAt: "now" }`.** See §5.3 |
+| `PATCH` | `/admin/users/:id` | ✅ | Suspend / restore via `{ status }`. **Also accepts `{ deletedAt: "now" }`.** See 5.3 |
 | `GET` | `/admin/stats` | ✅ | `users.{total,recruiters,candidates,admins}`. The chart counts roles, the stat cards count statuses, and they will not sum to the same number |
 | `GET` | `/admin/audit-logs` | ✅ | `?entity=&action=&page=&limit=` |
 | `GET` | `/admin/payments` | :dash: | ❌ | **Does not exist.** The admin payments page is a lookup by id, not a table |
@@ -652,8 +652,8 @@ curl -s http://localhost:5000/
 curl -s http://localhost:3000/api/health
 ```
 
-> 🚫 **Do not** probe `POST /invitations/:id/start` against a row you care about (§4.2).
-> **Do not** poll `GET /attempts/:id` (§4.5).
+> 🚫 **Do not** probe `POST /invitations/:id/start` against a row you care about (4.2).
+> **Do not** poll `GET /attempts/:id` (4.5).
 
 > ⚠️ The 100 requests / 15 minutes ceiling is easy to hit while verifying. A `429` is a rate
 > limit, not an application bug.
@@ -671,7 +671,7 @@ curl -s http://localhost:3000/api/health
 3. **Add the Zod schema to `lib/validations.ts`** and reuse it in both the form and the server
    action. The action re-parses server-side and its output wins.
 4. **Re-check the role gate in the action.** `requireRole()` returns `null` on a mismatch, it
-   does not throw, so the return value must be inspected. See §9.
+   does not throw, so the return value must be inspected. See 9.
 5. **Handle `success: false`.** A call that resolves with `success: false` renders as an error
    state on a `200` page. Branch on `res.success`, not on the HTTP status.
 6. **Respect the budget.** If the new call sits inside a list view, bound it to the current
