@@ -76,7 +76,7 @@ export function QuestionNavigator({
                 aria-current={isActive ? "true" : undefined}
                 aria-label={describe(index, isActive, isAnswered, isFlagged)}
                 className={cn(
-                  "relative flex size-8 items-center justify-center rounded-lg border text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring",
+                  "relative flex size-9 items-center justify-center rounded-lg border text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring",
                   TONE_CLASS[tone],
                 )}
                 onClick={(e) => {

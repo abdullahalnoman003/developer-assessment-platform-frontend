@@ -96,8 +96,11 @@ export async function respondInvitationAction(
 
   return ok(
     parsed.data.status === "ACCEPTED"
-      ? "Invitation accepted. Open it again to start the assessment."
+      ? "Invitation accepted. Starting the assessment…"
       : "Invitation declined. The recruiter is not told, and it stays on your list as declined.",
+    parsed.data.status === "ACCEPTED"
+      ? "/dashboard/candidate/invitations"
+      : null,
   );
 }
 

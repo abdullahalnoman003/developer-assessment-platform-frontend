@@ -64,17 +64,19 @@ export function AttemptSubmitDialog({
         </AlertDialogHeader>
 
         {unanswered.length > 0 ? (
-          <ul className="flex flex-col gap-1 text-sm">
-            {unanswered.map((q) => (
-              <li
-                key={q.index}
-                className="flex items-start gap-2 text-muted-foreground"
-              >
-                <span className="font-mono text-xs">Q{q.index + 1}:</span>
-                <span>{q.title}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="max-h-60 overflow-y-auto rounded-xl border border-border/60 bg-muted/30">
+            <ul className="flex flex-col gap-1 p-3 text-sm">
+              {unanswered.map((q) => (
+                <li
+                  key={q.index}
+                  className="flex items-start gap-2 text-muted-foreground"
+                >
+                  <span className="font-mono text-xs">Q{q.index + 1}:</span>
+                  <span>{q.title}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
 
         <AlertDialogFooter>

@@ -75,7 +75,10 @@ export function RunnerHeader({
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
       <div className="flex items-center gap-4 overflow-hidden">
-        <p className="truncate font-heading text-sm font-bold tracking-tight">
+        <p
+          className="truncate font-heading text-sm font-bold tracking-tight"
+          title={title}
+        >
           {title}
         </p>
         <span className="font-mono text-xs text-muted-foreground">

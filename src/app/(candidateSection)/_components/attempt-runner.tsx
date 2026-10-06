@@ -139,7 +139,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
   ).length;
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem)] flex-col">
+    <div className="flex h-full flex-col">
       <RunnerHeader
         countdown={countdown}
         dirty={dirty}
@@ -162,7 +162,7 @@ export function AttemptRunner({ attempt }: AttemptRunnerProps) {
           />
         </aside>
 
-        <section className="flex-1 overflow-y-auto p-6">
+        <section className="flex-1 overflow-y-auto p-4 sm:p-6">
           {currentQuestion ? (
             <QuestionPane
               autoFocus={true}
