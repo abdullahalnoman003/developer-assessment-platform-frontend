@@ -16,8 +16,9 @@ export default function RootError({
   reset: () => void;
 }) {
   useEffect(() => {
+    console.error(error);
     toast.error(VALIDATION_MESSAGES.unknown, { id: "root-error" });
-  }, []);
+  }, [error]);
 
   const message =
     process.env.NODE_ENV === "development" && error.message
@@ -26,7 +27,7 @@ export default function RootError({
 
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-20">
-      <div className="flex w-full max-w-xl flex-col items-center gap-6">
+      <div className="flex w-full max-w-xl flex-col items-center gap-6 animate-fade-up">
         <ErrorCard
           variant="blocked"
           title="Something went wrong"

@@ -1,11 +1,23 @@
 "use client";
 
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { ErrorCard } from "@/components/shared/error-card";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { APP_NAME } from "@/lib/constants";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
 
 export default function GlobalError({
   error,
@@ -15,8 +27,9 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
+    console.error(error);
     toast.error(VALIDATION_MESSAGES.unknown, { id: "global-error" });
-  }, []);
+  }, [error]);
 
   const message =
     process.env.NODE_ENV === "development" && error.message
@@ -24,18 +37,14 @@ export default function GlobalError({
       : null;
 
   return (
-    <html lang="en" className="h-full">
-      <body
-        className="flex min-h-full items-center justify-center bg-background p-6 text-foreground"
-        style={{
-          margin: 0,
-          background: "oklch(0.99 0.005 272)",
-          color: "oklch(0.18 0.02 272)",
-          fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
-        }}
-      >
+    <html
+      lang="en"
+      className={`h-full ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-full items-center justify-center bg-background p-6 text-foreground font-sans antialiased animate-fade-in">
         <main className="flex w-full max-w-xl flex-col items-center gap-6">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground uppercase">
             {APP_NAME}
           </p>
 
@@ -47,20 +56,24 @@ export default function GlobalError({
             digest={error.digest}
             action={
               <>
-                <Button onClick={reset}>Reload the app</Button>
-                <a
-                  href="/"
-                  className="inline-flex h-7 items-center rounded-md border border-border px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                <Button
+                  onClick={() => {
+                    reset();
+                    window.location.reload();
+                  }}
                 >
+                  Reload the app
+                </Button>
+                <LinkButton href="/" variant="outline">
                   Go to the home page
-                </a>
+                </LinkButton>
               </>
             }
           />
 
           <p className="text-center text-xs text-muted-foreground">
-            If this keeps happening, the CodeArena API on port 5000 may be down.
-            Reload again once it is back.
+            If this keeps happening, the CodeArena API may be down. Reload again
+            once it is back.
           </p>
         </main>
       </body>
