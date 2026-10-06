@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { updateProfileAction } from "@/app/(profileSection)/_actions/profile";
@@ -36,6 +37,7 @@ export function CandidateProfileForm({
   };
 }) {
   const { state, formAction, isPending } = useActionToast(updateProfileAction);
+  const [, startTransition] = useTransition();
 
   const form = useForm<FormValues, unknown, FormOutput>({
     resolver: zodResolver(updateProfileSchema),
@@ -49,6 +51,26 @@ export function CandidateProfileForm({
     mode: "onBlur",
   });
 
+  useEffect(() => {
+    if (state.status === "success") {
+      form.reset({
+        phone: user.phone ?? "",
+        bio: user.bio ?? "",
+        skills: user.skills ?? [],
+        resumeUrl: user.resumeUrl ?? "",
+        githubUrl: user.githubUrl ?? "",
+      });
+    }
+  }, [
+    state.status,
+    form,
+    user.phone,
+    user.bio,
+    user.skills,
+    user.resumeUrl,
+    user.githubUrl,
+  ]);
+
   const onSubmit = form.handleSubmit((values) => {
     const data = new FormData();
     data.set("phone", values.phone ?? "");
@@ -57,7 +79,9 @@ export function CandidateProfileForm({
     data.set("resumeUrl", values.resumeUrl ?? "");
     data.set("githubUrl", values.githubUrl ?? "");
 
-    formAction(data);
+    startTransition(() => {
+      formAction(data);
+    });
   });
 
   return (

@@ -22,51 +22,6 @@ const REFRESH_COOKIE = "refreshToken";
 const ACCESS_MAX_AGE = 60 * 60 * 24;
 const REFRESH_MAX_AGE = 60 * 60 * 24 * 7;
 
-const MAX_CONSECUTIVE_FAILURES = 3;
-const CIRCUIT_BREAKER_RESET_MS = 30_000;
-
-let consecutiveFailures = 0;
-let circuitOpenAt = 0;
-
-function recordFailure(): void {
-  consecutiveFailures += 1;
-  if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-    circuitOpenAt = Date.now() + CIRCUIT_BREAKER_RESET_MS;
-  }
-}
-
-function recordSuccess(): void {
-  consecutiveFailures = 0;
-  circuitOpenAt = 0;
-}
-
-function isCircuitOpen(): boolean {
-  if (circuitOpenAt === 0) return false;
-  if (Date.now() >= circuitOpenAt) {
-    consecutiveFailures = 0;
-    circuitOpenAt = 0;
-    return false;
-  }
-  return true;
-}
-
-export function getBackendHealth(): {
-  healthy: boolean;
-  failures: number;
-  resetAt: number;
-} {
-  return {
-    healthy: !isCircuitOpen(),
-    failures: consecutiveFailures,
-    resetAt: circuitOpenAt,
-  };
-}
-
-export function resetCircuitBreaker(): void {
-  consecutiveFailures = 0;
-  circuitOpenAt = 0;
-}
-
 export class UnauthenticatedError extends Error {
   constructor(message = "Your session has expired. Please sign in again.") {
     super(message);
@@ -146,16 +101,6 @@ async function send<T>(
   options: ApiOptions,
   token: string | null,
 ): Promise<ApiResponse<T>> {
-  if (isCircuitOpen()) {
-    return {
-      success: false,
-      statusCode: 503,
-      message:
-        "Backend is temporarily unavailable. Please try again in a moment.",
-      data: null,
-    };
-  }
-
   const misconfigured = missingBaseMessage();
   if (misconfigured) {
     return {
@@ -186,7 +131,6 @@ async function send<T>(
         : {}),
     });
   } catch {
-    recordFailure();
     return {
       success: false,
       statusCode: 503,
@@ -202,7 +146,6 @@ async function send<T>(
     payload && typeof payload === "object" ? payload : {};
 
   if (status < 200 || status >= 300) {
-    recordFailure();
     return {
       success: false,
       statusCode: status,
@@ -212,7 +155,6 @@ async function send<T>(
     };
   }
 
-  recordSuccess();
   return {
     success: true,
     statusCode: status,

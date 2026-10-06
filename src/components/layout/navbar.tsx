@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowRightIcon,
   LayoutDashboardIcon,
@@ -6,6 +8,7 @@ import {
   UserRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DesktopNav, MobileNav } from "@/components/layout/nav-links";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import {
@@ -49,6 +52,17 @@ export interface NavbarProps {
 }
 
 export function Navbar({ user = null }: NavbarProps) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // logout() redirects; ignore the thrown redirect and navigate manually
+    }
+    router.push("/login");
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 glass">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-2 px-4 sm:h-18 sm:gap-3 sm:px-6 lg:px-8">
@@ -114,7 +128,7 @@ export function Navbar({ user = null }: NavbarProps) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className={cn("text-destructive focus:text-destructive")}
-                      render={<form action={logout} />}
+                      onClick={handleLogout}
                       variant="destructive"
                     >
                       Sign out

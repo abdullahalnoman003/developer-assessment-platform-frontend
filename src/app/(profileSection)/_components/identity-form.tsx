@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { updateProfileAction } from "@/app/(profileSection)/_actions/profile";
@@ -33,6 +33,7 @@ export function IdentityForm({
   };
 }) {
   const { state, formAction, isPending } = useActionToast(updateProfileAction);
+  const [, startTransition] = useTransition();
 
   const form = useForm<FormValues, unknown, FormOutput>({
     resolver: zodResolver(updateProfileSchema),
@@ -43,12 +44,23 @@ export function IdentityForm({
     mode: "onBlur",
   });
 
+  useEffect(() => {
+    if (state.status === "success") {
+      form.reset({
+        name: user.name,
+        avatarUrl: user.avatarUrl ?? "",
+      });
+    }
+  }, [state.status, form, user.name, user.avatarUrl]);
+
   const onSubmit = form.handleSubmit((values) => {
     const data = new FormData();
     data.set("name", values.name ?? "");
     data.set("avatarUrl", values.avatarUrl ?? "");
 
-    formAction(data);
+    startTransition(() => {
+      formAction(data);
+    });
   });
 
   return (

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { API_BASE, getBackendHealth, resetCircuitBreaker } from "@/lib/api";
+import { API_BASE } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +10,6 @@ interface ProbeResult {
   error: string | null;
 }
 
-// Hits the backend root rather than /api/v1 so this diagnostic never consumes
-// the 100-per-15-minutes API budget.
 async function probeBackend(): Promise<ProbeResult> {
   const base = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
 
@@ -39,11 +37,12 @@ async function probeBackend(): Promise<ProbeResult> {
 }
 
 export async function GET() {
-  const health = getBackendHealth();
   const probe = await probeBackend();
 
   return NextResponse.json({
-    ...health,
+    healthy: probe.reachable,
+    failures: 0,
+    resetAt: 0,
     apiBase: API_BASE,
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "(unset)",
     probe,
@@ -51,6 +50,5 @@ export async function GET() {
 }
 
 export async function POST() {
-  resetCircuitBreaker();
   return NextResponse.json({ ok: true });
 }

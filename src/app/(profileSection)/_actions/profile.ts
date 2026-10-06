@@ -70,7 +70,7 @@ export async function updateProfileAction(
   }
 
   const parsed = updateProfileSchema.safeParse({
-    name: formData.get("name"),
+    name: formData.get("name") ?? undefined,
     avatarUrl: formData.get("avatarUrl") ?? undefined,
     phone: nullableField(formData, "phone"),
     bio: nullableField(formData, "bio"),
