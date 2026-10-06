@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DifficultyBadge,
   QuestionTypeBadge,
@@ -19,6 +19,7 @@ export function QuestionPicker({
   idPrefix = "question-picker",
   emptyTitle = EMPTY_STATES.questions.title,
   emptyBody = EMPTY_STATES.questions.body,
+  defaultType = "",
 }: {
   questions: Question[];
   selectedIds: string[];
@@ -26,10 +27,15 @@ export function QuestionPicker({
   idPrefix?: string;
   emptyTitle?: string;
   emptyBody?: string;
+  defaultType?: QuestionType | "";
 }) {
   const [query, setQuery] = useState("");
-  const [type, setType] = useState<QuestionType | "">("");
+  const [type, setType] = useState<QuestionType | "">(defaultType);
   const [difficulty, setDifficulty] = useState<Difficulty | "">("");
+
+  useEffect(() => {
+    setType(defaultType);
+  }, [defaultType]);
 
   const visible = questions.filter((question) => {
     if (type && question.type !== type) return false;

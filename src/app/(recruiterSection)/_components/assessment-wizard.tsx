@@ -36,9 +36,10 @@ import { Input } from "@/components/ui/input";
 import { LinkButton } from "@/components/ui/link-button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { QUESTION_TYPE_LABELS } from "@/lib/constants";
 import { truncate } from "@/lib/format";
 import { VALIDATION_MESSAGES } from "@/lib/messages";
-import type { Question } from "@/lib/types";
+import type { Question, QuestionType } from "@/lib/types";
 import { type ActionState, IDLE_ACTION_STATE } from "@/lib/types";
 import { createAssessmentSchema } from "@/lib/validations";
 
@@ -58,6 +59,7 @@ interface Draft {
   passScore: number;
   passScoreEnabled: boolean;
   questionIds: string[];
+  questionType: QuestionType | "";
   title: string;
 }
 
@@ -67,6 +69,7 @@ const EMPTY_DRAFT: Draft = {
   passScore: 0,
   passScoreEnabled: false,
   questionIds: [],
+  questionType: "",
   title: "",
 };
 
@@ -75,6 +78,7 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
   const searchParams = useSearchParams();
   const [state, setState] = useState<ActionState>(IDLE_ACTION_STATE);
   const [pending, startTransition] = useTransition();
+  const [stepLoading, setStepLoading] = useState(false);
 
   const stepParam = searchParams.get("step");
   const parsedStep = Number(stepParam);
@@ -97,14 +101,15 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
   const goToStep = useCallback(
     (next: number) => {
       const clamped = Math.min(Math.max(next, 1), TOTAL_STEPS);
+      setStepLoading(true);
       router.replace(clamped === 1 ? "" : `?step=${clamped}`, {
         scroll: false,
       });
+      setTimeout(() => setStepLoading(false), 300);
     },
     [router],
   );
 
-  // the deepest step the current draft can actually justify
   const reachableStep =
     title.trim() === "" ? 1 : draft.questionIds.length === 0 ? 2 : TOTAL_STEPS;
 
@@ -232,24 +237,32 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
   });
 
   const leaveStepOne = async () => {
-    const ok = await trigger();
-    if (!ok) {
-      toast.error("Fix the highlighted fields first.");
-      return;
+    setStepLoading(true);
+    try {
+      const ok = await trigger();
+      if (!ok) {
+        toast.error("Fix the highlighted fields first.");
+        return;
+      }
+      patch({
+        durationMins: Number(form.getValues("durationMins")),
+        title: form.getValues("title"),
+      });
+      goToStep(2);
+    } finally {
+      setStepLoading(false);
     }
-    patch({
-      durationMins: Number(form.getValues("durationMins")),
-      title: form.getValues("title"),
-    });
-    goToStep(2);
   };
 
-  const leaveStepTwo = () => {
+  const _leaveStepTwo = () => {
+    setStepLoading(true);
     if (draft.questionIds.length === 0) {
       toast.error("Pick at least one question to continue.");
+      setStepLoading(false);
       return;
     }
     goToStep(3);
+    setTimeout(() => setStepLoading(false), 300);
   };
 
   return (
@@ -400,13 +413,45 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
                   threshold.
                 </FieldDescription>
               </Field>
+
+              <Field>
+                <FieldLabel htmlFor="wizard-question-type">
+                  Question type
+                </FieldLabel>
+                <select
+                  className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
+                  id="wizard-question-type"
+                  onChange={(event) =>
+                    patch({
+                      questionType: event.target.value as QuestionType | "",
+                    })
+                  }
+                  value={draft.questionType}
+                >
+                  <option value="">Any type</option>
+                  {(Object.keys(QUESTION_TYPE_LABELS) as QuestionType[]).map(
+                    (value) => (
+                      <option key={value} value={value}>
+                        {QUESTION_TYPE_LABELS[value]}
+                      </option>
+                    ),
+                  )}
+                </select>
+                <FieldDescription>
+                  If set, only questions of this type are shown in the picker.
+                </FieldDescription>
+              </Field>
             </div>
           </FieldGroup>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button disabled={pending} type="submit">
-              <ArrowRightIcon className="size-3.5" />
-              Next: pick questions
+            <Button disabled={stepLoading || pending} type="submit">
+              {stepLoading ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <ArrowRightIcon className="size-3.5" />
+              )}
+              {stepLoading ? "Saving" : "Next: pick questions"}
             </Button>
             <LinkButton
               href="/dashboard/recruiter/assessments"
@@ -422,17 +467,27 @@ export function AssessmentWizard({ questions }: { questions: Question[] }) {
       {step === 2 ? (
         <div className="flex flex-col gap-5">
           <QuestionPicker
+            defaultType={draft.questionType}
             onToggle={toggleQuestion}
             questions={questions}
             selectedIds={draft.questionIds}
           />
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={leaveStepTwo} type="button">
-              <ArrowRightIcon className="size-3.5" />
-              Next: review
+            <Button disabled={stepLoading} type="button">
+              {stepLoading ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <ArrowRightIcon className="size-3.5" />
+              )}
+              {stepLoading ? "Loading" : "Next: review"}
             </Button>
-            <Button onClick={() => goToStep(1)} type="button" variant="outline">
+            <Button
+              disabled={stepLoading}
+              onClick={() => goToStep(1)}
+              type="button"
+              variant="outline"
+            >
               <ArrowLeftIcon className="size-3.5" />
               Back
             </Button>
